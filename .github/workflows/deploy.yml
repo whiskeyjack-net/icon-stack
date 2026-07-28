@@ -89,16 +89,32 @@ jobs:
 
       - name: Verify it is live
         run: |
+          # A 404 and a 503 mean very different things here. 404 on a path this
+          # deploy should not have touched means the scoped write misbehaved and
+          # something is genuinely gone -- fail immediately. 5xx is GitHub Pages
+          # being briefly unavailable while it propagates, which says nothing
+          # about the deploy; the first version of this check treated both the
+          # same and failed a perfectly good deploy on a transient 503.
+          check() {
+            local path="$1" url="https://whiskeyjack.net/$1" code
+            for _ in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w '%{http_code}' "$url")
+              case "$code" in
+                200) printf '  /%-18s -> 200\n' "$path"; return 0 ;;
+                404) printf '  /%-18s -> 404  MISSING\n' "$path"; return 1 ;;
+                *)   sleep 10 ;;
+              esac
+            done
+            printf '  /%-18s -> %s after 6 attempts\n' "$path" "$code"
+            return 1
+          }
+
           echo "Waiting for Pages to serve the new build…"
-          for i in $(seq 1 30); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' https://whiskeyjack.net/icon-stack/)
-            [ "$code" = "200" ] && break
-            sleep 10
-          done
-          curl -s -o /dev/null -w '  /icon-stack/ -> %{http_code}\n' https://whiskeyjack.net/icon-stack/
-          # The rest of the site must be untouched by this deploy.
+          check "icon-stack/" || exit 1
+
+          echo "The rest of the site must be untouched by this deploy:"
+          failed=0
           for path in "" "components/" "apps/" "chip-away/" "r/registry.json"; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' "https://whiskeyjack.net/$path")
-            printf '  /%-16s -> %s\n' "$path" "$code"
-            [ "$code" = "200" ] || { echo "  the deploy disturbed the rest of the site"; exit 1; }
+            check "$path" || failed=1
           done
+          [ "$failed" = 0 ] || { echo "  the deploy disturbed the rest of the site"; exit 1; }
