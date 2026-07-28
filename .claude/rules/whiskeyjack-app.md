@@ -49,11 +49,11 @@ store). Never hand-roll `matchMedia`/`dark`-class toggling.
 
 ### Cold-launch theme flash
 
-A theme-correct app can still show the wrong colour for a large part of its cold
+A theme-correct app can still show the wrong color for a large part of its cold
 launch. The launch is a **chain of surfaces**, each painting until the next is
 ready, and each with a different owner:
 
-| # | Surface | Owner | Colour source |
+| # | Surface | Owner | Color source |
 |---|---------|-------|---------------|
 | 1 | System splash / `LaunchScreen` | OS, before the process exists | theme resource |
 | 2 | Native window background | app `onCreate` / Rust setup | persisted mirror |

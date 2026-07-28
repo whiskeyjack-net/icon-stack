@@ -33,46 +33,46 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
         {/* --- Which artwork this platform draws from --------------------- */}
         {alternate && (
           <section className="space-y-4">
-            <SectionTitle>{t('settings.artworkSource')}</SectionTitle>
+            <SectionTitle>{t('platform.artworkSource')}</SectionTitle>
 
             {has('sourceChoice') && (
               <SourcePicker
-                label={t('settings.source.main')}
+                label={t('platform.source.main')}
                 value={config.sourceChoice as SourceChoice}
                 onChange={(sourceChoice) => patch({ sourceChoice } as never)}
               />
             )}
             {has('lightSourceChoice') && (
               <SourcePicker
-                label={t('settings.source.light')}
+                label={t('platform.source.light')}
                 value={config.lightSourceChoice as SourceChoice}
                 onChange={(lightSourceChoice) => patch({ lightSourceChoice } as never)}
               />
             )}
             {has('darkSourceChoice') && (
               <SourcePicker
-                label={t('settings.source.dark')}
+                label={t('platform.source.dark')}
                 value={config.darkSourceChoice as SourceChoice}
                 onChange={(darkSourceChoice) => patch({ darkSourceChoice } as never)}
               />
             )}
             {has('monoSourceChoice') && (
               <SourcePicker
-                label={t('settings.source.mono')}
+                label={t('platform.source.mono')}
                 value={config.monoSourceChoice as SourceChoice}
                 onChange={(monoSourceChoice) => patch({ monoSourceChoice } as never)}
               />
             )}
             {has('maskableSourceChoice') && (
               <SourcePicker
-                label={t('settings.source.maskable')}
+                label={t('platform.source.maskable')}
                 value={config.maskableSourceChoice as SourceChoice}
                 onChange={(maskableSourceChoice) => patch({ maskableSourceChoice } as never)}
               />
             )}
             {has('unplatedSourceChoice') && (
               <SourcePicker
-                label={t('settings.source.unplated')}
+                label={t('platform.source.unplated')}
                 value={config.unplatedSourceChoice as SourceChoice}
                 onChange={(unplatedSourceChoice) => patch({ unplatedSourceChoice } as never)}
               />
@@ -82,7 +82,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
         {/* --- Background -------------------------------------------------- */}
         <section>
-          <SectionTitle>{t('settings.background')}</SectionTitle>
+          <SectionTitle>{t('platform.background')}</SectionTitle>
           <BackgroundEditor
             fill={config.bgFill as BackgroundFill}
             onFillChange={(bgFill: BackgroundFill) => patch({ bgFill } as never)}
@@ -98,7 +98,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
         {/* Platforms with a separate dark variant carry a second fill. */}
         {has('bgFillDark') && (
           <section>
-            <SectionTitle>{t('settings.backgroundDark')}</SectionTitle>
+            <SectionTitle>{t('platform.backgroundDark')}</SectionTitle>
             <BackgroundEditor
               fill={config.bgFillDark as BackgroundFill}
               onFillChange={(bgFillDark: BackgroundFill) => patch({ bgFillDark } as never)}
@@ -109,31 +109,31 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
         {/* --- Apple .icon ------------------------------------------------- */}
         {platform === 'apple' && (
           <section className="space-y-5">
-            <SectionTitle>{t('settings.appleIcon')}</SectionTitle>
+            <SectionTitle>{t('platform.appleIcon')}</SectionTitle>
             <p className="-mt-2 text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-              {t('settings.appleIconHint')}
+              {t('platform.appleIconHint')}
             </p>
 
             <Toggle
-              label={t('settings.glass')}
-              description={t('settings.glassHint')}
+              label={t('platform.glass')}
+              description={t('platform.glassHint')}
               checked={config.glass as boolean}
               onChange={(glass) => patch({ glass } as never)}
             />
 
             <Slider
-              label={t('settings.shadowOpacity')}
+              label={t('platform.shadowOpacity')}
               min={0}
               max={100}
               step={1}
               value={Math.round((config.shadow as { opacity: number }).opacity * 100)}
               onChange={(v) => patch({ shadow: { kind: 'neutral', opacity: v / 100 } } as never)}
-              formatValue={(v) => (v === 0 ? t('settings.none') : `${v}%`)}
+              formatValue={(v) => (v === 0 ? t('platform.none') : `${v}%`)}
             />
 
             <Toggle
-              label={t('settings.translucency')}
-              description={t('settings.translucencyHint')}
+              label={t('platform.translucency')}
+              description={t('platform.translucencyHint')}
               checked={(config.translucency as { enabled: boolean }).enabled}
               onChange={(enabled) =>
                 patch({
@@ -147,7 +147,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
             {(config.translucency as { enabled: boolean }).enabled && (
               <Slider
-                label={t('settings.translucencyAmount')}
+                label={t('platform.translucencyAmount')}
                 min={0}
                 max={100}
                 step={1}
@@ -163,10 +163,10 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
         {/* --- Artwork geometry -------------------------------------------- */}
         <section className="space-y-5">
-          <SectionTitle>{t('settings.artwork')}</SectionTitle>
+          <SectionTitle>{t('platform.artwork')}</SectionTitle>
 
           <Slider
-            label={t('settings.zoom')}
+            label={t('platform.zoom')}
             min={50}
             max={150}
             step={1}
@@ -178,23 +178,23 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
           {has('cornerRadius') && (
             <>
               <Slider
-                label={t('settings.cornerRadius')}
+                label={t('platform.cornerRadius')}
                 min={0}
                 max={50}
                 step={1}
                 value={config.cornerRadius as number}
                 onChange={(cornerRadius) => patch({ cornerRadius } as never)}
-                formatValue={(v) => (v === 0 ? t('settings.square') : `${v}%`)}
+                formatValue={(v) => (v === 0 ? t('platform.square') : `${v}%`)}
               />
               {(config.cornerRadius as number) > 0 && (
                 <Slider
-                  label={t('settings.cornerSmoothing')}
+                  label={t('platform.cornerSmoothing')}
                   min={0}
                   max={100}
                   step={1}
                   value={config.cornerSmoothing as number}
                   onChange={(cornerSmoothing) => patch({ cornerSmoothing } as never)}
-                  formatValue={(v) => (v === 0 ? t('settings.circular') : `${v}%`)}
+                  formatValue={(v) => (v === 0 ? t('platform.circular') : `${v}%`)}
                 />
               )}
             </>
@@ -202,7 +202,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
           {has('maskableZoom') && (
             <Slider
-              label={t('settings.maskableZoom')}
+              label={t('platform.maskableZoom')}
               min={50}
               max={150}
               step={1}
@@ -214,7 +214,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
           {has('unplatedZoom') && (
             <Slider
-              label={t('settings.unplatedZoom')}
+              label={t('platform.unplatedZoom')}
               min={50}
               max={150}
               step={1}
@@ -228,8 +228,8 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
         {/* --- Platform extras --------------------------------------------- */}
         {has('useMonochrome') && (
           <Toggle
-            label={t('settings.monochrome')}
-            description={t('settings.monochromeHint')}
+            label={t('platform.monochrome')}
+            description={t('platform.monochromeHint')}
             checked={config.useMonochrome as boolean}
             onChange={(useMonochrome) => patch({ useMonochrome } as never)}
           />
@@ -237,15 +237,15 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
         {has('includeSvg') && (
           <Toggle
-            label={t('settings.includeSvg')}
-            description={t('settings.includeSvgHint')}
+            label={t('platform.includeSvg')}
+            description={t('platform.includeSvgHint')}
             checked={config.includeSvg as boolean}
             onChange={(includeSvg) => patch({ includeSvg } as never)}
           />
         )}
 
         <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-          {t(`settings.notes.${platform}`, { defaultValue: '' })}
+          {t(`platform.notes.${platform}`, { defaultValue: '' })}
         </p>
       </CardContent>
     </Card>
@@ -279,8 +279,8 @@ function SourcePicker({
         value={value}
         onChange={onChange}
         options={[
-          { value: 'main' as const, label: t('settings.source.useMain') },
-          { value: 'alternate' as const, label: t('settings.source.useAlternate') },
+          { value: 'main' as const, label: t('platform.source.useMain') },
+          { value: 'alternate' as const, label: t('platform.source.useAlternate') },
         ]}
       />
     </div>

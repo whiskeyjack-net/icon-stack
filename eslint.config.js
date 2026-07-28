@@ -96,19 +96,19 @@ export default tseslint.config(
           selector: 'JSXText[value=/\\u2014/]',
           message: 'Use an en dash (–), never an em dash (—).',
         },
-        // Colour must come from tokens, so raw Tailwind palette hues and
+        // Color must come from tokens, so raw Tailwind palette hues and
         // arbitrary hex values in a className are both wrong. The token-backed
         // scales (neutral, warm, accent, success, warning, error, info, orange,
         // yellow) stay allowed.
         {
           selector: `JSXAttribute[name.name='className'] Literal[value=/${RAW_PALETTE}/]`,
           message:
-            'Use a design-system token scale (accent, neutral, warm, success, warning, error, info) instead of a raw Tailwind palette colour.',
+            'Use a design-system token scale (accent, neutral, warm, success, warning, error, info) instead of a raw Tailwind palette color.',
         },
         {
           selector: `JSXAttribute[name.name='className'] TemplateElement[value.raw=/${RAW_PALETTE}/]`,
           message:
-            'Use a design-system token scale (accent, neutral, warm, success, warning, error, info) instead of a raw Tailwind palette colour.',
+            'Use a design-system token scale (accent, neutral, warm, success, warning, error, info) instead of a raw Tailwind palette color.',
         },
         {
           selector: `JSXAttribute[name.name='className'] Literal[value=/${ARBITRARY_HEX}/]`,

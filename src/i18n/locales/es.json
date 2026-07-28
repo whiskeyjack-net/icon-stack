@@ -21,6 +21,44 @@
     "includePlatform": "Incluir esta plataforma en la exportación"
   },
   "settings": {
+    "title": "Ajustes",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema",
+    "language": "Idioma"
+  },
+  "background": {
+    "transparent": "Fondo transparente",
+    "transparentHint": "Exportar sin placa detrás del gráfico.",
+    "solid": "Sólido",
+    "gradient": "Degradado",
+    "preset": "Color predefinido {{color}}",
+    "custom": "Color personalizado",
+    "gradientTop": "Color superior del degradado",
+    "autoTop": "Parada superior automática",
+    "customTop": "Parada superior personalizada"
+  },
+  "preview": {
+    "title": "Vista previa",
+    "alt": "Icono renderizado a {{size}} píxeles",
+    "none": "Sin tamaños ráster para esta plataforma."
+  },
+  "source": {
+    "main": "Imagen de origen",
+    "alternate": "Imagen alternativa",
+    "optional": "opcional",
+    "mainTitle": "Suelta una imagen",
+    "mainSubtitle": "PNG o SVG, 1024x1024 cuadrado funciona mejor.",
+    "alternateTitle": "Añade una alternativa",
+    "alternateSubtitle": "Para variantes oscuras, monocromas y de barra.",
+    "choose": "Elegir archivo",
+    "remove": "Quitar esta imagen",
+    "contain": "Contener",
+    "cover": "Cubrir",
+    "alternateHint": "Una imagen alternativa permite que las variantes oscuras, monocromas y de barra usen otro gráfico."
+  },
+  "platform": {
     "background": "Fondo",
     "artwork": "Gráfico",
     "zoom": "Zoom",
@@ -62,34 +100,9 @@
       "useAlternate": "Alternativa"
     }
   },
-  "background": {
-    "transparent": "Fondo transparente",
-    "transparentHint": "Exportar sin placa detrás del gráfico.",
-    "solid": "Sólido",
-    "gradient": "Degradado",
-    "preset": "Color predefinido {{color}}",
-    "custom": "Color personalizado",
-    "gradientTop": "Color superior del degradado",
-    "autoTop": "Parada superior automática",
-    "customTop": "Parada superior personalizada"
-  },
-  "preview": {
-    "title": "Vista previa",
-    "alt": "Icono renderizado a {{size}} píxeles",
-    "none": "Sin tamaños ráster para esta plataforma."
-  },
-  "source": {
-    "main": "Imagen de origen",
-    "alternate": "Imagen alternativa",
-    "optional": "opcional",
-    "mainTitle": "Suelta una imagen",
-    "mainSubtitle": "PNG o SVG, 1024x1024 cuadrado funciona mejor.",
-    "alternateTitle": "Añade una alternativa",
-    "alternateSubtitle": "Para variantes oscuras, monocromas y de barra.",
-    "choose": "Elegir archivo",
-    "remove": "Quitar esta imagen",
-    "contain": "Contener",
-    "cover": "Cubrir",
-    "alternateHint": "Una imagen alternativa permite que las variantes oscuras, monocromas y de barra usen otro gráfico."
+  "actions": {
+    "clear": "Borrar orígenes",
+    "replace": "Reemplazar origen",
+    "export": "Exportar todos los iconos"
   }
 }

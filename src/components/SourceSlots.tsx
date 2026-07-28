@@ -81,6 +81,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
         <input
           ref={input}
           type="file"
+          data-source-input={slot}
           accept="image/png,image/svg+xml"
           className="sr-only"
           onChange={(e) => void accept(e.target.files?.[0])}

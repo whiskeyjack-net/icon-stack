@@ -21,6 +21,44 @@
     "includePlatform": "Include this platform in the export"
   },
   "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language"
+  },
+  "background": {
+    "transparent": "Transparent background",
+    "transparentHint": "Export with no plate behind the artwork.",
+    "solid": "Solid",
+    "gradient": "Gradient",
+    "preset": "Preset color {{color}}",
+    "custom": "Custom color",
+    "gradientTop": "Gradient top color",
+    "autoTop": "Top stop derived automatically",
+    "customTop": "Custom top stop"
+  },
+  "preview": {
+    "title": "Preview",
+    "alt": "Icon rendered at {{size}} pixels",
+    "none": "No raster sizes for this platform."
+  },
+  "source": {
+    "main": "Source image",
+    "alternate": "Alternate image",
+    "optional": "optional",
+    "mainTitle": "Drop a source image",
+    "mainSubtitle": "PNG or SVG, 1024x1024 square works best.",
+    "alternateTitle": "Add an alternate",
+    "alternateSubtitle": "For dark, monochrome and taskbar variants.",
+    "choose": "Choose a file",
+    "remove": "Remove this image",
+    "contain": "Contain",
+    "cover": "Cover",
+    "alternateHint": "An alternate image lets dark, monochrome and taskbar variants use different artwork – a mark that reads on a light plate often does not read knocked out on a dark one."
+  },
+  "platform": {
     "background": "Background",
     "artwork": "Artwork",
     "zoom": "Zoom",
@@ -62,34 +100,9 @@
       "useAlternate": "Alternate"
     }
   },
-  "background": {
-    "transparent": "Transparent background",
-    "transparentHint": "Export with no plate behind the artwork.",
-    "solid": "Solid",
-    "gradient": "Gradient",
-    "preset": "Preset color {{color}}",
-    "custom": "Custom color",
-    "gradientTop": "Gradient top color",
-    "autoTop": "Top stop derived automatically",
-    "customTop": "Custom top stop"
-  },
-  "preview": {
-    "title": "Preview",
-    "alt": "Icon rendered at {{size}} pixels",
-    "none": "No raster sizes for this platform."
-  },
-  "source": {
-    "main": "Source image",
-    "alternate": "Alternate image",
-    "optional": "optional",
-    "mainTitle": "Drop a source image",
-    "mainSubtitle": "PNG or SVG, 1024x1024 square works best.",
-    "alternateTitle": "Add an alternate",
-    "alternateSubtitle": "For dark, monochrome and taskbar variants.",
-    "choose": "Choose a file",
-    "remove": "Remove this image",
-    "contain": "Contain",
-    "cover": "Cover",
-    "alternateHint": "An alternate image lets dark, monochrome and taskbar variants use different artwork – a mark that reads on a light plate often does not read knocked out on a dark one."
+  "actions": {
+    "clear": "Clear sources",
+    "replace": "Replace source",
+    "export": "Export all icons"
   }
 }

@@ -18,6 +18,7 @@ import {
   isLinuxDesktop,
 } from '@whiskeyjack-net/tauri'
 import { House, GearSix, List } from '@phosphor-icons/react'
+import { GeneratorActions, GeneratorActionsMeasure } from './GeneratorActions'
 import { useEffect } from 'react'
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -77,6 +78,8 @@ export function Layout({ children }: { children: ReactNode }) {
         }
       >
         <HeaderNav linkComponent={Link} items={items} />
+        {/* Same actions as the mobile bar, same order -- only the size differs. */}
+        <GeneratorActions size="desktop" />
       </AppHeader>
 
       <AppMain ref={mainRef} indicatorTopOffset={68} className="md:pt-16">
@@ -88,6 +91,10 @@ export function Layout({ children }: { children: ReactNode }) {
         menuIcon={<List size={24} weight="regular" />}
         menuLabel={t('nav.menu')}
         navItems={items}
+        toolbar={<GeneratorActions size="mobile" />}
+        // Worst case (every action visible) so the collapse decision does not
+        // flip as the contextual buttons appear and disappear.
+        measureToolbar={<GeneratorActionsMeasure />}
       />
     </AppShell>
   )
