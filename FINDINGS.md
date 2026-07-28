@@ -114,15 +114,18 @@ interaction is the non-obvious part.
 
 ---
 
-### FIXED HERE – the published packages shipped no LICENSE file
+### WITHDRAWN – "the published packages ship no LICENSE"
 
-`@whiskeyjack-net/design-system`, `i18n` and `tauri` all declare `"license":
-"MIT"` in package.json, but no LICENSE text is in the tarball. An MIT claim with
-no license text is not a license grant a recipient can rely on.
+Recorded here initially and **it was wrong**. Checked against the actual
+tarballs: `@whiskeyjack-net/design-system`, `i18n` and `tauri` all ship
+`package/LICENSE`, and all four stage scripts copy it.
 
-**Upstream fix:** the design-system stage script already copies `LICENSE`;
-confirm i18n and tauri do the same. Fixed in this repo at the root and in both
-packages.
+What genuinely lacked a LICENSE were `icon-stack-core` and `icon-stack-cli` --
+packages created during the extraction and never published. That was an
+omission in new work, not a gap in the published set. Both carry one here.
+
+Left in place rather than deleted, because a findings file that quietly drops
+its mistakes is not one anybody should trust.
 
 ### FIXED HERE – lint had never run over this code
 
