@@ -1,0 +1,104 @@
+name: Deploy
+
+# Publishes the web app to whiskeyjack.net/icon-stack/.
+#
+# TWO repositories write to the `whiskeyjack-net/website` Pages repo: the
+# Whiskeyjack monorepo publishes the site and its other apps, and this repo
+# publishes /icon-stack/. That shapes the whole design below.
+#
+# The monorepo deploys by cloning the live site, overlaying its builds, and
+# force-pushing the result. If this repo did the same, a deploy racing the
+# monorepo's would push a stale clone of everything else and silently revert it.
+#
+# So this one is scoped instead: `destination_dir` confines the write to the
+# icon-stack/ subtree, and `keep_files` stops it deleting anything outside.
+# It is not capable of touching the rest of the site, which is the property
+# worth having when the alternative failure is clobbering whiskeyjack.net.
+#
+# Trade-off: `keep_files` also means stale hashed assets inside icon-stack/
+# accumulate rather than being pruned. They are dead weight, never referenced by
+# the current index.html, and cost a few KB per deploy. Clearing them means
+# deleting icon-stack/assets/ in the website repo by hand -- worth doing
+# occasionally, not worth risking the site to automate.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'packages/core/**'
+      - 'index.html'
+      - 'vite.config.ts'
+      - 'tailwind.config.js'
+      - 'package.json'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  # Never let two deploys of this app interleave against the shared Pages repo.
+  group: deploy-icon-stack
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint and test
+        run: |
+          npm run lint
+          npm test
+
+      # `build` builds packages/core first -- the app consumes its dist, and npm
+      # does not order workspace builds topologically.
+      - name: Build
+        run: npm run build
+
+      - name: Verify the build is subpath-correct
+        run: |
+          # A missing vite `base` emits root-relative asset URLs that 404 under
+          # /icon-stack/. Cheaper to catch here than on the live site.
+          if grep -qE '(src|href)="/assets/' dist/index.html; then
+            echo "dist/index.html references /assets/ -- vite base is not set to /icon-stack/"
+            exit 1
+          fi
+          grep -q '/icon-stack/assets/' dist/index.html || {
+            echo "dist/index.html has no /icon-stack/assets/ reference"; exit 1; }
+          echo "  OK  assets are prefixed with /icon-stack/"
+
+      - name: Publish to whiskeyjack.net/icon-stack/
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
+          external_repository: whiskeyjack-net/website
+          publish_branch: main
+          publish_dir: ./dist
+          destination_dir: icon-stack
+          # Scoped write: everything outside icon-stack/ is left alone.
+          keep_files: true
+          commit_message: 'Deploy icon-stack from ${{ github.sha }}'
+
+      - name: Verify it is live
+        run: |
+          echo "Waiting for Pages to serve the new build…"
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://whiskeyjack.net/icon-stack/)
+            [ "$code" = "200" ] && break
+            sleep 10
+          done
+          curl -s -o /dev/null -w '  /icon-stack/ -> %{http_code}\n' https://whiskeyjack.net/icon-stack/
+          # The rest of the site must be untouched by this deploy.
+          for path in "" "components/" "apps/" "chip-away/" "r/registry.json"; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://whiskeyjack.net/$path")
+            printf '  /%-16s -> %s\n' "$path" "$code"
+            [ "$code" = "200" ] || { echo "  the deploy disturbed the rest of the site"; exit 1; }
+          done
