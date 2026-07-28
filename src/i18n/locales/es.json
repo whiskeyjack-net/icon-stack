@@ -19,11 +19,29 @@
     "change": "Cambiar origen"
   },
   "settings": {
-    "title": "Ajustes",
-    "theme": "Tema",
-    "themeLight": "Claro",
-    "themeDark": "Oscuro",
-    "themeSystem": "Sistema",
-    "language": "Idioma"
+    "background": "Fondo",
+    "artwork": "Gráfico",
+    "zoom": "Zoom",
+    "cornerRadius": "Radio de esquina",
+    "cornerSmoothing": "Suavizado de esquina",
+    "square": "Cuadrado",
+    "circular": "Circular",
+    "notes": {
+      "favicon": "Los navegadores lo escalan a 16px: mantén la marca simple.",
+      "pwa": "Las variantes maskable añaden margen de seguridad para Android.",
+      "windowsStore": "Los mosaicos permanecen transparentes; el color de la placa vive en el manifiesto MSIX.",
+      "trayIcon": "Los iconos de barra de menú son imágenes de plantilla en macOS."
+    }
+  },
+  "background": {
+    "transparent": "Fondo transparente",
+    "transparentHint": "Exportar sin placa detrás del gráfico.",
+    "solid": "Sólido",
+    "gradient": "Degradado",
+    "preset": "Color predefinido {{color}}",
+    "custom": "Color personalizado",
+    "gradientTop": "Color superior del degradado",
+    "autoTop": "Parada superior automática",
+    "customTop": "Parada superior personalizada"
   }
 }
