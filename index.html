@@ -46,6 +46,10 @@
     </script>
   </head>
   <body>
+    <!-- GitHub Pages serves one root 404.html for the whole domain. It stores
+         the requested path and bounces here; this restores it before React
+         mounts, so a deep link survives a hard refresh. -->
+    <script>!function(){var r=sessionStorage.getItem('spa-redirect');if(r){sessionStorage.removeItem('spa-redirect');history.replaceState(null,'',r)}}()</script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

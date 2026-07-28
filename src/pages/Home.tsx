@@ -8,21 +8,43 @@ import {
   EmptyState,
   Notice,
   ProgressBar,
-  ToggleGroup,
+  TabBar,
   cn,
+  useSwipeNavigation,
 } from '@whiskeyjack-net/design-system'
-import { DownloadSimple, Image as ImageIcon, ArrowCounterClockwise } from '@phosphor-icons/react'
+import {
+  UploadSimple,
+  DownloadSimple,
+  Image as ImageIcon,
+  ArrowCounterClockwise,
+} from '@phosphor-icons/react'
 import {
   generateIcons,
   createDefaultPlatforms,
+  updatePlatform,
+  selectPlatforms,
   PLATFORM_LABELS,
   type Platform,
   type SourceImage,
+  type PlatformConfigs,
 } from '@whiskeyjack-net/icon-stack-core'
 import { processFile } from '@/lib/process-file'
+import { PlatformSettings } from '@/components/PlatformSettings'
+import { SizePreview } from '@/components/SizePreview'
 
-/** The subset Stage A ships. The rest land in Stage B. */
-const STAGE_A_PLATFORMS: Platform[] = ['favicon', 'pwa', 'linux', 'windows']
+/** Platforms exposed in the UI, in the order the tabs present them. */
+const PLATFORMS: Platform[] = [
+  'favicon',
+  'pwa',
+  'windows',
+  'windowsStore',
+  'linux',
+  'android',
+  'macos',
+  'ios',
+  'appleTouchIcon',
+  'trayIcon',
+]
 
 export function Home() {
   const { t } = useTranslation()
@@ -32,6 +54,20 @@ export function Home() {
   const [warning, setWarning] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [selected, setSelected] = useState<Platform>('favicon')
+  const [platforms, setPlatforms] = useState(createDefaultPlatforms)
+
+  const activeIndex = PLATFORMS.indexOf(selected)
+  // The design system's rule: a TabBar is always paired with swipe navigation,
+  // so the content moves the same way the tabs do.
+  const { swipeOffset, isAnimating, handleTouchStart, handleTouchMove, handleTouchEnd } =
+    useSwipeNavigation({
+      count: PLATFORMS.length,
+      activeIndex,
+      onNavigate: (index) => setSelected(PLATFORMS[index]),
+    })
+
+  const patchPlatform = (patch: Partial<PlatformConfigs[Platform]>) =>
+    setPlatforms((prev) => updatePlatform(prev, selected, patch))
   const [progress, setProgress] = useState(0)
   const [busy, setBusy] = useState(false)
   const [dragging, setDragging] = useState(false)
@@ -64,15 +100,13 @@ export function Home() {
     setError(null)
     setProgress(0)
     try {
-      const platforms = createDefaultPlatforms()
-      for (const key of Object.keys(platforms) as Platform[]) {
-        platforms[key].enabled = key === selected
-      }
+      // Generate only the platform on screen, from its edited config.
+      const selection = selectPlatforms(platforms, [selected])
 
       const zip = await generateIcons({
         source,
         alternate: null,
-        platforms,
+        platforms: selection,
         sourceFit: 'contain',
         alternateFit: 'contain',
         faviconFit: 'contain',
@@ -114,6 +148,7 @@ export function Home() {
       />
 
       {source ? (
+        <>
         <Card>
           <CardContent className="space-y-5 pt-6">
             <div className="flex items-center gap-4">
@@ -133,17 +168,6 @@ export function Home() {
             </div>
 
             {warning && <Notice tone="warning">{warning}</Notice>}
-
-            <div>
-              <h2 className="mb-3 text-sm font-medium uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                {t('home.platform')}
-              </h2>
-              <ToggleGroup
-                value={selected}
-                onChange={setSelected}
-                options={STAGE_A_PLATFORMS.map((id) => ({ value: id, label: PLATFORM_LABELS[id] }))}
-              />
-            </div>
 
             {busy && <ProgressBar value={progress / 100} label={t('home.generating')} />}
 
@@ -165,6 +189,36 @@ export function Home() {
             </ButtonRow>
           </CardContent>
         </Card>
+
+        <TabBar
+          items={PLATFORMS.map((id) => ({ id, label: PLATFORM_LABELS[id] }))}
+          activeId={selected}
+          onSelect={(id) => setSelected(id as Platform)}
+        />
+
+        {/* Viewport-sized wrapper: a content-height one silently swallows
+            swipes below short content. */}
+        <div
+          className="min-h-[calc(100dvh-20rem)] touch-pan-y md:min-h-0"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div
+            style={{ transform: `translateX(${swipeOffset}px)` }}
+            className={cn(isAnimating && 'transition-transform duration-200')}
+          >
+            <div className="space-y-6">
+              <SizePreview source={source} platform={selected} platforms={platforms} />
+              <PlatformSettings
+                platform={selected}
+                config={platforms[selected]}
+                onChange={patchPlatform}
+              />
+            </div>
+          </div>
+        </div>
+        </>
       ) : (
         <div
           onDragOver={(e) => {
@@ -180,15 +234,16 @@ export function Home() {
               : 'border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]',
           )}
         >
-          {/* FINDING: EmptyState's CTA is `ctaLabel` + `onCta`, a label and a
-              handler rather than a ReactNode slot -- so the button cannot carry
-              an icon or use a non-accent variant. See FINDINGS.md. */}
           <EmptyState
             icon={<ImageIcon size={32} weight="duotone" />}
             title={t('home.dropTitle')}
             subtitle={t('home.dropSubtitle')}
-            ctaLabel={t('home.choose')}
-            onCta={() => fileInput.current?.click()}
+            action={
+              <Button variant="accent" onClick={() => fileInput.current?.click()}>
+                <UploadSimple size={16} weight="bold" className="mr-1.5" />
+                {t('home.choose')}
+              </Button>
+            }
           />
         </div>
       )}

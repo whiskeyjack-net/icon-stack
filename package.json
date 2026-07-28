@@ -3,19 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "npm run build:packages && vite",
+    "build": "npm run build:packages && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "npm run test --workspaces --if-present",
-    "typecheck": "tsc -b && npm run typecheck --workspaces --if-present"
+    "test": "npm run build:packages && npm run test --workspaces --if-present",
+    "typecheck": "tsc -b && npm run typecheck --workspaces --if-present",
+    "build:packages": "npm run build --workspace @whiskeyjack-net/icon-stack-core"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@tauri-apps/api": "^2.1.1",
-    "@whiskeyjack-net/design-system": "^0.5.0",
+    "@whiskeyjack-net/design-system": "^0.6.1",
     "@whiskeyjack-net/i18n": "^0.1.1",
-    "@whiskeyjack-net/tauri": "^0.3.1",
+    "@whiskeyjack-net/tauri": "^0.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^14.1.3",

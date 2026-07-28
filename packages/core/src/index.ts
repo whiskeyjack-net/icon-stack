@@ -17,7 +17,7 @@ export { encodeIcns } from './icns-encoder'
 export * from './color-utils'
 export * from './platform-configs'
 export * from './types'
-export { createDefaultPlatforms } from './defaults'
+export { createDefaultPlatforms, updatePlatform, selectPlatforms } from './defaults'
 export {
   setCanvasBackend,
   getCanvasBackend,

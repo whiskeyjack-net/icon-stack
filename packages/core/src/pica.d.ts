@@ -1,10 +1,11 @@
 /**
- * `pica` ships no type declarations, and this package currently exports raw TS
- * source (`main: ./src/index.ts`), so its untyped imports surface as errors in
- * whatever tsconfig the CONSUMER uses rather than this package's own. The real
- * fix is a dual-mode build that emits .d.ts, the way the design system does --
- * see FINDINGS.md. Until then, declare the sliver of the API the browser
- * adapter actually uses.
+ * `pica` ships no type declarations, and the browser adapter imports it.
+ *
+ * This shim belongs HERE, in the package that depends on pica. Before this
+ * package emitted its own `.d.ts`, it exported raw TS source -- so a consumer's
+ * tsc compiled these files under the consumer's config, and this missing
+ * declaration became THEIR error, in an app that never touches pica. The build
+ * fixed the leak; the shim itself was always legitimate.
  */
 declare module 'pica' {
   interface PicaResizeOptions {
