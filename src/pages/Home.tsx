@@ -1,64 +1,40 @@
-import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
+  Badge,
   Button,
   ButtonRow,
-  Card,
-  CardContent,
-  EmptyState,
   Notice,
   ProgressBar,
   TabBar,
+  Toggle,
   cn,
   useSwipeNavigation,
 } from '@whiskeyjack-net/design-system'
-import {
-  UploadSimple,
-  DownloadSimple,
-  Image as ImageIcon,
-  ArrowCounterClockwise,
-} from '@phosphor-icons/react'
-import {
-  generateIcons,
-  createDefaultPlatforms,
-  updatePlatform,
-  selectPlatforms,
-  PLATFORM_LABELS,
-  type Platform,
-  type SourceImage,
-  type PlatformConfigs,
-} from '@whiskeyjack-net/icon-stack-core'
-import { processFile } from '@/lib/process-file'
+import { DownloadSimple, Package } from '@phosphor-icons/react'
+import { PLATFORM_LABELS, type Platform } from '@whiskeyjack-net/icon-stack-core'
+import { useGenerator, PLATFORMS } from '@/contexts/GeneratorContext'
+import { SourceSlots } from '@/components/SourceSlots'
 import { PlatformSettings } from '@/components/PlatformSettings'
 import { SizePreview } from '@/components/SizePreview'
 
-/** Platforms exposed in the UI, in the order the tabs present them. */
-const PLATFORMS: Platform[] = [
-  'favicon',
-  'pwa',
-  'windows',
-  'windowsStore',
-  'linux',
-  'android',
-  'macos',
-  'ios',
-  'appleTouchIcon',
-  'trayIcon',
-]
-
 export function Home() {
   const { t } = useTranslation()
-  const fileInput = useRef<HTMLInputElement>(null)
-
-  const [source, setSource] = useState<SourceImage | null>(null)
-  const [warning, setWarning] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [selected, setSelected] = useState<Platform>('favicon')
-  const [platforms, setPlatforms] = useState(createDefaultPlatforms)
+  const {
+    source,
+    platforms,
+    selected,
+    setSelected,
+    togglePlatform,
+    generate,
+    busy,
+    exporting,
+    progress,
+    error,
+  } = useGenerator()
 
   const activeIndex = PLATFORMS.indexOf(selected)
-  // The design system's rule: a TabBar is always paired with swipe navigation,
-  // so the content moves the same way the tabs do.
+  // A TabBar is always paired with swipe navigation, so the content moves the
+  // same way the tabs do.
   const { swipeOffset, isAnimating, handleTouchStart, handleTouchMove, handleTouchEnd } =
     useSwipeNavigation({
       count: PLATFORMS.length,
@@ -66,67 +42,7 @@ export function Home() {
       onNavigate: (index) => setSelected(PLATFORMS[index]),
     })
 
-  const patchPlatform = (patch: Partial<PlatformConfigs[Platform]>) =>
-    setPlatforms((prev) => updatePlatform(prev, selected, patch))
-  const [progress, setProgress] = useState(0)
-  const [busy, setBusy] = useState(false)
-  const [dragging, setDragging] = useState(false)
-
-  const accept = useCallback(async (file: File | undefined) => {
-    if (!file) return
-    setError(null)
-    try {
-      const { source: next, warning: nextWarning } = await processFile(file)
-      setSource(next)
-      setWarning(nextWarning)
-    } catch (err) {
-      setSource(null)
-      setError(err instanceof Error ? err.message : 'Could not read that file.')
-    }
-  }, [])
-
-  const onDrop = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault()
-      setDragging(false)
-      void accept(event.dataTransfer.files[0])
-    },
-    [accept],
-  )
-
-  const generate = async () => {
-    if (!source) return
-    setBusy(true)
-    setError(null)
-    setProgress(0)
-    try {
-      // Generate only the platform on screen, from its edited config.
-      const selection = selectPlatforms(platforms, [selected])
-
-      const zip = await generateIcons({
-        source,
-        alternate: null,
-        platforms: selection,
-        sourceFit: 'contain',
-        alternateFit: 'contain',
-        faviconFit: 'contain',
-        trayFit: 'contain',
-        onProgress: setProgress,
-      })
-
-      const url = URL.createObjectURL(new Blob([zip as unknown as BlobPart], { type: 'application/zip' }))
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `icon-stack-${selected}-${Date.now()}.zip`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Generation failed.')
-    } finally {
-      setBusy(false)
-      setProgress(0)
-    }
-  }
+  const enabledCount = PLATFORMS.filter((p) => platforms[p].enabled).length
 
   return (
     <div className="space-y-6">
@@ -139,116 +55,87 @@ export function Home() {
         </p>
       </header>
 
-      <input
-        ref={fileInput}
-        type="file"
-        accept="image/png,image/svg+xml"
-        className="sr-only"
-        onChange={(e) => void accept(e.target.files?.[0])}
-      />
+      <SourceSlots />
 
-      {source ? (
+      {error && <Notice tone="error">{error}</Notice>}
+
+      {source && (
         <>
-        <Card>
-          <CardContent className="space-y-5 pt-6">
-            <div className="flex items-center gap-4">
-              <img
-                src={source.dataUrl}
-                alt=""
-                className="h-16 w-16 rounded-xl border border-[var(--color-border-light)] object-contain dark:border-[var(--color-border-dark)]"
-              />
-              <div className="min-w-0">
-                <p className="truncate font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
-                  {source.fileName}
+          {/* Export the whole selection -- what most people came for. */}
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--color-border-light)] p-4 dark:border-[var(--color-border-dark)]">
+            <div className="flex items-center gap-3">
+              <Package size={24} weight="duotone" className="text-[var(--color-accent-500)]" />
+              <div>
+                <p className="font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                  {t('home.exportAll')}
                 </p>
                 <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                  {source.width}&times;{source.height} &middot; {source.type.toUpperCase()}
+                  {t('home.platformsSelected', { count: enabledCount })}
                 </p>
               </div>
             </div>
+            <Button
+              variant="accent"
+              disabled={busy || enabledCount === 0}
+              onClick={() => void generate('all')}
+            >
+              <DownloadSimple size={16} weight="bold" className="mr-1.5" />
+              {exporting === 'all' ? t('home.generating') : t('home.exportAllAction')}
+            </Button>
+          </div>
 
-            {warning && <Notice tone="warning">{warning}</Notice>}
+          {busy && <ProgressBar value={progress / 100} label={t('home.generating')} />}
 
-            {busy && <ProgressBar value={progress / 100} label={t('home.generating')} />}
+          <TabBar
+            items={PLATFORMS.map((id) => ({ id, label: PLATFORM_LABELS[id] }))}
+            activeId={selected}
+            onSelect={(id) => setSelected(id as Platform)}
+          />
 
-            <ButtonRow>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSource(null)
-                  setWarning(null)
-                }}
-              >
-                <ArrowCounterClockwise size={16} weight="bold" className="mr-1.5" />
-                {t('home.change')}
-              </Button>
-              <Button variant="accent" onClick={() => void generate()} disabled={busy}>
-                <DownloadSimple size={16} weight="bold" className="mr-1.5" />
-                {busy ? t('home.generating') : t('home.generate')}
-              </Button>
-            </ButtonRow>
-          </CardContent>
-        </Card>
-
-        <TabBar
-          items={PLATFORMS.map((id) => ({ id, label: PLATFORM_LABELS[id] }))}
-          activeId={selected}
-          onSelect={(id) => setSelected(id as Platform)}
-        />
-
-        {/* Viewport-sized wrapper: a content-height one silently swallows
-            swipes below short content. */}
-        <div
-          className="min-h-[calc(100dvh-20rem)] touch-pan-y md:min-h-0"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
+          {/* Viewport-sized wrapper: a content-height one silently swallows
+              swipes below short content. */}
           <div
-            style={{ transform: `translateX(${swipeOffset}px)` }}
-            className={cn(isAnimating && 'transition-transform duration-200')}
+            className="min-h-[calc(100dvh-24rem)] touch-pan-y md:min-h-0"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
-            <div className="space-y-6">
-              <SizePreview source={source} platform={selected} platforms={platforms} />
-              <PlatformSettings
-                platform={selected}
-                config={platforms[selected]}
-                onChange={patchPlatform}
-              />
+            <div
+              style={{ transform: `translateX(${swipeOffset}px)` }}
+              className={cn('space-y-6', isAnimating && 'transition-transform duration-200')}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                    {PLATFORM_LABELS[selected]}
+                  </h2>
+                  <Badge tone={platforms[selected].enabled ? 'success' : 'neutral'}>
+                    {platforms[selected].enabled ? t('home.included') : t('home.excluded')}
+                  </Badge>
+                </div>
+                <Toggle
+                  aria-label={t('home.includePlatform')}
+                  checked={platforms[selected].enabled}
+                  onChange={() => togglePlatform(selected)}
+                />
+              </div>
+
+              <SizePreview platform={selected} />
+
+              <PlatformSettings platform={selected} />
+
+              <ButtonRow>
+                <Button variant="outline" disabled={busy} onClick={() => void generate(selected)}>
+                  <DownloadSimple size={16} weight="bold" className="mr-1.5" />
+                  {exporting === selected
+                    ? t('home.generating')
+                    : t('home.exportOne', { platform: PLATFORM_LABELS[selected] })}
+                </Button>
+              </ButtonRow>
             </div>
           </div>
-        </div>
         </>
-      ) : (
-        <div
-          onDragOver={(e) => {
-            e.preventDefault()
-            setDragging(true)
-          }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={onDrop}
-          className={cn(
-            'rounded-2xl border-2 border-dashed p-2 transition-colors',
-            dragging
-              ? 'border-[var(--color-accent-500)] bg-[var(--color-accent-50)]'
-              : 'border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]',
-          )}
-        >
-          <EmptyState
-            icon={<ImageIcon size={32} weight="duotone" />}
-            title={t('home.dropTitle')}
-            subtitle={t('home.dropSubtitle')}
-            action={
-              <Button variant="accent" onClick={() => fileInput.current?.click()}>
-                <UploadSimple size={16} weight="bold" className="mr-1.5" />
-                {t('home.choose')}
-              </Button>
-            }
-          />
-        </div>
       )}
-
-      {error && <Notice tone="error">{error}</Notice>}
     </div>
   )
 }

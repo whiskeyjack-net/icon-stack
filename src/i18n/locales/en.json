@@ -10,13 +10,15 @@
   "home": {
     "title": "Icon Stack",
     "subtitle": "One source image in, a complete app-icon set out.",
-    "dropTitle": "Drop a source image",
-    "dropSubtitle": "PNG or SVG, 1024x1024 square works best.",
-    "choose": "Choose a file",
-    "platform": "Platform",
-    "generate": "Generate icons",
     "generating": "Generating",
-    "change": "Change source"
+    "exportAll": "Export everything",
+    "exportAllAction": "Export all",
+    "platformsSelected": "{{count}} platform selected",
+    "platformsSelected_other": "{{count}} platforms selected",
+    "exportOne": "Export {{platform}} only",
+    "included": "Included",
+    "excluded": "Excluded",
+    "includePlatform": "Include this platform in the export"
   },
   "settings": {
     "background": "Background",
@@ -31,6 +33,33 @@
       "pwa": "Maskable variants add safe-area padding for Android.",
       "windowsStore": "Store tiles stay transparent; the plate colour lives in the MSIX manifest.",
       "trayIcon": "Menu-bar icons are template images on macOS."
+    },
+    "artworkSource": "Artwork source",
+    "backgroundDark": "Dark background",
+    "appleIcon": "Apple .icon",
+    "appleIconHint": "The .icon format layers light, dark and monochrome renders with system-applied glass and shadow.",
+    "glass": "Glass effect",
+    "glassHint": "Adds the specular highlight Apple applies to layered icons.",
+    "shadowOpacity": "Shadow opacity",
+    "none": "None",
+    "translucency": "Translucency",
+    "translucencyHint": "Lets the layer beneath show through.",
+    "translucencyAmount": "Translucency amount",
+    "maskableZoom": "Maskable zoom",
+    "unplatedZoom": "Unplated zoom",
+    "monochrome": "Monochrome layer",
+    "monochromeHint": "Android 13+ themed icons use a single-colour silhouette.",
+    "includeSvg": "Include SVG favicon",
+    "includeSvgHint": "Modern browsers prefer it; it scales without a raster step.",
+    "source": {
+      "main": "Main artwork",
+      "light": "Light variant",
+      "dark": "Dark variant",
+      "mono": "Monochrome",
+      "maskable": "Maskable",
+      "unplated": "Unplated (taskbar)",
+      "useMain": "Source",
+      "useAlternate": "Alternate"
     }
   },
   "background": {
@@ -48,5 +77,19 @@
     "title": "Preview",
     "alt": "Icon rendered at {{size}} pixels",
     "none": "No raster sizes for this platform."
+  },
+  "source": {
+    "main": "Source image",
+    "alternate": "Alternate image",
+    "optional": "optional",
+    "mainTitle": "Drop a source image",
+    "mainSubtitle": "PNG or SVG, 1024x1024 square works best.",
+    "alternateTitle": "Add an alternate",
+    "alternateSubtitle": "For dark, monochrome and taskbar variants.",
+    "choose": "Choose a file",
+    "remove": "Remove this image",
+    "contain": "Contain",
+    "cover": "Cover",
+    "alternateHint": "An alternate image lets dark, monochrome and taskbar variants use different artwork – a mark that reads on a light plate often does not read knocked out on a dark one."
   }
 }
