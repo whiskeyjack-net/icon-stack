@@ -1,0 +1,14 @@
+/* Design-system token + utility CSS from the package (default accent -- add a
+   `@import '@whiskeyjack-net/design-system/themes/<app>.css'` line to re-tint),
+   then the Tauri window-control chrome, then Tailwind. */
+@import '@whiskeyjack-net/design-system/css';
+@import '@whiskeyjack-net/design-system/css/utilities';
+@import '@whiskeyjack-net/tauri/css/window-controls';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body { margin: 0; background: var(--color-background-light); }
+.dark body { background: var(--color-background-dark); }

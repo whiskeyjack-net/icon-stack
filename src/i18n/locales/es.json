@@ -1,0 +1,29 @@
+{
+  "app": {
+    "name": "Icon Stack"
+  },
+  "nav": {
+    "home": "Inicio",
+    "settings": "Ajustes",
+    "menu": "Menú"
+  },
+  "home": {
+    "title": "Icon Stack",
+    "subtitle": "Una imagen de origen, un juego completo de iconos.",
+    "dropTitle": "Suelta una imagen",
+    "dropSubtitle": "PNG o SVG, 1024x1024 cuadrado funciona mejor.",
+    "choose": "Elegir archivo",
+    "platform": "Plataforma",
+    "generate": "Generar iconos",
+    "generating": "Generando",
+    "change": "Cambiar origen"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema",
+    "language": "Idioma"
+  }
+}

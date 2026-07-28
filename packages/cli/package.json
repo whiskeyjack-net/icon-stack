@@ -1,0 +1,59 @@
+{
+  "name": "@whiskeyjack-net/icon-stack",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Generate a complete app-icon set for every platform from one source image.",
+  "keywords": [
+    "icons",
+    "app-icon",
+    "favicon",
+    "icns",
+    "ico",
+    "pwa",
+    "tauri",
+    "cli",
+    "electron",
+    "android",
+    "ios"
+  ],
+  "homepage": "https://whiskeyjack.net",
+  "bugs": {
+    "url": "https://github.com/whiskeyjack-net/whiskeyjack-starter/issues"
+  },
+  "author": "whiskeyjack.net",
+  "license": "MIT",
+  "bin": {
+    "icon-stack": "bin/index.mjs"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "scripts": {
+    "build:dist": "rm -rf dist && tsup && tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.2",
+    "@resvg/resvg-js": "^2.6.2",
+    "fflate": "^0.8.2",
+    "@whiskeyjack-net/icon-stack-core": "*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.6.3",
+    "vitest": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whiskeyjack-net/icon-stack.git",
+    "directory": "packages/cli"
+  }
+}

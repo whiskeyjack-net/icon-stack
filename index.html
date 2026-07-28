@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f2f0ed" />
+    <title>Icon Stack</title>
+    <!-- Pre-paint the theme so the correct background is up on the FIRST frame.
+         The page background comes from a `body` rule inside the app's
+         render-blocking stylesheet, so until that loads the canvas is the
+         browser's or webview's own default -- white -- which is the cold-launch
+         flash. Toggling classes here cannot fix it (a class is inert without
+         CSS); painting the root can, because the root's background propagates
+         to the canvas. Reads the resolved theme `useTheme`'s `launchMirrorKey`
+         mirrors on every apply, and falls back to the OS setting on a fresh
+         install (matching the default 'system' theme).
+
+         The hexes run before any stylesheet, so this is the one place that
+         cannot read the tokens -- keep them equal to the DS
+         color-background-light / -dark and the extra-dark black.
+
+         NOT painted on Tauri Linux: that window is undecorated + transparent
+         with CSS-only rounded corners, and an opaque root fills the corners
+         with colour and squares the window off. Android's UA also says "Linux",
+         hence the second test. `useTheme`'s `paintRoot` re-checks this properly
+         and clears the property if this script ran too early to know. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('icon-stack-theme-resolved'); // 'light' | 'dark' | 'oled'
+          var dark = t ? (t === 'dark' || t === 'oled')
+                       : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var oled = t === 'oled';
+          var el = document.documentElement;
+          if (dark) el.classList.add('dark');
+          if (oled) el.classList.add('extra-dark');
+          var color = dark ? (oled ? '#000000' : '#1d1d1d') : '#f2f0ed';
+          var ua = navigator.userAgent;
+          var linuxTauri = '__TAURI_INTERNALS__' in window &&
+            ua.indexOf('Linux') !== -1 && !/android/i.test(ua);
+          if (!linuxTauri) el.style.backgroundColor = color;
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', color);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+{
+  "name": "@whiskeyjack-net/icon-stack-core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./browser": {
+      "import": "./src/adapters/browser.ts",
+      "types": "./src/adapters/browser.ts"
+    },
+    "./node": {
+      "import": "./src/adapters/node.ts",
+      "types": "./src/adapters/node.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2"
+  },
+  "peerDependencies": {
+    "@napi-rs/canvas": ">=0.1.0",
+    "@resvg/resvg-js": ">=2.0.0",
+    "pica": "^9.0.1"
+  },
+  "peerDependenciesMeta": {
+    "@napi-rs/canvas": {
+      "optional": true
+    },
+    "pica": {
+      "optional": true
+    },
+    "@resvg/resvg-js": {
+      "optional": "true"
+    }
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.0.2",
+    "@resvg/resvg-js": "^2.6.2",
+    "vitest": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whiskeyjack-net/icon-stack.git",
+    "directory": "packages/core"
+  }
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Test fixture. Deliberately styles its shapes with a <style> block and CSS
+  classes rather than inline `fill` attributes, because that is the case that
+  broke: Skia's SVG renderer ignores <style>, so an icon written this way
+  rasterized as a solid black square while still producing a valid PNG.
+  Any renderer swap must keep this file rendering as three distinct colours
+  with transparent corners.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <style>
+      .plate { fill: #f2f0ed; }
+      .mark  { fill: #1d1d1d; }
+      .accent { fill: #1e90ff; }
+    </style>
+  </defs>
+  <rect class="plate" x="0" y="0" width="256" height="256" rx="56" ry="56"/>
+  <circle class="mark" cx="128" cy="112" r="56"/>
+  <rect class="accent" x="72" y="180" width="112" height="28" rx="14"/>
+</svg>
