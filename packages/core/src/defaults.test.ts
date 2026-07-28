@@ -5,7 +5,7 @@
  * `configs[key] = {...}` where `key` is a `Platform` union requires the value to
  * satisfy the INTERSECTION of every config shape, which no single config does.
  * Every consumer otherwise reaches for `Object.assign` or a cast. The tests
- * below pin the behaviour; the type-checker pins the rest by compiling this file.
+ * below pin the behavior; the type-checker pins the rest by compiling this file.
  */
 import { describe, it, expect } from 'vitest'
 import { createDefaultPlatforms, updatePlatform, selectPlatforms } from './defaults'

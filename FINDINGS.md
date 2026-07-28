@@ -96,7 +96,7 @@ on the button and had to drop it.
 shorthand and takes precedence when both are given. The drop zone now has its
 upload icon.
 
-### RESOLVED – generated component docs describe behaviour but never list props
+### RESOLVED – generated component docs describe behavior but never list props
 
 `docs/empty-state.md` ships in the package and says "optional call to action",
 which is what led to guessing `action`. It never names `ctaLabel`/`onCta`. The

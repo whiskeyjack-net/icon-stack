@@ -177,7 +177,7 @@ function buildPlatforms(args: Args): PlatformConfigs {
 function normalizeHex(value: string): string {
   const hex = value.startsWith('#') ? value : `#${value}`
   if (!/^#[0-9a-fA-F]{6}$/.test(hex)) {
-    throw new Error(`--background must be a 6-digit hex colour, got ${value}`)
+    throw new Error(`--background must be a 6-digit hex color, got ${value}`)
   }
   return hex.toUpperCase()
 }

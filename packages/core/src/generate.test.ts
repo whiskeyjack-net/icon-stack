@@ -223,18 +223,18 @@ describe('node icon pipeline', () => {
       expect(alphaAt(x, y), `corner (${x},${y}) should be transparent`).toBe(0)
     }
 
-    // And the artwork must have real structure. Counting distinct colours is
+    // And the artwork must have real structure. Counting distinct colors is
     // the discriminator that a flat fill cannot fake: this mark renders a light
     // plate, a dark bird, and antialiased edges between them, so it has many.
     // Coverage alone would not do -- the plate legitimately fills ~96% of the
     // canvas, which is close enough to the all-black failure's 100% that no
     // useful threshold sits between them.
-    const colours = new Set<number>()
+    const colors = new Set<number>()
     for (let i = 0; i < data.length; i += 4) {
       if (data[i + 3] < 200) continue
-      colours.add((data[i] << 16) | (data[i + 1] << 8) | data[i + 2])
+      colors.add((data[i] << 16) | (data[i + 1] << 8) | data[i + 2])
     }
-    expect(colours.size, 'artwork looks like a flat fill').toBeGreaterThan(16)
+    expect(colors.size, 'artwork looks like a flat fill').toBeGreaterThan(16)
   })
 
   it('rasterizes an SVG source rather than emitting a blank canvas', async () => {

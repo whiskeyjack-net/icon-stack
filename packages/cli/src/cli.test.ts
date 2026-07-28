@@ -76,7 +76,7 @@ describe('argument handling', () => {
     expect(errText()).toContain('favicon')
   })
 
-  it('validates the background colour', async () => {
+  it('validates the background color', async () => {
     expect(await main(['generate', '-s', PNG, '-b', 'blue'])).toBe(1)
     expect(errText()).toContain('6-digit hex')
   })
@@ -131,7 +131,7 @@ describe('generate', () => {
   it('bakes a background when asked', async () => {
     expect(await main(['generate', '-s', PNG, '-o', out, '-p', 'pwa', '-b', '#1E90FF', '--json'])).toBe(0)
     const bytes = readFileSync(join(out, 'pwa/icon-512.png'))
-    // A PNG with a flat colour behind the artwork is materially larger than
+    // A PNG with a flat color behind the artwork is materially larger than
     // one whose surround is fully transparent.
     expect(bytes.length).toBeGreaterThan(1000)
     expect(bytes.subarray(0, 4)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47]))

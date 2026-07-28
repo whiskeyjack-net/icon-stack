@@ -31,7 +31,7 @@
     "notes": {
       "favicon": "Browsers scale this to 16px – keep the mark simple.",
       "pwa": "Maskable variants add safe-area padding for Android.",
-      "windowsStore": "Store tiles stay transparent; the plate colour lives in the MSIX manifest.",
+      "windowsStore": "Store tiles stay transparent; the plate color lives in the MSIX manifest.",
       "trayIcon": "Menu-bar icons are template images on macOS."
     },
     "artworkSource": "Artwork source",
@@ -48,7 +48,7 @@
     "maskableZoom": "Maskable zoom",
     "unplatedZoom": "Unplated zoom",
     "monochrome": "Monochrome layer",
-    "monochromeHint": "Android 13+ themed icons use a single-colour silhouette.",
+    "monochromeHint": "Android 13+ themed icons use a single-color silhouette.",
     "includeSvg": "Include SVG favicon",
     "includeSvgHint": "Modern browsers prefer it; it scales without a raster step.",
     "source": {
@@ -67,9 +67,9 @@
     "transparentHint": "Export with no plate behind the artwork.",
     "solid": "Solid",
     "gradient": "Gradient",
-    "preset": "Preset colour {{color}}",
-    "custom": "Custom colour",
-    "gradientTop": "Gradient top colour",
+    "preset": "Preset color {{color}}",
+    "custom": "Custom color",
+    "gradientTop": "Gradient top color",
     "autoTop": "Top stop derived automatically",
     "customTop": "Custom top stop"
   },

@@ -40,7 +40,7 @@ source's dimensions and any quality warnings without generating anything.
 # Everything, into a project's assets directory
 icon-stack generate -s logo.png -o ./assets/icons
 
-# Just the web set, on a brand-coloured plate
+# Just the web set, on a brand-colored plate
 icon-stack generate -s logo.svg -p favicon,pwa -b '#1E90FF'
 
 # Check a source before committing to it

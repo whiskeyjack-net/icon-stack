@@ -2,7 +2,7 @@
  * The one place this package touches a rasterizer.
  *
  * Icon generation is otherwise pure: size tables, `.ico`/`.icns` container
- * encoding, colour maths, and the compositing logic are all platform-agnostic.
+ * encoding, color maths, and the compositing logic are all platform-agnostic.
  * Only creating a canvas, decoding a source image, high-quality downscaling,
  * and encoding a PNG need a host.
  *
