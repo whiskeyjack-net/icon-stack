@@ -10,8 +10,14 @@ documentation gap, and it lands here.
 This file is the point of the exercise. Every entry is something a real external
 consumer hits.
 
-Status legend: **OPEN** needs a change upstream · **FIXED HERE** worked around
-locally, upstream change still wanted · **PASS** worked as advertised.
+Status legend: **OPEN** needs a change upstream · **RESOLVED** upstream fix
+shipped and consumed here · **FIXED HERE** handled locally, upstream change
+still wanted · **PASS** worked as advertised · **WITHDRAWN** recorded, then
+found to be wrong.
+
+**Round trip so far:** five findings raised, fixed upstream in
+`design-system@0.6.0` / `create-whiskeyjack@0.3.1`, published, and consumed back
+here. One withdrawn as incorrect. Two open.
 
 ---
 
@@ -33,7 +39,7 @@ theming all resolved from the package with no component copying.
 
 ---
 
-### OPEN – a package that exports raw TS source imposes its type problems on consumers
+### RESOLVED – a package that exports raw TS source imposes its type problems on consumers
 
 **The most significant finding so far.** `@whiskeyjack-net/icon-stack-core` uses
 `main: ./src/index.ts`, so a consumer's `tsc` compiles the package's *source*
@@ -54,15 +60,27 @@ Each fix exposed the next. Final local shape: `include: ["src",
 "packages/core/src"]`, `exclude: [..., "packages/core/src/adapters/node.ts"]`,
 plus a hand-written `pica.d.ts`.
 
-**Upstream fix:** give the core the same dual-mode build the design system has –
-`tsup` for JS plus `tsc` for `.d.ts`, workspace source for in-repo dev, built
-`dist` for publishing. The DS does not have this problem precisely because it
-ships `dist/index.js` + `dist/index.d.ts`. Any package published from this
-family should follow that pattern rather than exporting `src`.
+**Fixed** – `packages/core` now builds with tsup (`dts: true`) and exports
+`dist/*.js` + `dist/*.d.ts` from three entry points, keeping the two adapters
+separable so the browser bundle never pulls in `@napi-rs/canvas` (verified: zero
+occurrences of it, resvg, or `node:fs` in the web bundle).
+
+All three workarounds are gone. The app's tsconfig is back to `include: ["src"]`
+with no `exclude` beyond build output, and it no longer reaches into a
+dependency's internals. The `pica.d.ts` shim stayed – it always belonged to the
+package that depends on pica; the build simply stopped it being *the consumer's*
+problem. Deleting it was in fact the one wrong move, and it broke the core's own
+declaration build immediately.
+
+Cost: the app consumes `dist`, so the core must build first. `build`, `dev` and
+`test` now do that explicitly, because npm does not order workspace builds
+topologically.
+
+**Still applies to any future package here:** export built output, never `src`.
 
 ---
 
-### OPEN – `EmptyState`'s CTA is a label and a handler, not a slot
+### RESOLVED – `EmptyState`'s CTA is a label and a handler, not a slot
 
 ```ts
 ctaLabel?: string
@@ -74,43 +92,47 @@ cannot be a `<label>` wrapping a file input – all reasonable things for an emp
 state whose entire purpose is "start here". The drop zone wanted an upload icon
 on the button and had to drop it.
 
-**Upstream fix:** accept `action?: ReactNode` as an alternative to
-`ctaLabel`/`onCta`, keeping both for compatibility. Matches how `BottomDrawer`
-takes a `footer` slot rather than button descriptions.
+**Fixed in design-system 0.6.0** – `action?: ReactNode` renders in place of the
+shorthand and takes precedence when both are given. The drop zone now has its
+upload icon.
 
-### OPEN – generated component docs describe behaviour but never list props
+### RESOLVED – generated component docs describe behaviour but never list props
 
 `docs/empty-state.md` ships in the package and says "optional call to action",
 which is what led to guessing `action`. It never names `ctaLabel`/`onCta`. The
 `.d.ts` is currently the only place a consumer can learn a component's actual
 API.
 
-**Upstream fix:** have `build-docs.mjs` emit a props table from the `.d.ts` tree
-it already ships alongside. The manifest's `docs` field answers "which component
-and when"; it should not have to answer "what props", but something should.
+**Fixed in design-system 0.6.0** – every page now carries a props table built
+from the emitted declarations, **including CVA variants**. That last part
+mattered more than the interface: `Badge` and `ActionPill` declare *empty*
+`Props` interfaces and keep their whole API in `VariantProps`, so an
+interface-only reader produced no table at all for the component whose `tone`
+prop is its entire API.
 
 ---
 
-### OPEN – the starter assumes Tauri, and a pure-web app pays for it
+### RESOLVED – the starter assumes Tauri, and a pure-web app pays for it
 
 The template hard-depends on `@whiskeyjack-net/tauri` and wires window controls
 into the shell. Icon Stack is pure web and always will be. The dependency is
 inert at runtime, but it is a **15.3 kB** `window-*.js` chunk in a build that
 will never use it, plus a dependency to keep updated.
 
-**Upstream fix:** either a `--no-tauri` flag on `create-whiskeyjack`, or a short
-"removing Tauri" section in the template README naming the files to touch.
+**Fixed in create-whiskeyjack 0.3.1** – the template README names the exact
+touchpoints. Icon Stack has not removed it yet; the shell still uses the Tauri
+window-control slots, and a decision on going desktop can come later.
 
-### OPEN – the starter scaffolds a single package, with no path to workspaces
+### RESOLVED – the starter scaffolds a single package, with no path to workspaces
 
 Icon Stack needs `packages/core` and `packages/cli` beside the app. Converting
 the scaffold to npm workspaces was entirely manual: adding `workspaces`, moving
 `test`/`typecheck` to `--workspaces --if-present`, and reconciling the app's
 DOM-targeted tsconfig with the CLI's Node-targeted one.
 
-**Upstream fix:** not necessarily a scaffold option – but the template README
-should say what to do when an app grows a package beside it, since the tsconfig
-interaction is the non-obvious part.
+**Fixed in create-whiskeyjack 0.3.1** – the README covers converting to npm
+workspaces, and carries the non-obvious part: a package exporting raw TypeScript
+compiles under the consumer's tsconfig.
 
 ---
 
@@ -146,6 +168,36 @@ generic over its backing buffer. Cast at the call site for now.
 
 **Upstream fix:** worth a note in the core's README, since every browser consumer
 downloading the result hits it.
+
+---
+
+### OPEN – `./package.json` is not in the design system's `exports` map
+
+`require('@whiskeyjack-net/design-system/package.json')` throws
+`ERR_PACKAGE_PATH_NOT_EXPORTED`. Reading a dependency's manifest is routine –
+version checks, build tooling, bundler plugins – and an `exports` map silently
+forbids it unless the path is listed.
+
+**Upstream fix:** add `"./package.json": "./package.json"` to the exports map.
+Done in `icon-stack-core` already; costs nothing and removes a papercut.
+
+### OPEN – a caret on a `0.x` version pins the MINOR, and three places depend on it
+
+The 0.6.0 release left two ranges stale, both silently: the starter template
+pinned `design-system ^0.5.0`, so every scaffolded app installed 0.5.0 and did
+not get the `action` slot added for this very consumer; and published
+`tauri@0.3.1` peered on `^0.5.0`, which 0.6.0 cannot satisfy.
+
+`^0.5.0` means `>=0.5.0 <0.6.0`. Nothing catches this automatically –
+`onlyUpdatePeerDependentsWhenOutOfRange` deliberately stops a DS bump cascading,
+which also means nothing bumps these when the range genuinely does go out of
+date. There are now **three** such places: tauri's `WJ_PUBLIC_PEERS`, the starter
+template's deps, and this repo's.
+
+**Upstream fix:** a release-time check that every declared Whiskeyjack range
+still admits the version about to ship. Both instances were fixed by hand in
+`tauri@0.3.2` / `create-whiskeyjack@0.3.1`, which is exactly the manual step
+worth automating before 0.7.0.
 
 ---
 

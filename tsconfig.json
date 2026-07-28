@@ -28,14 +28,10 @@
     }
   },
   "include": [
-    "src",
-    "packages/core/src"
+    "src"
   ],
   "exclude": [
-    "**/*.test.ts",
-    "**/*.test.tsx",
     "dist",
-    "node_modules",
-    "packages/core/src/adapters/node.ts"
+    "node_modules"
   ]
 }

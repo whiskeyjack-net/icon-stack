@@ -11,7 +11,12 @@ import {
   ToggleGroup,
   cn,
 } from '@whiskeyjack-net/design-system'
-import { DownloadSimple, Image as ImageIcon, ArrowCounterClockwise } from '@phosphor-icons/react'
+import {
+  UploadSimple,
+  DownloadSimple,
+  Image as ImageIcon,
+  ArrowCounterClockwise,
+} from '@phosphor-icons/react'
 import {
   generateIcons,
   createDefaultPlatforms,
@@ -180,15 +185,16 @@ export function Home() {
               : 'border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]',
           )}
         >
-          {/* FINDING: EmptyState's CTA is `ctaLabel` + `onCta`, a label and a
-              handler rather than a ReactNode slot -- so the button cannot carry
-              an icon or use a non-accent variant. See FINDINGS.md. */}
           <EmptyState
             icon={<ImageIcon size={32} weight="duotone" />}
             title={t('home.dropTitle')}
             subtitle={t('home.dropSubtitle')}
-            ctaLabel={t('home.choose')}
-            onCta={() => fileInput.current?.click()}
+            action={
+              <Button variant="accent" onClick={() => fileInput.current?.click()}>
+                <UploadSimple size={16} weight="bold" className="mr-1.5" />
+                {t('home.choose')}
+              </Button>
+            }
           />
         </div>
       )}
