@@ -1,22 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, Notice } from '@whiskeyjack-net/design-system'
-import {
-  generateIcons,
-  selectPlatforms,
-  type Platform,
-  type PlatformConfigs,
-  type SourceImage,
-} from '@whiskeyjack-net/icon-stack-core'
-import { unzipSync } from 'fflate'
+import type { Platform } from '@whiskeyjack-net/icon-stack-core'
+import { useGenerator } from '@/contexts/GeneratorContext'
 
 /** Sizes worth eyeballing: the ones where a mark actually breaks down. */
 const PREVIEW_SIZES = [16, 32, 64, 128] as const
 
 export interface SizePreviewProps {
-  source: SourceImage
   platform: Platform
-  platforms: PlatformConfigs
 }
 
 /**
@@ -25,7 +17,8 @@ export interface SizePreviewProps {
  * down in CSS -- a 16px icon looks nothing like a 512px one shrunk by the
  * browser, which is the whole reason the pipeline resamples per size.
  */
-export function SizePreview({ source, platform, platforms }: SizePreviewProps) {
+export function SizePreview({ platform }: SizePreviewProps) {
+  const { source, platforms, alternate, render } = useGenerator()
   const { t } = useTranslation()
   const [previews, setPreviews] = useState<{ size: number; url: string }[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -40,19 +33,8 @@ export function SizePreview({ source, platform, platforms }: SizePreviewProps) {
     setPending(true)
     const timer = setTimeout(async () => {
       try {
-        const zip = await generateIcons({
-          source,
-          alternate: null,
-          platforms: selectPlatforms(platforms, [platform]),
-          sourceFit: 'contain',
-          alternateFit: 'contain',
-          faviconFit: 'contain',
-          trayFit: 'contain',
-          onProgress: () => {},
-        })
+        const files = await render(platform)
         if (run !== runRef.current) return // a newer run superseded this one
-
-        const files = unzipSync(zip)
         const pngs = Object.entries(files)
           .filter(([name]) => name.endsWith('.png'))
           .map(([name, bytes]) => ({ name, bytes, size: pngSize(bytes) }))
@@ -84,7 +66,7 @@ export function SizePreview({ source, platform, platforms }: SizePreviewProps) {
     }, 250)
 
     return () => clearTimeout(timer)
-  }, [source, platform, platforms])
+  }, [platform, platforms, source, alternate, render])
 
   // Revoke on unmount, so a long session does not leak every preview it made.
   useEffect(() => () => urlsRef.current.forEach(URL.revokeObjectURL), [])

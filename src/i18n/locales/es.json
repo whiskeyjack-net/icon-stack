@@ -10,13 +10,15 @@
   "home": {
     "title": "Icon Stack",
     "subtitle": "Una imagen de origen, un juego completo de iconos.",
-    "dropTitle": "Suelta una imagen",
-    "dropSubtitle": "PNG o SVG, 1024x1024 cuadrado funciona mejor.",
-    "choose": "Elegir archivo",
-    "platform": "Plataforma",
-    "generate": "Generar iconos",
     "generating": "Generando",
-    "change": "Cambiar origen"
+    "exportAll": "Exportar todo",
+    "exportAllAction": "Exportar todo",
+    "platformsSelected": "{{count}} plataforma seleccionada",
+    "platformsSelected_other": "{{count}} plataformas seleccionadas",
+    "exportOne": "Exportar solo {{platform}}",
+    "included": "Incluida",
+    "excluded": "Excluida",
+    "includePlatform": "Incluir esta plataforma en la exportación"
   },
   "settings": {
     "background": "Fondo",
@@ -31,6 +33,33 @@
       "pwa": "Las variantes maskable añaden margen de seguridad para Android.",
       "windowsStore": "Los mosaicos permanecen transparentes; el color de la placa vive en el manifiesto MSIX.",
       "trayIcon": "Los iconos de barra de menú son imágenes de plantilla en macOS."
+    },
+    "artworkSource": "Origen del gráfico",
+    "backgroundDark": "Fondo oscuro",
+    "appleIcon": "Apple .icon",
+    "appleIconHint": "El formato .icon superpone renders claro, oscuro y monocromo con cristal y sombra del sistema.",
+    "glass": "Efecto cristal",
+    "glassHint": "Añade el brillo especular que Apple aplica a iconos por capas.",
+    "shadowOpacity": "Opacidad de sombra",
+    "none": "Ninguna",
+    "translucency": "Translucidez",
+    "translucencyHint": "Deja ver la capa inferior.",
+    "translucencyAmount": "Cantidad de translucidez",
+    "maskableZoom": "Zoom maskable",
+    "unplatedZoom": "Zoom sin placa",
+    "monochrome": "Capa monocroma",
+    "monochromeHint": "Los iconos temáticos de Android 13+ usan una silueta de un color.",
+    "includeSvg": "Incluir favicon SVG",
+    "includeSvgHint": "Los navegadores modernos lo prefieren; escala sin rasterizar.",
+    "source": {
+      "main": "Gráfico principal",
+      "light": "Variante clara",
+      "dark": "Variante oscura",
+      "mono": "Monocromo",
+      "maskable": "Maskable",
+      "unplated": "Sin placa (barra)",
+      "useMain": "Origen",
+      "useAlternate": "Alternativa"
     }
   },
   "background": {
@@ -48,5 +77,19 @@
     "title": "Vista previa",
     "alt": "Icono renderizado a {{size}} píxeles",
     "none": "Sin tamaños ráster para esta plataforma."
+  },
+  "source": {
+    "main": "Imagen de origen",
+    "alternate": "Imagen alternativa",
+    "optional": "opcional",
+    "mainTitle": "Suelta una imagen",
+    "mainSubtitle": "PNG o SVG, 1024x1024 cuadrado funciona mejor.",
+    "alternateTitle": "Añade una alternativa",
+    "alternateSubtitle": "Para variantes oscuras, monocromas y de barra.",
+    "choose": "Elegir archivo",
+    "remove": "Quitar esta imagen",
+    "contain": "Contener",
+    "cover": "Cubrir",
+    "alternateHint": "Una imagen alternativa permite que las variantes oscuras, monocromas y de barra usen otro gráfico."
   }
 }
