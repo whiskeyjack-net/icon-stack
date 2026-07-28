@@ -43,5 +43,10 @@
     "gradientTop": "Color superior del degradado",
     "autoTop": "Parada superior automática",
     "customTop": "Parada superior personalizada"
+  },
+  "preview": {
+    "title": "Vista previa",
+    "alt": "Icono renderizado a {{size}} píxeles",
+    "none": "Sin tamaños ráster para esta plataforma."
   }
 }

@@ -43,5 +43,10 @@
     "gradientTop": "Gradient top colour",
     "autoTop": "Top stop derived automatically",
     "customTop": "Custom top stop"
+  },
+  "preview": {
+    "title": "Preview",
+    "alt": "Icon rendered at {{size}} pixels",
+    "none": "No raster sizes for this platform."
   }
 }

@@ -238,7 +238,7 @@ Harmless once you know; puzzling if you do not. Worth either surfacing the
 handful of inherited props that are genuinely part of a component's API, or
 naming them in the `docs` prose.
 
-### OPEN – writing to `PlatformConfigs[key]` requires the intersection of every config
+### RESOLVED – writing to `PlatformConfigs[key]` requires the intersection of every config
 
 `platforms[key] = { ...next }` where `key: Platform` fails: TypeScript requires
 the value to satisfy the *intersection* of `AppleConfig & AndroidConfig &
@@ -246,9 +246,15 @@ PwaConfig & ...`, which no single config satisfies. A computed key in an object
 literal (`{ ...prev, [key]: next }`) widens and is fine; a loop assignment is
 not. Worked around with `Object.assign`, which mutates rather than reassigns.
 
-This is Icon Stack's own type, not the design system's -- but it is the kind of
-thing a per-key generic helper (`setPlatformConfig<K extends Platform>`) should
-absorb rather than leaving to every consumer.
+**Fixed in the core** – `updatePlatform<K extends Platform>(configs, platform,
+patch)` pins the key to one platform, so the patch is checked against that
+platform's own type and nothing else. `selectPlatforms(configs, enabled)` covers
+"generate only what is selected" while preserving every other setting.
+
+`selectPlatforms` hits the same union problem internally and carries the single
+assertion needed to resolve it -- which is the point: absorb it once rather than
+in every consumer. Ten tests cover both, including that a platform-specific
+field like Android's `useMonochrome` type-checks through the generic.
 
 ---
 

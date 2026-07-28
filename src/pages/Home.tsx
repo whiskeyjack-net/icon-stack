@@ -21,6 +21,8 @@ import {
 import {
   generateIcons,
   createDefaultPlatforms,
+  updatePlatform,
+  selectPlatforms,
   PLATFORM_LABELS,
   type Platform,
   type SourceImage,
@@ -28,6 +30,7 @@ import {
 } from '@whiskeyjack-net/icon-stack-core'
 import { processFile } from '@/lib/process-file'
 import { PlatformSettings } from '@/components/PlatformSettings'
+import { SizePreview } from '@/components/SizePreview'
 
 /** Platforms exposed in the UI, in the order the tabs present them. */
 const PLATFORMS: Platform[] = [
@@ -64,7 +67,7 @@ export function Home() {
     })
 
   const patchPlatform = (patch: Partial<PlatformConfigs[Platform]>) =>
-    setPlatforms((prev) => ({ ...prev, [selected]: { ...prev[selected], ...patch } }))
+    setPlatforms((prev) => updatePlatform(prev, selected, patch))
   const [progress, setProgress] = useState(0)
   const [busy, setBusy] = useState(false)
   const [dragging, setDragging] = useState(false)
@@ -98,15 +101,7 @@ export function Home() {
     setProgress(0)
     try {
       // Generate only the platform on screen, from its edited config.
-      //
-      // Object.assign rather than `selection[key] = {...}`: writing to an
-      // indexed property whose key is a union requires the value to satisfy the
-      // INTERSECTION of every config type, which no single config does. Mutating
-      // the existing object sidesteps that without a cast.
-      const selection = createDefaultPlatforms()
-      for (const key of Object.keys(selection) as Platform[]) {
-        Object.assign(selection[key], platforms[key], { enabled: key === selected })
-      }
+      const selection = selectPlatforms(platforms, [selected])
 
       const zip = await generateIcons({
         source,
@@ -213,11 +208,14 @@ export function Home() {
             style={{ transform: `translateX(${swipeOffset}px)` }}
             className={cn(isAnimating && 'transition-transform duration-200')}
           >
-            <PlatformSettings
-              platform={selected}
-              config={platforms[selected]}
-              onChange={patchPlatform}
-            />
+            <div className="space-y-6">
+              <SizePreview source={source} platform={selected} platforms={platforms} />
+              <PlatformSettings
+                platform={selected}
+                config={platforms[selected]}
+                onChange={patchPlatform}
+              />
+            </div>
           </div>
         </div>
         </>
