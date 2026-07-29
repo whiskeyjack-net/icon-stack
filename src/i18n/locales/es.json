@@ -3,22 +3,21 @@
     "name": "Icon Stack"
   },
   "nav": {
-    "home": "Inicio",
+    "generator": "Generador",
     "settings": "Ajustes",
     "menu": "Menú"
   },
-  "home": {
-    "title": "Icon Stack",
-    "subtitle": "Una imagen de origen, un juego completo de iconos.",
+  "generator": {
+    "tagline": "Una imagen de origen, un juego completo de iconos.",
+    "sourceTab": "Origen",
+    "platforms": "Plataformas",
+    "preview": "Vista previa",
+    "export": "Exportar",
+    "exportAll": "Exportar todas las plataformas seleccionadas",
+    "exportEmpty": "Selecciona al menos una plataforma para exportar.",
+    "downloadPlatform": "Descargar iconos de {{platform}}",
     "generating": "Generando",
-    "exportAll": "Exportar todo",
-    "exportAllAction": "Exportar todo",
-    "platformsSelected": "{{count}} plataforma seleccionada",
-    "platformsSelected_other": "{{count}} plataformas seleccionadas",
-    "exportOne": "Exportar solo {{platform}}",
-    "included": "Incluida",
-    "excluded": "Excluida",
-    "includePlatform": "Incluir esta plataforma en la exportación"
+    "generatingProgress": "Generando iconos, {{progress}}% completado"
   },
   "settings": {
     "title": "Ajustes",
@@ -103,6 +102,13 @@
   "actions": {
     "clear": "Borrar orígenes",
     "replace": "Reemplazar origen",
-    "export": "Exportar todos los iconos"
+    "export": "Exportar todos los iconos",
+    "upload": "Subir una imagen de origen"
+  },
+  "replace": {
+    "title": "¿Reemplazar la imagen de origen?",
+    "body": "Cada ajuste por plataforma está afinado con la imagen actual. Reemplazarla por {{fileName}} conserva tu selección de plataformas y no restablece nada más, pero todas las vistas previas se vuelven a generar.",
+    "cancel": "Mantener la actual",
+    "confirm": "Reemplazar"
   }
 }

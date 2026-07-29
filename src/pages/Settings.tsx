@@ -18,7 +18,9 @@ export function Settings() {
   ]
 
   return (
-    <div className="space-y-4 pt-4">
+    // Same cap and insets as the Generator, so the header nav and the action
+    // pill stay put as you move between the two pages.
+    <div className="mx-auto max-w-[var(--content-max)] space-y-4 px-4 pb-6 pt-4">
       <h1 className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
         {t('settings.title')}
       </h1>

@@ -9,6 +9,12 @@ const PREVIEW_SIZES = [16, 32, 64, 128] as const
 
 export interface SizePreviewProps {
   platform: Platform
+  /**
+   * Card heading. Defaults to a plain "Preview"; the rail passes the platform
+   * name instead, because on the source tab it stacks one card per enabled
+   * platform and identical headings would make them indistinguishable.
+   */
+  title?: string
 }
 
 /**
@@ -17,7 +23,7 @@ export interface SizePreviewProps {
  * down in CSS -- a 16px icon looks nothing like a 512px one shrunk by the
  * browser, which is the whole reason the pipeline resamples per size.
  */
-export function SizePreview({ platform }: SizePreviewProps) {
+export function SizePreview({ platform, title }: SizePreviewProps) {
   const { source, platforms, alternate, render } = useGenerator()
   const { t } = useTranslation()
   const [previews, setPreviews] = useState<{ size: number; url: string }[]>([])
@@ -75,7 +81,7 @@ export function SizePreview({ platform }: SizePreviewProps) {
     <Card>
       <CardContent className="pt-6">
         <h3 className="mb-4 text-sm font-medium uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-          {t('preview.title')}
+          {title ?? t('preview.title')}
         </h3>
 
         {error ? (
