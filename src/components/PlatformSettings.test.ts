@@ -21,8 +21,20 @@ import { createDefaultPlatforms, type Platform } from '@whiskeyjack-net/icon-sta
 
 const componentsDir = dirname(fileURLToPath(import.meta.url))
 
-/** The files that between them are allowed to satisfy the requirement. */
-const UI = ['PlatformSettings.tsx', 'BackgroundEditor.tsx', 'DedicatedSource.tsx', 'PlatformGrid.tsx']
+/**
+ * The files that between them are allowed to satisfy the requirement.
+ *
+ * `BackgroundField.tsx` is listed because it now owns the row and the toggle,
+ * with `BackgroundEditor.tsx` behind it holding the drawer. Miss one of the two
+ * and this check keeps passing while a field loses its only control.
+ */
+const UI = [
+  'PlatformSettings.tsx',
+  'BackgroundField.tsx',
+  'BackgroundEditor.tsx',
+  'DedicatedSource.tsx',
+  'PlatformGrid.tsx',
+]
   .map((f) => readFileSync(join(componentsDir, f), 'utf8'))
   .join('\n')
 

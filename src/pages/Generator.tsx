@@ -166,7 +166,7 @@ export function Generator() {
 
               <Card>
                 <CardContent className="pt-6">
-                  <h2 className="mb-3 text-sm font-medium uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+                  <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     {t('generator.platforms')}
                   </h2>
                   <PlatformGrid />
@@ -175,7 +175,7 @@ export function Generator() {
 
               <Card>
                 <CardContent className="pt-6">
-                  <h2 className="mb-3 text-sm font-medium uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+                  <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     {t('generator.export')}
                   </h2>
                   {enabled.length === 0 ? (

@@ -33,13 +33,16 @@
   "background": {
     "transparent": "Fondo transparente",
     "transparentHint": "Exportar sin placa detrás del gráfico.",
-    "solid": "Sólido",
     "gradient": "Degradado",
-    "preset": "Color predefinido {{color}}",
-    "custom": "Color personalizado",
-    "gradientTop": "Color superior del degradado",
-    "autoTop": "Parada superior automática",
-    "customTop": "Parada superior personalizada"
+    "edit": "Editar {{label}}",
+    "color": "Color",
+    "useGradient": "Usar un degradado",
+    "automaticTopColor": "Derivar el color superior",
+    "topColor": "Color superior",
+    "bottomColor": "Color inferior",
+    "colorPickerAriaLabel": "Elegir un color para {{label}}",
+    "cancel": "Cancelar",
+    "save": "Guardar"
   },
   "preview": {
     "title": "Vista previa",
