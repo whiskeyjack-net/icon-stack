@@ -45,7 +45,8 @@
     "title": "Vorschau",
     "alt": "Icon in {{size}} Pixeln gerendert",
     "none": "Keine Rastergrößen für diese Plattform.",
-    "from": "aus {{size}}",
+    "shownAt": "angezeigt mit {{size}} px",
+    "maskApplied": "{{platform}} rundet das Icon bei der Anzeige ab. Die exportierte Datei bleibt quadratisch.",
     "variant": {
       "regular": "Standard",
       "maskable": "Maskierbar",

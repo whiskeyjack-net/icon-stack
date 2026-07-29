@@ -45,7 +45,8 @@
     "title": "Preview",
     "alt": "Icon rendered at {{size}} pixels",
     "none": "No raster sizes for this platform.",
-    "from": "from {{size}}",
+    "shownAt": "shown at {{size}}px",
+    "maskApplied": "{{platform}} rounds the icon when it displays it. The exported file stays square.",
     "variant": {
       "regular": "Regular",
       "maskable": "Maskable",

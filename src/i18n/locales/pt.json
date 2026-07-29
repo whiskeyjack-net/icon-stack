@@ -45,7 +45,8 @@
     "title": "Pré-visualização",
     "alt": "Ícone renderizado a {{size}} píxeis",
     "none": "Sem tamanhos raster para esta plataforma.",
-    "from": "de {{size}}",
+    "shownAt": "mostrado a {{size}} px",
+    "maskApplied": "{{platform}} arredonda o ícone ao apresentá-lo. O ficheiro exportado permanece quadrado.",
     "variant": {
       "regular": "Padrão",
       "maskable": "Mascarável",

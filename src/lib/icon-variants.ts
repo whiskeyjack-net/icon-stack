@@ -99,13 +99,22 @@ export function groupByVariant(files: Record<string, Uint8Array>): Map<IconVaria
 }
 
 /**
- * The render to display at `size` within one variant: the smallest at or above
- * it, so a real render is downscaled rather than a smaller one upscaled. Falls
- * back to the largest available when the variant tops out below `size` (tray
- * icons stop at 48).
+ * The distinct sizes a variant actually contains, ascending.
+ *
+ * Derived from the render rather than a per-platform table, for the same reason
+ * the variants are: the retired app carried a hardcoded `PLATFORM_SIZES` map
+ * with a comment saying it was "derived from platform-configs.ts", which is a
+ * hand-copy waiting to drift. A size added or dropped in the core shows up here
+ * with no change.
  */
-export function pickForSize(icons: RenderedIcon[], size: number): RenderedIcon | undefined {
-  const atOrAbove = icons.filter((i) => i.size >= size).sort((a, b) => a.size - b.size)
-  if (atOrAbove.length) return atOrAbove[0]
-  return icons.slice().sort((a, b) => b.size - a.size)[0]
+export function sizesOf(icons: RenderedIcon[]): number[] {
+  return [...new Set(icons.map((i) => i.size))].sort((a, b) => a - b)
 }
+
+/**
+ * The largest size worth showing at 1:1. Above this a preview stops being about
+ * legibility -- nobody squints at a 512px icon wondering if the mark reads -- and
+ * starts being about shape and composition, which one larger render answers
+ * better than a row of them.
+ */
+export const LEGIBILITY_MAX = 128

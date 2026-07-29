@@ -45,7 +45,8 @@
     "title": "Vista previa",
     "alt": "Icono renderizado a {{size}} píxeles",
     "none": "Sin tamaños ráster para esta plataforma.",
-    "from": "desde {{size}}",
+    "shownAt": "mostrado a {{size}}px",
+    "maskApplied": "{{platform}} redondea el icono al mostrarlo. El archivo exportado sigue siendo cuadrado.",
     "variant": {
       "regular": "Estándar",
       "maskable": "Enmascarable",
