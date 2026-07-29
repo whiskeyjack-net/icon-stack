@@ -19,10 +19,20 @@ web codebase delivered to desktop and mobile via Tauri.
 ## Commands
 
 ```bash
-npm run dev      # dev server
-npm run build    # tsc + vite build
-npm run lint     # ESLint (run this before you consider a change done)
+npm run dev        # dev server
+npm run build      # core → tsc -b → vite build
+npm run lint       # ESLint (run this before you consider a change done)
+npm run typecheck  # tsc -b across the app and both packages
+npm test           # the app's suite, then each package's
 ```
+
+Every one of those builds `packages/core` first. The app consumes the core's
+`dist`, and npm does not order workspace builds topologically, so a script that
+skipped that step would compile against whatever `dist` was left over.
+
+`npm test` runs `vitest run` explicitly before `--workspaces`, because the app's
+vitest config lives at the repo root and `--workspaces` alone silently skipped
+it. Adding a config is not the same as running it.
 
 ## Structure
 
@@ -32,10 +42,20 @@ src/
   App.tsx           # routes
   index.css         # DS token + utility CSS, Tauri chrome CSS, Tailwind
   i18n/             # createI18n(locales) + locale JSON
+  lib/              # icon-variants (preview grouping), platform-icons, process-file
   components/
-    Layout.tsx      # the app shell (AppShell + header + nav + theme + Tauri chrome)
-  pages/            # Home, Settings
+    Layout.tsx      # the app shell (AppShell + AppPanes + header + nav + theme)
+  pages/            # Generator, Settings
+packages/
+  core/             # @whiskeyjack-net/icon-stack-core – the icon pipeline
+  cli/              # @whiskeyjack-net/icon-stack – the published CLI
 ```
+
+This is an npm workspace: the app is the root package, and the two published
+packages sit beside it. A package here **exports built output, never `src`** –
+a package whose `main` points at TypeScript compiles under the *consumer's*
+tsconfig and hands them its own type problems. That one cost three rounds of
+fixes to learn, and `FINDINGS.md` records it in full.
 
 ## Finding a design-system component
 
@@ -43,7 +63,7 @@ Before writing a component, check whether the design system already has it.
 `components.json` registers the `@whiskeyjack` namespace, so:
 
 ```bash
-npx shadcn@latest search @whiskeyjack           # list all 44 items with descriptions
+npx shadcn@latest search @whiskeyjack           # list every item with descriptions
 npx shadcn@latest view @whiskeyjack/bottom-drawer
 npx shadcn@latest add @whiskeyjack/bottom-drawer  # copy the source into src/
 ```
