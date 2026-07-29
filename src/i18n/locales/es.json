@@ -69,7 +69,8 @@
     "remove": "Quitar esta imagen",
     "contain": "Contener",
     "cover": "Cubrir",
-    "alternateHint": "Una imagen alternativa permite que las variantes oscuras, monocromas y de barra usen otro gráfico."
+    "alternateHint": "Una imagen alternativa permite que las variantes oscuras, monocromas y de barra usen otro gráfico.",
+    "readFailed": "No se pudo leer ese archivo."
   },
   "platform": {
     "background": "Fondo",
@@ -111,7 +112,17 @@
       "unplated": "Sin placa (barra)",
       "useMain": "Origen",
       "useAlternate": "Alternativa"
-    }
+    },
+    "faviconSource": "Origen dedicado para el favicon",
+    "faviconSourceHint": "Los favicons se dibujan a 16 px en la pestaña del navegador. Un dibujo simplificado lo resiste; uno detallado se convierte en barro.",
+    "traySource": "Origen dedicado para el icono de bandeja",
+    "traySourceHint": "Los iconos de barra de menús y bandeja se dibujan a 16-22 px, a menudo monocromos. Una silueta simplificada se lee; el gráfico completo no.",
+    "svgDarkMode": "Favicon SVG para modo oscuro",
+    "svgDarkModeHint": "Incrusta una regla prefers-color-scheme para que el favicon SVG se invierta en un navegador oscuro.",
+    "maskableBackground": "Fondo enmascarable",
+    "unplatedBackground": "Fondo del icono de la barra de tareas",
+    "dedicatedUsingMain": "Usando el origen principal",
+    "dedicatedRemove": "Quitar {{label}}"
   },
   "actions": {
     "clear": "Borrar orígenes",

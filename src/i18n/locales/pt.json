@@ -69,7 +69,8 @@
     "remove": "Remover esta imagem",
     "contain": "Conter",
     "cover": "Cobrir",
-    "alternateHint": "Uma imagem alternativa permite que as variantes escuras, monocromáticas e de barra de tarefas usem outra arte – uma marca que funciona sobre placa clara muitas vezes não se lê recortada sobre uma escura."
+    "alternateHint": "Uma imagem alternativa permite que as variantes escuras, monocromáticas e de barra de tarefas usem outra arte – uma marca que funciona sobre placa clara muitas vezes não se lê recortada sobre uma escura.",
+    "readFailed": "Não foi possível ler esse ficheiro."
   },
   "platform": {
     "background": "Fundo",
@@ -111,7 +112,17 @@
       "unplated": "Sem placa (barra de tarefas)",
       "useMain": "Origem",
       "useAlternate": "Alternativa"
-    }
+    },
+    "faviconSource": "Origem dedicada para o favicon",
+    "faviconSourceHint": "Os favicons são desenhados a 16 px no separador do navegador. Um desenho simplificado aguenta; um detalhado fica ilegível.",
+    "traySource": "Origem dedicada para o ícone da bandeja",
+    "traySourceHint": "Os ícones da barra de menus aparecem a 16-22 px, muitas vezes monocromáticos. Uma silhueta simplificada lê-se, arte completa não.",
+    "svgDarkMode": "Favicon SVG em modo escuro",
+    "svgDarkModeHint": "Integra uma regra prefers-color-scheme para o favicon SVG inverter num navegador escuro.",
+    "maskableBackground": "Fundo mascarável",
+    "unplatedBackground": "Fundo do ícone da barra de tarefas",
+    "dedicatedUsingMain": "A usar a origem principal",
+    "dedicatedRemove": "Remover {{label}}"
   },
   "actions": {
     "clear": "Limpar origens",

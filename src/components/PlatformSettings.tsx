@@ -5,8 +5,10 @@ import type {
   Platform,
   PlatformConfigs,
   SourceChoice,
+  SourceImage,
 } from '@whiskeyjack-net/icon-stack-core'
 import { BackgroundEditor } from './BackgroundEditor'
+import { DedicatedSource } from './DedicatedSource'
 import { useGenerator } from '@/contexts/GeneratorContext'
 
 /**
@@ -19,7 +21,8 @@ import { useGenerator } from '@/contexts/GeneratorContext'
  */
 export function PlatformSettings({ platform }: { platform: Platform }) {
   const { t } = useTranslation()
-  const { platforms, alternate, patchPlatform } = useGenerator()
+  const { platforms, alternate, patchPlatform, faviconFit, trayFit, setFaviconFit, setTrayFit } =
+    useGenerator()
   // Read generically so each control can be gated on its field existing;
   // the config union has no index signature, hence the step through unknown.
   const config = platforms[platform] as unknown as Record<string, unknown>
@@ -30,6 +33,28 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
   return (
     <Card>
       <CardContent className="space-y-6 pt-6">
+        {/* --- A source belonging to this platform alone ------------------- */}
+        {has('faviconSource') && (
+          <DedicatedSource
+            label={t('platform.faviconSource')}
+            hint={t('platform.faviconSourceHint')}
+            value={config.faviconSource as SourceImage | null}
+            onChange={(faviconSource) => patch({ faviconSource } as never)}
+            fit={faviconFit}
+            onFitChange={setFaviconFit}
+          />
+        )}
+        {has('traySource') && (
+          <DedicatedSource
+            label={t('platform.traySource')}
+            hint={t('platform.traySourceHint')}
+            value={config.traySource as SourceImage | null}
+            onChange={(traySource) => patch({ traySource } as never)}
+            fit={trayFit}
+            onFitChange={setTrayFit}
+          />
+        )}
+
         {/* --- Which artwork this platform draws from --------------------- */}
         {alternate && (
           <section className="space-y-4">
@@ -94,6 +119,38 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
             }
           />
         </section>
+
+        {/* The maskable variant is cropped by the OS, so the plate that shows
+            around the mark is often not the one the plain icon wants. */}
+        {has('maskableBgFill') && (
+          <section>
+            <SectionTitle>{t('platform.maskableBackground')}</SectionTitle>
+            <BackgroundEditor
+              fill={config.maskableBgFill as BackgroundFill}
+              onFillChange={(maskableBgFill: BackgroundFill) =>
+                patch({ maskableBgFill } as never)
+              }
+            />
+          </section>
+        )}
+
+        {/* Windows Store taskbar icons: unlike the tiles, their background IS
+            baked into the exported PNGs, so it gets its own controls. */}
+        {has('unplatedBgFill') && (
+          <section>
+            <SectionTitle>{t('platform.unplatedBackground')}</SectionTitle>
+            <BackgroundEditor
+              fill={config.unplatedBgFill as BackgroundFill}
+              onFillChange={(unplatedBgFill: BackgroundFill) =>
+                patch({ unplatedBgFill } as never)
+              }
+              transparent={config.unplatedTransparent as boolean}
+              onTransparentChange={(unplatedTransparent) =>
+                patch({ unplatedTransparent } as never)
+              }
+            />
+          </section>
+        )}
 
         {/* Platforms with a separate dark variant carry a second fill. */}
         {has('bgFillDark') && (
@@ -241,6 +298,17 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
             description={t('platform.includeSvgHint')}
             checked={config.includeSvg as boolean}
             onChange={(includeSvg) => patch({ includeSvg } as never)}
+          />
+        )}
+
+        {/* Nested under includeSvg on purpose: with no SVG favicon emitted there
+            is nothing for a dark-mode media query to live in. */}
+        {has('svgDarkMode') && (config.includeSvg as boolean) && (
+          <Toggle
+            label={t('platform.svgDarkMode')}
+            description={t('platform.svgDarkModeHint')}
+            checked={config.svgDarkMode as boolean}
+            onChange={(svgDarkMode) => patch({ svgDarkMode } as never)}
           />
         )}
 
