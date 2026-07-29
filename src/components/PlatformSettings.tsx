@@ -7,7 +7,7 @@ import type {
   SourceChoice,
   SourceImage,
 } from '@whiskeyjack-net/icon-stack-core'
-import { BackgroundEditor } from './BackgroundEditor'
+import { BackgroundField } from './BackgroundField'
 import { DedicatedSource } from './DedicatedSource'
 import { useGenerator } from '@/contexts/GeneratorContext'
 
@@ -107,8 +107,8 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
         {/* --- Background -------------------------------------------------- */}
         <section>
-          <SectionTitle>{t('platform.background')}</SectionTitle>
-          <BackgroundEditor
+          <BackgroundField
+            label={t('platform.background')}
             fill={config.bgFill as BackgroundFill}
             onFillChange={(bgFill: BackgroundFill) => patch({ bgFill } as never)}
             transparent={has('bgTransparent') ? (config.bgTransparent as boolean) : undefined}
@@ -124,8 +124,8 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
             around the mark is often not the one the plain icon wants. */}
         {has('maskableBgFill') && (
           <section>
-            <SectionTitle>{t('platform.maskableBackground')}</SectionTitle>
-            <BackgroundEditor
+            <BackgroundField
+              label={t('platform.maskableBackground')}
               fill={config.maskableBgFill as BackgroundFill}
               onFillChange={(maskableBgFill: BackgroundFill) =>
                 patch({ maskableBgFill } as never)
@@ -138,8 +138,8 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
             baked into the exported PNGs, so it gets its own controls. */}
         {has('unplatedBgFill') && (
           <section>
-            <SectionTitle>{t('platform.unplatedBackground')}</SectionTitle>
-            <BackgroundEditor
+            <BackgroundField
+              label={t('platform.unplatedBackground')}
               fill={config.unplatedBgFill as BackgroundFill}
               onFillChange={(unplatedBgFill: BackgroundFill) =>
                 patch({ unplatedBgFill } as never)
@@ -155,8 +155,8 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
         {/* Platforms with a separate dark variant carry a second fill. */}
         {has('bgFillDark') && (
           <section>
-            <SectionTitle>{t('platform.backgroundDark')}</SectionTitle>
-            <BackgroundEditor
+            <BackgroundField
+              label={t('platform.backgroundDark')}
               fill={config.bgFillDark as BackgroundFill}
               onFillChange={(bgFillDark: BackgroundFill) => patch({ bgFillDark } as never)}
             />
@@ -322,12 +322,25 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="mb-3 text-sm font-medium uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+    <h3 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
       {children}
     </h3>
   )
 }
 
+/**
+ * Which of the two loaded sources this platform draws from.
+ *
+ * Each option carries a thumbnail of the image it selects, which the monorepo
+ * version had and the rebuild dropped: the labels are "Main" and "Alternate",
+ * and those words say nothing about which artwork you are choosing. With two
+ * images loaded, the thumbnail IS the answer.
+ *
+ * No new component was needed for it. `ToggleGroupOption.icon` is already
+ * `ReactNode`, documented as caller-supplied precisely because the design system
+ * bundles no icon library -- an `<img>` is as valid there as a Phosphor glyph.
+ * The gap was in how this called it rather than in the primitive.
+ */
 function SourcePicker({
   label,
   value,
@@ -338,6 +351,17 @@ function SourcePicker({
   onChange: (value: SourceChoice) => void
 }) {
   const { t } = useTranslation()
+  const { source, alternate } = useGenerator()
+
+  const thumb = (image: SourceImage | null) =>
+    image ? (
+      <img
+        src={image.dataUrl}
+        alt=""
+        className="h-5 w-5 rounded-sm bg-[var(--color-neutral-200)] object-contain dark:bg-[var(--color-neutral-700)]"
+      />
+    ) : undefined
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
@@ -347,8 +371,12 @@ function SourcePicker({
         value={value}
         onChange={onChange}
         options={[
-          { value: 'main' as const, label: t('platform.source.useMain') },
-          { value: 'alternate' as const, label: t('platform.source.useAlternate') },
+          { value: 'main' as const, label: t('platform.source.useMain'), icon: thumb(source) },
+          {
+            value: 'alternate' as const,
+            label: t('platform.source.useAlternate'),
+            icon: thumb(alternate),
+          },
         ]}
       />
     </div>

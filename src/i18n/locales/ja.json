@@ -33,13 +33,16 @@
   "background": {
     "transparent": "透明な背景",
     "transparentHint": "アートワークの背後にプレートを付けずに書き出します。",
-    "solid": "単色",
     "gradient": "グラデーション",
-    "preset": "プリセットカラー {{color}}",
-    "custom": "カスタムカラー",
-    "gradientTop": "グラデーション上端の色",
-    "autoTop": "上端のストップを自動で算出",
-    "customTop": "上端のストップをカスタム指定"
+    "edit": "{{label}} を編集",
+    "color": "色",
+    "useGradient": "グラデーションを使う",
+    "automaticTopColor": "上部の色を自動で決める",
+    "topColor": "上部の色",
+    "bottomColor": "下部の色",
+    "colorPickerAriaLabel": "{{label}} の色を選ぶ",
+    "cancel": "キャンセル",
+    "save": "保存"
   },
   "preview": {
     "title": "プレビュー",

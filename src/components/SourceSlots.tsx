@@ -26,7 +26,11 @@ export function SourceSlots() {
   const { source, alternate, sourceWarning, alternateWarning } = useGenerator()
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    // One column until there is something to sit beside. The grid was
+    // unconditionally `md:grid-cols-2`, so the only card on an empty Generator
+    // took the left half and left the right half blank -- the drop target read
+    // as undersized and off-centre, which is the first thing anyone sees.
+    <div className={cn('grid gap-4', source && 'md:grid-cols-2')}>
       <Slot slot="main" />
       {source ? <Slot slot="alternate" /> : null}
       {(sourceWarning || alternateWarning) && (
@@ -63,7 +67,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
     <Card>
       <CardContent className="pt-6">
         <div className="mb-3 flex items-baseline justify-between gap-2">
-          <h3 className="text-sm font-medium uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+          <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t(`source.${slot}`)}
           </h3>
           {slot === 'alternate' && (

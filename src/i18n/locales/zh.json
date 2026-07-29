@@ -33,13 +33,16 @@
   "background": {
     "transparent": "透明背景",
     "transparentHint": "导出时不在图形后面加底板。",
-    "solid": "纯色",
     "gradient": "渐变",
-    "preset": "预设颜色 {{color}}",
-    "custom": "自定义颜色",
-    "gradientTop": "渐变顶部颜色",
-    "autoTop": "顶部色标自动推导",
-    "customTop": "自定义顶部色标"
+    "edit": "编辑{{label}}",
+    "color": "颜色",
+    "useGradient": "使用渐变",
+    "automaticTopColor": "自动推导顶部颜色",
+    "topColor": "顶部颜色",
+    "bottomColor": "底部颜色",
+    "colorPickerAriaLabel": "为{{label}}选择颜色",
+    "cancel": "取消",
+    "save": "保存"
   },
   "preview": {
     "title": "预览",

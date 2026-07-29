@@ -33,13 +33,16 @@
   "background": {
     "transparent": "Sfondo trasparente",
     "transparentHint": "Esporta senza piastra dietro la grafica.",
-    "solid": "Pieno",
     "gradient": "Gradiente",
-    "preset": "Colore predefinito {{color}}",
-    "custom": "Colore personalizzato",
-    "gradientTop": "Colore superiore del gradiente",
-    "autoTop": "Stop superiore derivato automaticamente",
-    "customTop": "Stop superiore personalizzato"
+    "edit": "Modifica {{label}}",
+    "color": "Colore",
+    "useGradient": "Usa un gradiente",
+    "automaticTopColor": "Deriva il colore in alto",
+    "topColor": "Colore in alto",
+    "bottomColor": "Colore in basso",
+    "colorPickerAriaLabel": "Scegli un colore per {{label}}",
+    "cancel": "Annulla",
+    "save": "Salva"
   },
   "preview": {
     "title": "Anteprima",

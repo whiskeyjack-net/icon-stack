@@ -21,19 +21,26 @@ import {
 import { unzipSync } from 'fflate'
 import { processFile } from '@/lib/process-file'
 
-/** Platforms exposed in the UI, in the order the tabs present them. */
+/**
+ * Platforms exposed in the UI, in the order the tabs and the grid present them.
+ *
+ * The order is the monorepo version's, which groups by how people actually pick:
+ * the three big app targets first, then the desktop formats, then the web set,
+ * and the narrow extras last. The rebuild had sorted web-first, which buried
+ * Apple and Android under favicon and PWA.
+ */
 export const PLATFORMS: Platform[] = [
-  'favicon',
-  'pwa',
+  'apple',
+  'android',
   'windows',
   'windowsStore',
   'linux',
-  'android',
-  'apple',
-  'macos',
-  'ios',
+  'pwa',
+  'favicon',
   'appleTouchIcon',
   'trayIcon',
+  'macos',
+  'ios',
 ]
 
 /** Which slot a `SourceImage` fills. */

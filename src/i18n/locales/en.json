@@ -33,13 +33,16 @@
   "background": {
     "transparent": "Transparent background",
     "transparentHint": "Export with no plate behind the artwork.",
-    "solid": "Solid",
     "gradient": "Gradient",
-    "preset": "Preset color {{color}}",
-    "custom": "Custom color",
-    "gradientTop": "Gradient top color",
-    "autoTop": "Top stop derived automatically",
-    "customTop": "Custom top stop"
+    "edit": "Edit {{label}}",
+    "color": "Color",
+    "useGradient": "Use a gradient",
+    "automaticTopColor": "Derive the top color",
+    "topColor": "Top color",
+    "bottomColor": "Bottom color",
+    "colorPickerAriaLabel": "Pick a color for {{label}}",
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "preview": {
     "title": "Preview",

@@ -33,13 +33,16 @@
   "background": {
     "transparent": "Transparenter Hintergrund",
     "transparentHint": "Ohne Platte hinter der Grafik exportieren.",
-    "solid": "Einfarbig",
     "gradient": "Verlauf",
-    "preset": "Vorgabefarbe {{color}}",
-    "custom": "Eigene Farbe",
-    "gradientTop": "Obere Verlaufsfarbe",
-    "autoTop": "Oberer Stopp automatisch abgeleitet",
-    "customTop": "Eigener oberer Stopp"
+    "edit": "{{label}} bearbeiten",
+    "color": "Farbe",
+    "useGradient": "Verlauf verwenden",
+    "automaticTopColor": "Obere Farbe ableiten",
+    "topColor": "Obere Farbe",
+    "bottomColor": "Untere Farbe",
+    "colorPickerAriaLabel": "Eine Farbe für {{label}} wählen",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
   },
   "preview": {
     "title": "Vorschau",

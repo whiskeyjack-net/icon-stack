@@ -63,7 +63,7 @@ export function DedicatedSource({
   return (
     <div className="space-y-3">
       <div>
-        <h3 className="text-sm font-medium uppercase tracking-wider text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+        <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
           {label}
         </h3>
         <p className="mt-1 text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">

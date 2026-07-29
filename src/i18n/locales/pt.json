@@ -33,13 +33,16 @@
   "background": {
     "transparent": "Fundo transparente",
     "transparentHint": "Exportar sem placa atrás da arte.",
-    "solid": "Sólido",
     "gradient": "Gradiente",
-    "preset": "Cor predefinida {{color}}",
-    "custom": "Cor personalizada",
-    "gradientTop": "Cor superior do gradiente",
-    "autoTop": "Paragem superior derivada automaticamente",
-    "customTop": "Paragem superior personalizada"
+    "edit": "Editar {{label}}",
+    "color": "Cor",
+    "useGradient": "Usar um gradiente",
+    "automaticTopColor": "Derivar a cor de cima",
+    "topColor": "Cor de cima",
+    "bottomColor": "Cor de baixo",
+    "colorPickerAriaLabel": "Escolher uma cor para {{label}}",
+    "cancel": "Cancelar",
+    "save": "Guardar"
   },
   "preview": {
     "title": "Pré-visualização",

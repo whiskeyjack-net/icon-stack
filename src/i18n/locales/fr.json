@@ -33,13 +33,16 @@
   "background": {
     "transparent": "Fond transparent",
     "transparentHint": "Exporter sans plaque derrière le visuel.",
-    "solid": "Uni",
     "gradient": "Dégradé",
-    "preset": "Couleur prédéfinie {{color}}",
-    "custom": "Couleur personnalisée",
-    "gradientTop": "Couleur haute du dégradé",
-    "autoTop": "Arrêt haut déduit automatiquement",
-    "customTop": "Arrêt haut personnalisé"
+    "edit": "Modifier {{label}}",
+    "color": "Couleur",
+    "useGradient": "Utiliser un dégradé",
+    "automaticTopColor": "Déduire la couleur du haut",
+    "topColor": "Couleur du haut",
+    "bottomColor": "Couleur du bas",
+    "colorPickerAriaLabel": "Choisir une couleur pour {{label}}",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
   },
   "preview": {
     "title": "Aperçu",
