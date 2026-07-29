@@ -7,6 +7,7 @@
  */
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import '@/i18n'
 
 /** A minimal valid PNG header carrying a square size in its IHDR. */
@@ -33,12 +34,22 @@ const files: Record<string, Record<string, Uint8Array>> = {
     'windows/icon-32.png': fakePng(32),
     'windows/icon-256.png': fakePng(256),
   },
+  // The Apple export is a transparent foreground plus a declared plate, which
+  // is why the preview composites rather than showing the file flat.
+  apple: {
+    'apple/AppIcon.icon/Assets/foreground.png': fakePng(1024),
+  },
 }
 
 vi.mock('@/contexts/GeneratorContext', () => ({
   useGenerator: () => ({
     source: { name: 'mark.png' },
-    platforms: {},
+    platforms: {
+      apple: {
+        bgFill: { type: 'solid', color: '#FFCC00' },
+        bgFillDark: { type: 'solid', color: '#102030' },
+      },
+    },
     alternate: {},
     render: (platform: string) => Promise.resolve(files[platform] ?? {}),
   }),
@@ -57,7 +68,9 @@ describe('SizePreview', () => {
     render(<SizePreview platform="macos" />)
 
     const hero = await screen.findByAltText('Icon rendered at 1024 pixels')
-    expect(hero).toHaveStyle({ borderRadius: '22.37%' })
+    // The mask sits on the clipping wrapper rather than the image, so that an
+    // Apple plate drawn behind the artwork is cropped to the same shape.
+    expect(hero.parentElement).toHaveStyle({ borderRadius: '22.37%' })
 
     // The caption is load-bearing: a rounded preview with no note reads as a
     // claim that the exported PNG is rounded.
@@ -86,11 +99,40 @@ describe('SizePreview', () => {
     expect(screen.queryByAltText('Icon rendered at 128 pixels')).toBeNull()
   })
 
+  it('composites the Apple plate the export never bakes, and swaps it per appearance', async () => {
+    const user = userEvent.setup()
+    render(<SizePreview platform="apple" />)
+
+    const hero = await screen.findByAltText('Icon rendered at 1024 pixels')
+    // Light appearance draws the configured plate behind the transparent layer.
+    expect(hero.parentElement).toHaveStyle({ background: '#FFCC00' })
+
+    await user.click(screen.getByRole('radio', { name: 'Dark' }))
+    await waitFor(() => expect(hero.parentElement).toHaveStyle({ background: '#102030' }))
+
+    // Tinted drops the icon's colour entirely, which is the appearance's point,
+    // so neither configured fill applies.
+    await user.click(screen.getByRole('radio', { name: 'Tinted' }))
+    await waitFor(() => expect(hero.parentElement).toHaveStyle({ background: '#333333' }))
+    expect(hero).toHaveStyle({ filter: 'brightness(0) invert(1)' })
+  })
+
+  it('makes the Apple icon circular for the watch, whatever the desktop does', async () => {
+    const user = userEvent.setup()
+    render(<SizePreview platform="apple" />)
+
+    const hero = await screen.findByAltText('Icon rendered at 1024 pixels')
+    expect(hero.parentElement).toHaveStyle({ borderRadius: '22.37%' })
+
+    await user.click(screen.getByRole('button', { name: /watch/i }))
+    await waitFor(() => expect(hero.parentElement).toHaveStyle({ borderRadius: '50%' }))
+  })
+
   it('leaves a Windows icon square, because its corner is already in the pixels', async () => {
     render(<SizePreview platform="windows" />)
 
     const hero = await screen.findByAltText('Icon rendered at 256 pixels')
-    expect(hero.style.borderRadius).toBe('')
+    expect(hero.parentElement!.style.borderRadius).toBe('')
 
     await waitFor(() => expect(screen.queryByText(/stays square/i)).toBeNull())
   })
