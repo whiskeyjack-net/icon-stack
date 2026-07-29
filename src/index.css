@@ -1,13 +1,21 @@
-/* Design-system token + utility CSS from the package (default accent -- add a
-   `@import '@whiskeyjack-net/design-system/themes/<app>.css'` line to re-tint),
-   then the Tauri window-control chrome, then Tailwind. */
+/* Design-system tokens, then Icon Stack's accent override, then the shared
+   utilities, then the Tauri window-control chrome, then Tailwind. Order
+   matters: the theme must follow the base tokens to win. */
 @import '@whiskeyjack-net/design-system/css';
+@import '@whiskeyjack-net/design-system/themes/icon-stack.css';
 @import '@whiskeyjack-net/design-system/css/utilities';
 @import '@whiskeyjack-net/tauri/css/window-controls';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Content-column cap, matching Chip Away. Content is fluid up to this width
+     below the sidebar gate, fills the space between the panes once the sidebar
+     deploys, and re-caps when the right rail appears. */
+  --content-max: 1024px;
+}
 
 html, body, #root { height: 100%; }
 body { margin: 0; background: var(--color-background-light); }
