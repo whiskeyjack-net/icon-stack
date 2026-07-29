@@ -1,6 +1,12 @@
 {
-  "app": { "name": "Icon Stack" },
-  "nav": { "generator": "ジェネレーター", "settings": "設定", "menu": "メニュー" },
+  "app": {
+    "name": "Icon Stack"
+  },
+  "nav": {
+    "generator": "ジェネレーター",
+    "settings": "設定",
+    "menu": "メニュー"
+  },
   "generator": {
     "tagline": "ソース画像を 1 枚渡すと、アプリアイコン一式が出てきます。",
     "sourceTab": "ソース",
@@ -19,7 +25,10 @@
     "themeLight": "ライト",
     "themeDark": "ダーク",
     "themeSystem": "システム",
-    "language": "言語"
+    "language": "言語",
+    "about": "このアプリについて",
+    "version": "バージョン",
+    "aboutText": "Icon Stack は Web、macOS、iOS、Android、Windows、Linux 向けの製品版アプリアイコンを生成します。すべてブラウザー内で処理され、画像が端末から送信されることはありません。"
   },
   "background": {
     "transparent": "透明な背景",
@@ -35,7 +44,18 @@
   "preview": {
     "title": "プレビュー",
     "alt": "{{size}} ピクセルでレンダリングしたアイコン",
-    "none": "このプラットフォームにはラスターサイズがありません。"
+    "none": "このプラットフォームにはラスターサイズがありません。",
+    "from": "{{size}} から",
+    "variant": {
+      "regular": "通常",
+      "maskable": "マスカブル",
+      "light": "ライト",
+      "dark": "ダーク",
+      "mono": "モノクロ",
+      "unplated": "プレートなし",
+      "foreground": "前景",
+      "background": "背景"
+    }
   },
   "source": {
     "main": "ソース画像",

@@ -1,6 +1,12 @@
 {
-  "app": { "name": "Icon Stack" },
-  "nav": { "generator": "Generatore", "settings": "Impostazioni", "menu": "Menu" },
+  "app": {
+    "name": "Icon Stack"
+  },
+  "nav": {
+    "generator": "Generatore",
+    "settings": "Impostazioni",
+    "menu": "Menu"
+  },
   "generator": {
     "tagline": "Un'immagine di origine in ingresso, un set completo di icone in uscita.",
     "sourceTab": "Origine",
@@ -19,7 +25,10 @@
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
     "themeSystem": "Sistema",
-    "language": "Lingua"
+    "language": "Lingua",
+    "about": "Informazioni",
+    "version": "Versione",
+    "aboutText": "Icon Stack genera icone applicative pronte per la produzione per web, macOS, iOS, Android, Windows e Linux. Tutto avviene nel tuo browser: nessuna immagine lascia il tuo dispositivo."
   },
   "background": {
     "transparent": "Sfondo trasparente",
@@ -35,7 +44,18 @@
   "preview": {
     "title": "Anteprima",
     "alt": "Icona resa a {{size}} pixel",
-    "none": "Nessuna dimensione raster per questa piattaforma."
+    "none": "Nessuna dimensione raster per questa piattaforma.",
+    "from": "da {{size}}",
+    "variant": {
+      "regular": "Standard",
+      "maskable": "Mascherabile",
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "mono": "Monocromatica",
+      "unplated": "Senza piastra",
+      "foreground": "Primo piano",
+      "background": "Sfondo"
+    }
   },
   "source": {
     "main": "Immagine di origine",

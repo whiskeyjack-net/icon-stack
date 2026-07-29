@@ -1,6 +1,12 @@
 {
-  "app": { "name": "Icon Stack" },
-  "nav": { "generator": "生成器", "settings": "设置", "menu": "菜单" },
+  "app": {
+    "name": "Icon Stack"
+  },
+  "nav": {
+    "generator": "生成器",
+    "settings": "设置",
+    "menu": "菜单"
+  },
   "generator": {
     "tagline": "输入一张源图片，输出一整套应用图标。",
     "sourceTab": "来源",
@@ -19,7 +25,10 @@
     "themeLight": "浅色",
     "themeDark": "深色",
     "themeSystem": "跟随系统",
-    "language": "语言"
+    "language": "语言",
+    "about": "关于",
+    "version": "版本",
+    "aboutText": "Icon Stack 为 Web、macOS、iOS、Android、Windows 和 Linux 生成可直接用于生产的应用图标。全部在你的浏览器中完成，图片不会离开你的设备。"
   },
   "background": {
     "transparent": "透明背景",
@@ -35,7 +44,18 @@
   "preview": {
     "title": "预览",
     "alt": "以 {{size}} 像素渲染的图标",
-    "none": "此平台没有位图尺寸。"
+    "none": "此平台没有位图尺寸。",
+    "from": "来自 {{size}}",
+    "variant": {
+      "regular": "标准",
+      "maskable": "可遮罩",
+      "light": "浅色",
+      "dark": "深色",
+      "mono": "单色",
+      "unplated": "无底板",
+      "foreground": "前景",
+      "background": "背景"
+    }
   },
   "source": {
     "main": "源图片",

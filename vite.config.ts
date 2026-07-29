@@ -2,11 +2,17 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath, URL } from 'node:url'
+import { readFileSync } from 'node:fs'
+
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
 
 export default defineConfig({
   // Served from a subpath of whiskeyjack.net, so assets must be
   // prefixed. Without this every /assets/* request 404s.
   base: '/icon-stack/',
+  // Settings' About card reads this. Defined here rather than hardcoded in the
+  // component, which is how the retired version came to claim 1.0.0 forever.
+  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
     react(),
     VitePWA({
