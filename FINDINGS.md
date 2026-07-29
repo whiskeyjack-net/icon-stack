@@ -17,7 +17,7 @@ found to be wrong.
 
 **Round trip so far:** findings raised across four stages and fixed upstream in
 `design-system@0.6.0`–`0.8.0` and `create-whiskeyjack@0.3.1`, published, and
-consumed back here. One withdrawn as incorrect. Five open, one blocked on source art.
+consumed back here. One withdrawn as incorrect, one overstated and corrected. Four open.
 
 ---
 
@@ -431,49 +431,47 @@ config:
   and its next update check. It started as a way to avoid clobbering the rest of
   the site; it is now also the thing that makes worker updates safe.
 
-### OPEN – should `create-whiskeyjack` scaffold a PWA at all?
+### NOT A FINDING – the PWA's icons are complete; only the full-set dogfood needs a master
 
-Recommendation unchanged after doing it by hand: an opt-in `--pwa` flag, not a
-default. A service worker in a project that did not ask for one is worse than no
-service worker -- it caches aggressively, it is invisible until it misbehaves, and
-retiring one takes a tombstone, as this repo just demonstrated at length.
+Recorded here first as "blocked on source art", which **overstated it**. The PWA
+needs 192, 512 and both maskable variants, plus a favicon and an apple-touch-icon.
+All six exist at exactly the right sizes, apple-touch at the correct 180px, and
+every icon the manifest declares resolves. There is no gap.
 
-### BLOCKED – Icon Stack cannot generate its own icons: there is no source art
+What genuinely needs a >=1024px master is the *aspiration* of Icon Stack producing
+its own **full multi-platform set** as a dogfood -- and that set is irrelevant to
+this app, which is web-only and ships no Tauri build. `graphics/icon-stack/` holds
+outputs rather than a master (Chip Away keeps 1024 masters; this app never had
+one), so the dogfood would need new art. That is a nice-to-have, not a defect.
 
-The obvious dogfood is Icon Stack producing its own icon set. It cannot, and the
-reason is worth recording rather than leaving as a to-do.
+Left in place because a findings file that quietly rewrites its own overstatements
+is not one anybody should trust. The lesson is about the analysis rather than the
+code: "the exports are missing a source" and "the exports are insufficient" are
+different claims, and only the first was true.
 
-`graphics/icon-stack/` in the monorepo holds only **outputs**: a 180px
-apple-touch-icon, a 16px favicon, and 192/512 PWA pairs. No 1024px master, no
-SVG. The largest asset is 512×512, so regenerating the set from what exists would
-upscale into the 1024-class outputs, and the result would be measurably worse
-than what is already shipped. Chip Away, by contrast, keeps 1024×1024 masters
-(`icons/ios/AppIcon-1024x1024.png`, `icons/apple/AppIcon.icon/Assets/*.png`).
+### DECIDED – `create-whiskeyjack --pwa` verifies a directory of exported icons
 
-So the finding is not "nobody ran the tool" but **the monorepo's `graphics/`
-convention was never actually applied to this app** – the root CLAUDE.md
-describes `graphics/{app}/icons/` as holding "1024px PNGs, SVGs, .icon", and for
-Icon Stack it never did. Every other icon here descends from a lost original.
+Opt-in rather than default, because a service worker in a project that did not ask
+for one is worse than none: it caches aggressively, it is invisible until it
+misbehaves, and retiring one takes a tombstone, as this repo demonstrated at
+length.
 
-Unblocking it needs source art, not code. Once a ≥1024px master or an SVG exists,
-`npx @whiskeyjack-net/icon-stack generate` produces the whole set and the dogfood
-becomes real.
+When passed, it **points at already-exported icons** rather than producing them. Given a location, the CLI checks the required PWA sizes are present (192,
+512, and both maskable variants), copies them into `public/`, and wires the
+manifest; apple-touch-icon and favicon are checked too but optional. A missing or
+incomplete location fails with a message naming what was not found.
 
-### DECIDED – `create-whiskeyjack --pwa` must ask for icon files
+The CLI does no image processing and takes **no dependency on Icon Stack**, not
+even via `npx`. A scaffolder that rasterizes images is a scaffolder with an image
+pipeline to maintain, and coupling the starter kit to a separate tool to satisfy
+one optional flag is a bad trade. Icon Stack belongs in the error message and the
+docs as the recommended way to produce the set, which costs nothing and stays true
+if someone would rather use anything else.
 
-Settled while wiring the PWA here: the flag is **opt-in**, and when it is passed
-the CLI has to obtain icons rather than scaffold a manifest pointing at files
-that do not exist.
-
-That constraint follows directly from this repo's experience. A PWA manifest
-without real icons is not a smaller PWA, it is a broken one: install prompts fail,
-and the failure surfaces late and quietly. Shipping placeholders instead trains
-people to ignore them.
-
-So `--pwa` should prompt for a source image and generate the set from it – which
-is `@whiskeyjack-net/icon-stack` doing the job it exists for, composed into the
-scaffold. It also means a generated project inherits the master-art discipline the
-finding above shows this app never had.
+What the flag must not do is scaffold a manifest pointing at icons that do not
+exist. That is a broken PWA rather than a smaller one -- install prompts fail
+quietly and late -- and shipping placeholders instead just trains people to ignore
+them.
 
 ---
 
