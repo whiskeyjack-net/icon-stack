@@ -45,7 +45,8 @@
     "title": "预览",
     "alt": "以 {{size}} 像素渲染的图标",
     "none": "此平台没有位图尺寸。",
-    "from": "来自 {{size}}",
+    "shownAt": "以 {{size}} 像素显示",
+    "maskApplied": "{{platform}} 在显示时会把图标切成圆角，导出的文件仍是方形。",
     "variant": {
       "regular": "标准",
       "maskable": "可遮罩",

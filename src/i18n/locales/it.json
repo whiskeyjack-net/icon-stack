@@ -45,7 +45,8 @@
     "title": "Anteprima",
     "alt": "Icona resa a {{size}} pixel",
     "none": "Nessuna dimensione raster per questa piattaforma.",
-    "from": "da {{size}}",
+    "shownAt": "mostrata a {{size}} px",
+    "maskApplied": "{{platform}} arrotonda l'icona quando la mostra. Il file esportato resta quadrato.",
     "variant": {
       "regular": "Standard",
       "maskable": "Mascherabile",

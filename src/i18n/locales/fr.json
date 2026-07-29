@@ -45,7 +45,8 @@
     "title": "Aperçu",
     "alt": "Icône rendue à {{size}} pixels",
     "none": "Aucune taille raster pour cette plateforme.",
-    "from": "depuis {{size}}",
+    "shownAt": "affiché à {{size}} px",
+    "maskApplied": "{{platform}} arrondit l'icône lors de l'affichage. Le fichier exporté reste carré.",
     "variant": {
       "regular": "Standard",
       "maskable": "Masquable",

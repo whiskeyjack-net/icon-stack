@@ -12,7 +12,7 @@
  * `ic_launcher_background.png` -- a solid plate with no artwork on it.
  */
 import { describe, it, expect } from 'vitest'
-import { variantOf, groupByVariant, pickForSize, VARIANT_ORDER } from './icon-variants'
+import { variantOf, groupByVariant, sizesOf, VARIANT_ORDER } from './icon-variants'
 
 /** A minimal valid PNG header carrying a square size in its IHDR. */
 function fakePng(size: number): Uint8Array {
@@ -125,25 +125,13 @@ describe('groupByVariant', () => {
   })
 })
 
-describe('pickForSize', () => {
-  const icons = [
-    { name: 'a', bytes: fakePng(192), size: 192 },
-    { name: 'b', bytes: fakePng(512), size: 512 },
-  ]
-
-  it('downscales from the smallest render at or above the target', () => {
-    expect(pickForSize(icons, 16)?.size).toBe(192)
-    expect(pickForSize(icons, 192)?.size).toBe(192)
-    expect(pickForSize(icons, 256)?.size).toBe(512)
-  })
-
-  it('falls back to the largest when the variant tops out below the target', () => {
-    // Tray icons stop at 48, so a 128px preview slot has nothing above it.
-    const tray = [{ name: 't', bytes: fakePng(48), size: 48 }]
-    expect(pickForSize(tray, 128)?.size).toBe(48)
-  })
-
-  it('returns undefined for an empty variant', () => {
-    expect(pickForSize([], 32)).toBeUndefined()
+describe('sizesOf', () => {
+  it('reports the sizes a variant actually contains, ascending and deduplicated', () => {
+    const icons = [
+      { name: 'b', bytes: fakePng(512), size: 512 },
+      { name: 'a', bytes: fakePng(192), size: 192 },
+      { name: 'c', bytes: fakePng(192), size: 192 },
+    ]
+    expect(sizesOf(icons)).toEqual([192, 512])
   })
 })
