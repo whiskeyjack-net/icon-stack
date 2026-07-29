@@ -50,6 +50,20 @@
     "none": "No raster sizes for this platform.",
     "shownAt": "shown at {{size}}px",
     "maskApplied": "{{platform}} rounds the icon when it displays it. The exported file stays square.",
+    "appearance": {
+      "light": "Light",
+      "dark": "Dark",
+      "tinted": "Tinted"
+    },
+    "watch": "Watch",
+    "shuffleBackdrop": "Change the backdrop",
+    "note": {
+      "apple": "macOS composites the plate from icon.json; the exported layer is transparent artwork.",
+      "android": "The launcher stacks the layers and masks the result, so the shape varies by device.",
+      "pwa": "The maskable icon is cropped on install. Keep the mark inside the middle 80%.",
+      "windowsStore": "Tiles sit on the plate color from the manifest; the unplated icons are the taskbar.",
+      "trayIcon": "Menu bars render this at 16-22px, and macOS recolors template icons to match the bar."
+    },
     "variant": {
       "regular": "Regular",
       "maskable": "Maskable",

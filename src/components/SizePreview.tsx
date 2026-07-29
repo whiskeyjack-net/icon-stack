@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, Notice, ToggleGroup } from '@whiskeyjack-net/design-system'
-import { PLATFORM_LABELS, type Platform } from '@whiskeyjack-net/icon-stack-core'
+import { Button, Card, CardContent, Notice, ToggleGroup } from '@whiskeyjack-net/design-system'
+import { Shuffle, Watch } from '@phosphor-icons/react'
+import {
+  PLATFORM_LABELS,
+  fillToCss,
+  type BackgroundFill,
+  type Platform,
+} from '@whiskeyjack-net/icon-stack-core'
 import { useGenerator } from '@/contexts/GeneratorContext'
 import {
   LEGIBILITY_MAX,
@@ -11,6 +17,13 @@ import {
   type RenderedIcon,
 } from '@/lib/icon-variants'
 import { osMaskFor } from '@/lib/os-mask'
+import {
+  APPLE_APPEARANCES,
+  TINTED_PLATE,
+  appleLayerFor,
+  type AppleAppearance,
+} from '@/lib/apple-appearance'
+import { DEFAULT_BACKDROP, backdropStyle, randomBackdrop } from '@/lib/backdrop'
 
 /**
  * Widest the large preview is drawn. A 1024px render at 1:1 would be taller than
@@ -55,11 +68,14 @@ export interface SizePreviewProps {
  */
 export function SizePreview({ platform, title }: SizePreviewProps) {
   const { source, platforms, alternate, render } = useGenerator()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [variants, setVariants] = useState<Map<IconVariant, RenderedIcon[]>>(new Map())
   const [active, setActive] = useState<IconVariant | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  const [appearance, setAppearance] = useState<AppleAppearance>('light')
+  const [watch, setWatch] = useState(false)
+  const [backdrop, setBackdrop] = useState(DEFAULT_BACKDROP)
   const runRef = useRef(0)
 
   useEffect(() => {
@@ -88,7 +104,18 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
 
   // Hold the chosen variant across re-renders, but fall back when it disappears
   // -- switching a platform's monochrome layer off should not leave a blank card.
-  const shown = active && variants.has(active) ? active : (available[0] ?? null)
+  const picked = active && variants.has(active) ? active : (available[0] ?? null)
+
+  // Apple ships a transparent foreground and declares its plate in icon.json, so
+  // the appearance picker REPLACES the variant picker here: the exported layers
+  // are the appearances, and two controls would be two names for one choice.
+  const isApple = platform === 'apple'
+  const appleConfig = platforms.apple as unknown as {
+    bgFill: BackgroundFill
+    bgFillDark: BackgroundFill
+  }
+  const appleLayer = isApple ? appleLayerFor(appearance, available) : null
+  const shown = appleLayer?.variant ?? picked
 
   // Object URLs are derived from the bytes and revoked when they change, so a
   // long session does not leak every preview it made.
@@ -115,8 +142,18 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
   // Only worth a hero when it shows something the 1:1 row cannot. A favicon tops
   // out at 32 and a tray icon at 48, so for those the row already IS the icon.
   const hero = largest && largest.size > LEGIBILITY_MAX ? largest : null
+
   const mask = shown ? osMaskFor(platform, shown) : { radius: null }
-  const maskStyle = mask.radius ? { borderRadius: mask.radius } : undefined
+  // An Apple Watch icon is circular whatever the desktop does with the same file.
+  const radius = isApple && watch ? '50%' : mask.radius
+  const maskStyle = radius ? { borderRadius: radius } : undefined
+
+  // The plate the OS puts behind the artwork, which this export never bakes.
+  const applePlate = !isApple
+    ? null
+    : appearance === 'tinted'
+      ? TINTED_PLATE
+      : fillToCss(appearance === 'dark' ? appleConfig.bgFillDark : appleConfig.bgFill)
 
   return (
     <Card>
@@ -129,35 +166,96 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
           <Notice tone="error">{error}</Notice>
         ) : (
           <div className="space-y-4">
-            {/* Only worth showing when there is a choice: most platforms export
-                one variant, and a one-option segmented control is noise. */}
-            {available.length > 1 && (
-              <ToggleGroup
-                className="!grid-cols-2 sm:!grid-cols-4"
-                options={available.map((v) => ({ value: v, label: t(`preview.variant.${v}`) }))}
-                value={shown as IconVariant}
-                onChange={setActive}
-              />
+            {isApple ? (
+              <div className="space-y-3">
+                <ToggleGroup
+                  className="!grid-cols-3"
+                  options={APPLE_APPEARANCES.map((a) => ({
+                    value: a,
+                    label: t(`preview.appearance.${a}`),
+                  }))}
+                  value={appearance}
+                  onChange={setAppearance}
+                />
+                <Button
+                  variant={watch ? 'accent' : 'outline'}
+                  size="sm"
+                  aria-pressed={watch}
+                  onClick={() => setWatch(!watch)}
+                >
+                  <Watch size={16} weight={watch ? 'fill' : 'regular'} className="mr-1.5" />
+                  {t('preview.watch')}
+                </Button>
+              </div>
+            ) : (
+              /* Only worth showing when there is a choice: most platforms export
+                 one variant, and a one-option segmented control is noise. */
+              available.length > 1 && (
+                <ToggleGroup
+                  className="!grid-cols-2 sm:!grid-cols-4"
+                  options={available.map((v) => ({ value: v, label: t(`preview.variant.${v}`) }))}
+                  value={shown as IconVariant}
+                  onChange={setActive}
+                />
+              )
             )}
 
             <div className="space-y-5 transition-opacity" style={{ opacity: pending ? 0.5 : 1 }}>
               {hero && (
                 <figure className="flex flex-col items-center gap-2">
-                  <img
-                    src={hero.url}
-                    width={Math.min(hero.size, HERO_MAX)}
-                    height={Math.min(hero.size, HERO_MAX)}
-                    alt={t('preview.alt', { size: hero.size })}
-                    style={maskStyle}
-                    className="[image-rendering:auto]"
-                  />
-                  <figcaption className="text-xs tabular-nums text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                    {hero.size}px
-                    {hero.size > HERO_MAX && (
-                      <span className="ms-1 opacity-70">
-                        {t('preview.shownAt', { size: HERO_MAX })}
-                      </span>
-                    )}
+                  {/* An icon is judged against a wallpaper, never against a card:
+                      a pale plate or a white outer edge vanishes on a real
+                      desktop and looks fine here. Re-roll to check. */}
+                  <div
+                    className="flex w-full items-center justify-center rounded-xl p-6"
+                    style={backdropStyle(backdrop)}
+                  >
+                    <div
+                      style={{
+                        ...maskStyle,
+                        // Apple declares its plate rather than baking it, so the
+                        // preview supplies the one the OS would composite.
+                        ...(applePlate ? { background: applePlate } : null),
+                        width: Math.min(hero.size, HERO_MAX),
+                        height: Math.min(hero.size, HERO_MAX),
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <img
+                        src={hero.url}
+                        width={Math.min(hero.size, HERO_MAX)}
+                        height={Math.min(hero.size, HERO_MAX)}
+                        alt={t('preview.alt', { size: hero.size })}
+                        // Tinted mode renders the layer as a white silhouette,
+                        // which is what macOS does with the monochrome layer.
+                        style={
+                          appleLayer?.monochrome
+                            ? { filter: 'brightness(0) invert(1)' }
+                            : undefined
+                        }
+                        className="[image-rendering:auto]"
+                      />
+                    </div>
+                  </div>
+
+                  <figcaption className="flex items-center gap-2 text-xs tabular-nums text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+                    <span>
+                      {hero.size}px
+                      {hero.size > HERO_MAX && (
+                        <span className="ms-1 opacity-70">
+                          {t('preview.shownAt', { size: HERO_MAX })}
+                        </span>
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setBackdrop(randomBackdrop())}
+                      aria-label={t('preview.shuffleBackdrop')}
+                      title={t('preview.shuffleBackdrop')}
+                      className="wj-focus-ring rounded p-1 hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-text-primary-dark)]"
+                    >
+                      <Shuffle size={14} weight="bold" />
+                    </button>
                   </figcaption>
                 </figure>
               )}
@@ -191,6 +289,14 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
               {mask.radius && (
                 <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
                   {t('preview.maskApplied', { platform: PLATFORM_LABELS[platform] })}
+                </p>
+              )}
+
+              {/* What the OS does that the file cannot show. Only the platforms
+                  with something non-obvious to say carry one. */}
+              {i18n.exists(`preview.note.${platform}`) && (
+                <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+                  {t(`preview.note.${platform}`)}
                 </p>
               )}
             </div>

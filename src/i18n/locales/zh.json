@@ -50,6 +50,20 @@
     "none": "此平台没有位图尺寸。",
     "shownAt": "以 {{size}} 像素显示",
     "maskApplied": "{{platform}} 在显示时会把图标切成圆角，导出的文件仍是方形。",
+    "appearance": {
+      "light": "浅色",
+      "dark": "深色",
+      "tinted": "着色"
+    },
+    "watch": "Watch",
+    "shuffleBackdrop": "更换背景",
+    "note": {
+      "apple": "macOS 依据 icon.json 合成底板，导出的图层是透明图形。",
+      "android": "启动器会叠加图层并裁剪结果，因此形状因设备而异。",
+      "pwa": "可遮罩图标在安装时会被裁剪，请把图形保持在中间 80% 以内。",
+      "windowsStore": "磁贴使用清单里的底板颜色，无底板图标用于任务栏。",
+      "trayIcon": "菜单栏以 16-22 像素显示它，macOS 还会为模板图标重新着色。"
+    },
     "variant": {
       "regular": "标准",
       "maskable": "可遮罩",

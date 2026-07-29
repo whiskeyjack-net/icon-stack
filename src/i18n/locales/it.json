@@ -50,6 +50,20 @@
     "none": "Nessuna dimensione raster per questa piattaforma.",
     "shownAt": "mostrata a {{size}} px",
     "maskApplied": "{{platform}} arrotonda l'icona quando la mostra. Il file esportato resta quadrato.",
+    "appearance": {
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "tinted": "Tinta"
+    },
+    "watch": "Watch",
+    "shuffleBackdrop": "Cambia lo sfondo",
+    "note": {
+      "apple": "macOS compone la piastra da icon.json; il livello esportato è grafica trasparente.",
+      "android": "Il launcher impila i livelli e ritaglia il risultato, quindi la forma varia per dispositivo.",
+      "pwa": "L'icona maskable viene ritagliata all'installazione. Tieni il segno nell'80% centrale.",
+      "windowsStore": "Le piastrelle usano il colore del manifest; le icone senza piastra sono la barra applicazioni.",
+      "trayIcon": "Le barre dei menu la mostrano a 16-22px, e macOS ricolora le icone template."
+    },
     "variant": {
       "regular": "Standard",
       "maskable": "Mascherabile",

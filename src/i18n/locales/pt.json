@@ -50,6 +50,20 @@
     "none": "Sem tamanhos raster para esta plataforma.",
     "shownAt": "mostrado a {{size}} px",
     "maskApplied": "{{platform}} arredonda o ícone ao apresentá-lo. O ficheiro exportado permanece quadrado.",
+    "appearance": {
+      "light": "Claro",
+      "dark": "Escuro",
+      "tinted": "Tingido"
+    },
+    "watch": "Watch",
+    "shuffleBackdrop": "Mudar o fundo",
+    "note": {
+      "apple": "O macOS compõe a placa a partir do icon.json; a camada exportada é arte transparente.",
+      "android": "O lançador empilha as camadas e recorta o resultado, por isso a forma varia com o dispositivo.",
+      "pwa": "O ícone maskable é recortado na instalação. Mantém a marca dentro dos 80% centrais.",
+      "windowsStore": "Os mosaicos usam a cor de placa do manifesto; os ícones sem placa são a barra de tarefas.",
+      "trayIcon": "As barras de menu mostram-no a 16-22px, e o macOS recolore ícones de modelo."
+    },
     "variant": {
       "regular": "Padrão",
       "maskable": "Mascarável",

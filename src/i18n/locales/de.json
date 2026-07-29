@@ -50,6 +50,20 @@
     "none": "Keine Rastergrößen für diese Plattform.",
     "shownAt": "angezeigt mit {{size}} px",
     "maskApplied": "{{platform}} rundet das Icon bei der Anzeige ab. Die exportierte Datei bleibt quadratisch.",
+    "appearance": {
+      "light": "Hell",
+      "dark": "Dunkel",
+      "tinted": "Getönt"
+    },
+    "watch": "Watch",
+    "shuffleBackdrop": "Hintergrund wechseln",
+    "note": {
+      "apple": "macOS setzt die Platte aus icon.json zusammen; die exportierte Ebene ist transparente Grafik.",
+      "android": "Der Launcher stapelt die Ebenen und maskiert das Ergebnis, die Form hängt also vom Gerät ab.",
+      "pwa": "Das maskierbare Icon wird bei der Installation beschnitten. Halte die Marke in den mittleren 80%.",
+      "windowsStore": "Kacheln nutzen die Plattenfarbe aus dem Manifest; die ungeplatteten Icons sind die Taskleiste.",
+      "trayIcon": "Menüleisten zeigen es mit 16-22px, und macOS färbt Template-Icons passend um."
+    },
     "variant": {
       "regular": "Standard",
       "maskable": "Maskierbar",
