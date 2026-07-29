@@ -13,6 +13,7 @@
 export { generateIcons, type GenerateOptions } from './generate'
 export { buildZip, type ZipFile } from './zip-builder'
 export { encodeIco } from './ico-encoder'
+export { decodeIco, type DecodedIcoImage } from './ico-decoder'
 export { encodeIcns } from './icns-encoder'
 export * from './color-utils'
 export * from './platform-configs'

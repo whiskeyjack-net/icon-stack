@@ -8,13 +8,22 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { encodeIco } from '@whiskeyjack-net/icon-stack-core'
 import '@/i18n'
 
-/** A minimal valid PNG header carrying a square size in its IHDR. */
+/**
+ * A minimal valid PNG header carrying a square size in its IHDR.
+ *
+ * All four magic bytes, not just the first two: the ICO decoder identifies an
+ * embedded image by the full signature, so a half-stamped header decodes as "not
+ * a PNG" and the entry is skipped.
+ */
 function fakePng(size: number): Uint8Array {
   const b = new Uint8Array(24)
   b[0] = 0x89
   b[1] = 0x50
+  b[2] = 0x4e
+  b[3] = 0x47
   for (const offset of [16, 20]) {
     b[offset] = (size >> 24) & 0xff
     b[offset + 1] = (size >> 16) & 0xff
@@ -30,9 +39,16 @@ const files: Record<string, Record<string, Uint8Array>> = {
     'macos/icon_32x32.png': fakePng(32),
     'macos/icon_512x512@2x.png': fakePng(1024),
   },
+  // The real Windows export is ONE file: app.ico. The earlier fixture invented
+  // `windows/icon-32.png`, so the test passed against output the CLI has never
+  // produced -- and the platform's preview was empty in the app the whole time.
   windows: {
-    'windows/icon-32.png': fakePng(32),
-    'windows/icon-256.png': fakePng(256),
+    'windows/app.ico': encodeIco(
+      [16, 24, 32, 48, 64, 128, 256].map((size) => ({ size, pngData: fakePng(size) })),
+    ),
+  },
+  favicon: {
+    'favicon.ico': encodeIco([16, 32].map((size) => ({ size, pngData: fakePng(size) }))),
   },
   // The Apple export is a transparent foreground plus a declared plate, which
   // is why the preview composites rather than showing the file flat.
@@ -135,5 +151,30 @@ describe('SizePreview', () => {
     expect(hero.parentElement!.style.borderRadius).toBe('')
 
     await waitFor(() => expect(screen.queryByText(/stays square/i)).toBeNull())
+  })
+
+  it('opens the ICO the Windows export ships instead of showing nothing', async () => {
+    // `windows` emits app.ico and no PNG at all, so a preview that only read
+    // PNGs said "no raster sizes" about icons it had just generated.
+    render(<SizePreview platform="windows" />)
+
+    await screen.findByAltText('Icon rendered at 256 pixels')
+    for (const size of [16, 24, 32, 48, 64, 128]) {
+      expect(screen.getByAltText(`Icon rendered at ${size} pixels`)).toHaveAttribute(
+        'width',
+        String(size),
+      )
+    }
+    expect(screen.queryByText(/no raster sizes/i)).toBeNull()
+  })
+
+  it('opens favicon.ico too, and shows no hero because it tops out at 32', async () => {
+    render(<SizePreview platform="favicon" />)
+
+    const small = await screen.findByAltText('Icon rendered at 16 pixels')
+    expect(small).toHaveAttribute('width', '16')
+    expect(screen.getByAltText('Icon rendered at 32 pixels')).toHaveAttribute('width', '32')
+    // Both sizes are already below the legibility ceiling, so the row IS the icon.
+    expect(screen.queryByText(/shown at/i)).toBeNull()
   })
 })

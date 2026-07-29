@@ -17,6 +17,8 @@
  * so a platform that grows a variant in the core surfaces here without a change.
  */
 
+import { decodeIco } from '@whiskeyjack-net/icon-stack-core'
+
 export type IconVariant =
   | 'regular'
   | 'maskable'
@@ -82,12 +84,29 @@ export function pngSize(bytes: Uint8Array): number {
 export function groupByVariant(files: Record<string, Uint8Array>): Map<IconVariant, RenderedIcon[]> {
   const grouped = new Map<IconVariant, RenderedIcon[]>()
 
-  for (const [name, bytes] of Object.entries(files)) {
-    if (!name.toLowerCase().endsWith('.png')) continue
-    const size = pngSize(bytes)
-    if (size <= 0) continue
+  const add = (name: string, bytes: Uint8Array, size: number) => {
+    if (size <= 0) return
     const variant = variantOf(name)
     grouped.set(variant, [...(grouped.get(variant) ?? []), { name, bytes, size }])
+  }
+
+  for (const [name, bytes] of Object.entries(files)) {
+    const lower = name.toLowerCase()
+
+    // Two platforms export nothing else. `windows` ships only `app.ico` and
+    // `favicon` only `favicon.ico`, so skipping containers meant both showed
+    // "no raster sizes" -- a strange thing for an icon generator to say about
+    // icons it had just produced. Each embedded PNG is a real render at a real
+    // size, which is exactly what this preview wants.
+    if (lower.endsWith('.ico')) {
+      for (const image of decodeIco(bytes)) {
+        add(`${name}@${image.size}`, image.pngData, image.size)
+      }
+      continue
+    }
+
+    if (!lower.endsWith('.png')) continue
+    add(name, bytes, pngSize(bytes))
   }
 
   const ordered = new Map<IconVariant, RenderedIcon[]>()
