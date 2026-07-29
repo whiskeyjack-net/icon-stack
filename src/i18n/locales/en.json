@@ -69,7 +69,8 @@
     "remove": "Remove this image",
     "contain": "Contain",
     "cover": "Cover",
-    "alternateHint": "An alternate image lets dark, monochrome and taskbar variants use different artwork – a mark that reads on a light plate often does not read knocked out on a dark one."
+    "alternateHint": "An alternate image lets dark, monochrome and taskbar variants use different artwork – a mark that reads on a light plate often does not read knocked out on a dark one.",
+    "readFailed": "Could not read that file."
   },
   "platform": {
     "background": "Background",
@@ -111,7 +112,17 @@
       "unplated": "Unplated (taskbar)",
       "useMain": "Source",
       "useAlternate": "Alternate"
-    }
+    },
+    "faviconSource": "Dedicated favicon source",
+    "faviconSourceHint": "Favicons render at 16px in a browser tab. A simplified drawing survives that; a detailed one turns to mud.",
+    "traySource": "Dedicated tray icon source",
+    "traySourceHint": "Menu-bar and tray icons render at 16-22px, often monochrome. A simplified silhouette reads where full artwork does not.",
+    "svgDarkMode": "Dark-mode SVG favicon",
+    "svgDarkModeHint": "Embeds a prefers-color-scheme rule so the SVG favicon inverts in dark browser chrome.",
+    "maskableBackground": "Maskable background",
+    "unplatedBackground": "Taskbar icon background",
+    "dedicatedUsingMain": "Using the main source",
+    "dedicatedRemove": "Remove the {{label}}"
   },
   "actions": {
     "clear": "Clear sources",

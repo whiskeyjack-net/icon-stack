@@ -69,7 +69,8 @@
     "remove": "移除这张图片",
     "contain": "适应",
     "cover": "填充",
-    "alternateHint": "备用图片可以让深色、单色和任务栏变体使用另一套图形。在浅色底板上清晰的标志，反白放到深色底板上往往就看不清了。"
+    "alternateHint": "备用图片可以让深色、单色和任务栏变体使用另一套图形。在浅色底板上清晰的标志，反白放到深色底板上往往就看不清了。",
+    "readFailed": "无法读取该文件。"
   },
   "platform": {
     "background": "背景",
@@ -111,7 +112,17 @@
       "unplated": "无底板（任务栏）",
       "useMain": "来源",
       "useAlternate": "备用"
-    }
+    },
+    "faviconSource": "favicon 专用源图片",
+    "faviconSourceHint": "favicon 在浏览器标签页中以 16px 绘制。简化的图形还能看清，细节丰富的会糊成一团。",
+    "traySource": "托盘图标专用源图片",
+    "traySourceHint": "菜单栏和托盘图标以 16-22px 绘制，通常为单色。简化的剪影能看清，完整图形不行。",
+    "svgDarkMode": "深色模式 SVG favicon",
+    "svgDarkModeHint": "嵌入 prefers-color-scheme 规则，让 SVG favicon 在深色浏览器界面中反转。",
+    "maskableBackground": "可遮罩背景",
+    "unplatedBackground": "任务栏图标背景",
+    "dedicatedUsingMain": "正在使用主源图片",
+    "dedicatedRemove": "移除{{label}}"
   },
   "actions": {
     "clear": "清除来源",
