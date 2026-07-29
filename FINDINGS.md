@@ -17,7 +17,7 @@ found to be wrong.
 
 **Round trip so far:** findings raised across four stages and fixed upstream in
 `design-system@0.6.0`–`0.8.0` and `create-whiskeyjack@0.3.1`, published, and
-consumed back here. One withdrawn as incorrect, one overstated and corrected. Five open.
+consumed back here. One withdrawn as incorrect, one overstated and corrected. Four open.
 
 ---
 
@@ -431,13 +431,6 @@ config:
   and its next update check. It started as a way to avoid clobbering the rest of
   the site; it is now also the thing that makes worker updates safe.
 
-### OPEN – should `create-whiskeyjack` scaffold a PWA at all?
-
-Recommendation unchanged after doing it by hand: an opt-in `--pwa` flag, not a
-default. A service worker in a project that did not ask for one is worse than no
-service worker -- it caches aggressively, it is invisible until it misbehaves, and
-retiring one takes a tombstone, as this repo just demonstrated at length.
-
 ### NOT A FINDING – the PWA's icons are complete; only the full-set dogfood needs a master
 
 Recorded here first as "blocked on source art", which **overstated it**. The PWA
@@ -458,8 +451,12 @@ different claims, and only the first was true.
 
 ### DECIDED – `create-whiskeyjack --pwa` verifies a directory of exported icons
 
-Opt-in flag, and it **points at already-exported icons** rather than producing
-them. Given a location, the CLI checks the required PWA sizes are present (192,
+Opt-in rather than default, because a service worker in a project that did not ask
+for one is worse than none: it caches aggressively, it is invisible until it
+misbehaves, and retiring one takes a tombstone, as this repo demonstrated at
+length.
+
+When passed, it **points at already-exported icons** rather than producing them. Given a location, the CLI checks the required PWA sizes are present (192,
 512, and both maskable variants), copies them into `public/`, and wires the
 manifest; apple-touch-icon and favicon are checked too but optional. A missing or
 incomplete location fails with a message naming what was not found.
