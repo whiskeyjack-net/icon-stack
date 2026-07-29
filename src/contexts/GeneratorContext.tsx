@@ -48,6 +48,14 @@ interface GeneratorValue {
   selected: Platform
   sourceFit: ImageFit
   alternateFit: ImageFit
+  /**
+   * Fits for the DEDICATED favicon and tray sources. They live here rather than
+   * in the platform config because the core takes them as GenerateOptions
+   * fields, not config fields -- and each only applies when that platform
+   * carries its own image.
+   */
+  faviconFit: ImageFit
+  trayFit: ImageFit
   busy: boolean
   exporting: Platform | 'all' | null
   progress: number
@@ -76,6 +84,8 @@ interface GeneratorValue {
   triggerUpload: () => void
   setSelected: (platform: Platform) => void
   setFit: (slot: SourceSlot, fit: ImageFit) => void
+  setFaviconFit: (fit: ImageFit) => void
+  setTrayFit: (fit: ImageFit) => void
   patchPlatform: <K extends Platform>(platform: K, patch: Partial<PlatformConfigs[K]>) => void
   togglePlatform: (platform: Platform) => void
   /** Set the whole enabled set at once, for a multi-select control. */
@@ -102,6 +112,8 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
   const [selected, setSelected] = useState<Platform>('favicon')
   const [sourceFit, setSourceFit] = useState<ImageFit>('contain')
   const [alternateFit, setAlternateFit] = useState<ImageFit>('contain')
+  const [faviconFit, setFaviconFit] = useState<ImageFit>('contain')
+  const [trayFit, setTrayFit] = useState<ImageFit>('contain')
   const [busy, setBusy] = useState(false)
   const [exporting, setExporting] = useState<Platform | 'all' | null>(null)
   const [progress, setProgress] = useState(0)
@@ -208,12 +220,13 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
           : selectPlatforms(platforms, [which]),
       sourceFit,
       alternateFit,
-      // The dedicated favicon/tray sources carry their own images; when unset
-      // those platforms fall back to the main source, so its fit applies.
-      faviconFit: sourceFit,
-      trayFit: sourceFit,
+      // Each dedicated source has its own fit. With no dedicated image the core
+      // falls back to the main source, whose fit is `sourceFit` -- so passing
+      // these unconditionally is safe and only bites when they are in play.
+      faviconFit,
+      trayFit,
     }),
-    [source, alternate, platforms, sourceFit, alternateFit],
+    [source, alternate, platforms, sourceFit, alternateFit, faviconFit, trayFit],
   )
 
   const render = useCallback(
@@ -264,6 +277,8 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
       selected,
       sourceFit,
       alternateFit,
+      faviconFit,
+      trayFit,
       busy,
       exporting,
       progress,
@@ -277,6 +292,8 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
       triggerUpload,
       setSelected,
       setFit,
+      setFaviconFit,
+      setTrayFit,
       patchPlatform,
       togglePlatform,
       setEnabledPlatforms,
@@ -297,12 +314,16 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
       selected,
       sourceFit,
       alternateFit,
+      faviconFit,
+      trayFit,
       busy,
       exporting,
       progress,
       error,
       setSlot,
       setFit,
+      setFaviconFit,
+      setTrayFit,
       patchPlatform,
       togglePlatform,
       setEnabledPlatforms,

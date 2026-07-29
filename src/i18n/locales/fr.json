@@ -69,7 +69,8 @@
     "remove": "Retirer cette image",
     "contain": "Contenir",
     "cover": "Couvrir",
-    "alternateHint": "Une image alternative permet aux variantes sombres, monochromes et de barre des tâches d'utiliser un autre visuel – une marque lisible sur une plaque claire l'est souvent moins détourée sur une plaque sombre."
+    "alternateHint": "Une image alternative permet aux variantes sombres, monochromes et de barre des tâches d'utiliser un autre visuel – une marque lisible sur une plaque claire l'est souvent moins détourée sur une plaque sombre.",
+    "readFailed": "Impossible de lire ce fichier."
   },
   "platform": {
     "background": "Fond",
@@ -111,7 +112,17 @@
       "unplated": "Sans plaque (barre des tâches)",
       "useMain": "Source",
       "useAlternate": "Alternative"
-    }
+    },
+    "faviconSource": "Source dédiée pour le favicon",
+    "faviconSourceHint": "Les favicons sont dessinés à 16 px dans un onglet. Un dessin simplifié y survit ; un dessin détaillé devient illisible.",
+    "traySource": "Source dédiée pour l'icône de barre",
+    "traySourceHint": "Les icônes de barre de menus s'affichent à 16-22 px, souvent en monochrome. Une silhouette simplifiée reste lisible, un visuel complet non.",
+    "svgDarkMode": "Favicon SVG en mode sombre",
+    "svgDarkModeHint": "Intègre une règle prefers-color-scheme pour que le favicon SVG s'inverse dans un navigateur sombre.",
+    "maskableBackground": "Fond masquable",
+    "unplatedBackground": "Fond de l'icône de barre des tâches",
+    "dedicatedUsingMain": "Utilise la source principale",
+    "dedicatedRemove": "Retirer {{label}}"
   },
   "actions": {
     "clear": "Effacer les sources",

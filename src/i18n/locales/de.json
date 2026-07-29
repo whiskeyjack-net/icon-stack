@@ -69,7 +69,8 @@
     "remove": "Dieses Bild entfernen",
     "contain": "Einpassen",
     "cover": "Füllen",
-    "alternateHint": "Mit einem alternativen Bild können dunkle, monochrome und Taskleisten-Varianten eine andere Grafik verwenden – eine Marke, die auf heller Platte funktioniert, liest sich ausgestanzt auf dunkler oft nicht."
+    "alternateHint": "Mit einem alternativen Bild können dunkle, monochrome und Taskleisten-Varianten eine andere Grafik verwenden – eine Marke, die auf heller Platte funktioniert, liest sich ausgestanzt auf dunkler oft nicht.",
+    "readFailed": "Diese Datei konnte nicht gelesen werden."
   },
   "platform": {
     "background": "Hintergrund",
@@ -111,7 +112,17 @@
       "unplated": "Ohne Platte (Taskleiste)",
       "useMain": "Quelle",
       "useAlternate": "Alternative"
-    }
+    },
+    "faviconSource": "Eigene Favicon-Quelle",
+    "faviconSourceHint": "Favicons werden im Browser-Tab mit 16 px gezeichnet. Eine vereinfachte Zeichnung übersteht das; eine detaillierte verschwimmt.",
+    "traySource": "Eigene Quelle für das Menüleisten-Icon",
+    "traySourceHint": "Menüleisten- und Tray-Icons erscheinen mit 16-22 px, oft monochrom. Eine vereinfachte Silhouette bleibt lesbar, volle Grafik nicht.",
+    "svgDarkMode": "SVG-Favicon für den Dunkelmodus",
+    "svgDarkModeHint": "Bettet eine prefers-color-scheme-Regel ein, damit sich das SVG-Favicon in dunkler Browser-Oberfläche umkehrt.",
+    "maskableBackground": "Maskierbarer Hintergrund",
+    "unplatedBackground": "Hintergrund des Taskleisten-Icons",
+    "dedicatedUsingMain": "Nutzt die Hauptquelle",
+    "dedicatedRemove": "{{label}} entfernen"
   },
   "actions": {
     "clear": "Quellen löschen",

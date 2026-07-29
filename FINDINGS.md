@@ -485,6 +485,43 @@ and so read `trayTemplate-dark@2x.png` -- macOS's retina tray icon -- as regular
 putting the dark tray icon in the same bucket as the light one. The delimiter is
 now "not alphanumeric", which cannot be outrun by the next separator someone picks.
 
+### FIXED HERE – six core config fields had no control at all
+
+Diffing `createDefaultPlatforms()` against every string the settings UI mentions
+turned up six fields the core supported, the export honored, and **nothing could
+set**:
+
+| Field | Platform | What was unreachable |
+|---|---|---|
+| `faviconSource` | favicon | a simplified drawing for 16px browser tabs |
+| `traySource` | trayIcon | a simplified silhouette for 16-22px menu bars |
+| `svgDarkMode` | favicon | the `prefers-color-scheme` rule in the SVG favicon |
+| `maskableBgFill` | pwa | the plate that shows after the OS crops the maskable icon |
+| `unplatedBgFill` | windowsStore | the taskbar icon's baked background |
+| `unplatedTransparent` | windowsStore | whether it is baked at all |
+
+The two dedicated sources are the substantial ones: the core gives
+`FaviconConfig` and `TrayIconConfig` their own `SourceImage` field precisely
+because a mark that survives at 512px turns to mud at 16px. That capability
+shipped and stayed unreachable. Nothing failed, which is why it lasted.
+
+All six now have controls, and `PlatformSettings.test.ts` asserts that **every**
+config field is referenced by one -- so the next field added to the core cannot
+quietly go unexposed.
+
+**That test was vacuous on the first attempt, and only a mutation test showed
+it.** `UI.includes('faviconSource')` was satisfied by
+`t('platform.faviconSourceHint')`, and for `svgDarkMode` the translation key is
+spelled *identically* to the field, so the string alone passed. Two independent
+ways to pass for the wrong reason. Fixed with a word boundary plus a lookbehind
+excluding the `platform.` namespace, then re-verified by breaking each of the
+four fields in turn and confirming each one fails.
+
+The general lesson, and the reason this is filed rather than just fixed: a
+coverage test that greps for names will report success from the very translation
+strings you added alongside the feature. Assert the mutation fails before
+believing the assertion.
+
 ### FIXED HERE – a Vite `define` does not reach the test config
 
 Settings gained an About card showing the build version, injected via

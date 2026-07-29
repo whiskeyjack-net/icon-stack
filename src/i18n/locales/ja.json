@@ -69,7 +69,8 @@
     "remove": "この画像を削除",
     "contain": "収める",
     "cover": "覆う",
-    "alternateHint": "代替画像を使うと、ダーク・モノクロ・タスクバーのバリアントに別のアートワークを割り当てられます。明るいプレート上で読めるマークが、暗いプレートに白抜きすると読めなくなることはよくあります。"
+    "alternateHint": "代替画像を使うと、ダーク・モノクロ・タスクバーのバリアントに別のアートワークを割り当てられます。明るいプレート上で読めるマークが、暗いプレートに白抜きすると読めなくなることはよくあります。",
+    "readFailed": "そのファイルを読み込めませんでした。"
   },
   "platform": {
     "background": "背景",
@@ -111,7 +112,17 @@
       "unplated": "プレートなし（タスクバー）",
       "useMain": "ソース",
       "useAlternate": "代替"
-    }
+    },
+    "faviconSource": "favicon 専用のソース",
+    "faviconSourceHint": "favicon はブラウザーのタブで 16px で描かれます。簡略化した図案なら耐えますが、描き込んだものは潰れます。",
+    "traySource": "トレイアイコン専用のソース",
+    "traySourceHint": "メニューバーやトレイのアイコンは 16〜22px、多くはモノクロで描かれます。簡略化したシルエットなら読めますが、フルのアートワークでは読めません。",
+    "svgDarkMode": "ダークモード用 SVG favicon",
+    "svgDarkModeHint": "prefers-color-scheme ルールを埋め込み、暗いブラウザー UI で SVG favicon が反転するようにします。",
+    "maskableBackground": "マスカブルの背景",
+    "unplatedBackground": "タスクバーアイコンの背景",
+    "dedicatedUsingMain": "メインのソースを使用中",
+    "dedicatedRemove": "{{label}}を削除"
   },
   "actions": {
     "clear": "ソースをクリア",
