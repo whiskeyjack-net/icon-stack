@@ -15,9 +15,9 @@ shipped and consumed here · **FIXED HERE** handled locally, upstream change
 still wanted · **PASS** worked as advertised · **WITHDRAWN** recorded, then
 found to be wrong.
 
-**Round trip so far:** five findings raised, fixed upstream in
-`design-system@0.6.0` / `create-whiskeyjack@0.3.1`, published, and consumed back
-here. One withdrawn as incorrect. Two open.
+**Round trip so far:** findings raised across three stages and fixed upstream in
+`design-system@0.6.0`–`0.8.0` and `create-whiskeyjack@0.3.1`, published, and
+consumed back here. One withdrawn as incorrect. Four open.
 
 ---
 
@@ -258,8 +258,128 @@ field like Android's `useMonochrome` type-checks through the generic.
 
 ---
 
+## Stage C – layout parity with the monorepo build
+
+Stage C set this app's layout against the Chip Away original it was modelled on,
+across all four phases (narrow, regular, wide, extra-wide). The rebuild had
+shipped as a single centred column at every width, so almost everything below is
+about the side-by-side presentation.
+
+### RESOLVED – the three-pane layout was 250 lines copied between two apps
+
+Chip Away and the retired monorepo Icon Stack had grown near-identical
+sidebar/rail columns: same collapse-don't-unmount portal hosts, same hidden
+native scrollbar plus bounded `ScrollIndicator`, same `pt` clearing the floating
+header. The Icon Stack copy's own comments said "mirrors Chip Away's". Rebuilding
+it a third time here would have made three.
+
+**Extracted to `AppPanes` in design-system 0.7.0.** `sidebar` / `rail` take an
+`AppPaneConfig` (`filled`, optional `width`, `aria-label`), and pages read
+`useSidebarHost()` / `useRailHost()` and portal into them. Eight tests, the
+load-bearing one pinning that an unfilled pane **collapses to `w-0` rather than
+unmounting** -- unmounting produces a null host on exactly the render that
+needed it, which is the bug both hand-rolled copies had already been written to
+avoid without saying so.
+
+Icon Stack passes `width: 'w-[420px] 2xl:w-[460px]'` for the preview rail. That
+override existing is the reason the extraction works: the rail is genuinely
+wider here than Chip Away's nav rail, and a component that hard-coded one set of
+proportions would have been rejected by its second consumer.
+
+### RESOLVED – the layout gates existed only in CSS
+
+`wide` and `xlwide` are pointer- and orientation-aware, not width breakpoints:
+`(min-width: 768px) and (pointer: coarse) and (orientation: landscape),
+(min-width: 1024px) and (pointer: fine)`. They lived only inside
+`tailwind-preset.js`.
+
+Everything on this page decides layout in CSS, which is correct and free. One
+thing cannot: the live preview runs the **real** icon pipeline, so rendering it
+inline and in the rail with one hidden would regenerate every icon twice on
+every slider tick. It has to be mounted once, in one place or the other, which
+means reading the gate in JS.
+
+The obvious `matchMedia('(min-width: 1280px)')` is wrong, and wrong *quietly* --
+it disagrees with the CSS on a landscape tablet, portaling the preview into a
+rail that has not deployed. The retired monorepo app did exactly this.
+
+**Added `useLayoutGate` + `LAYOUT_GATES` in design-system 0.8.0.** The queries
+are declared twice by necessity -- Tailwind loads the preset as a config module
+with no TypeScript transform, and the published package ships no `src/` for it
+to read, while the hook ships as a self-contained registry item and so cannot
+import a package-root file. A test pins both declarations against the variants
+the preset actually registers, so the two cannot drift silently.
+
+Consumed here via a temporary local mirror (`src/hooks/use-layout-gate.ts`) with
+a note to delete it once 0.8.0 is on npm.
+
+### RESOLVED – no scaffolded project can type-check `import.meta.env`
+
+`create-whiskeyjack`'s template ships no `src/vite-env.d.ts`, so the first use of
+`import.meta.env.BASE_URL` fails with `Property 'env' does not exist on type
+'ImportMeta'`. Vite's own `create-vite` scaffold includes this file; ours dropped
+it. One line, and every generated project needs it.
+
+**Fixed in the template**, and added here.
+
+### FIXED HERE – the app's own test suite never ran
+
+`npm test` was `npm run test --workspaces --if-present`, which runs the two
+packages and skips the app, whose vitest config lives at the repo root. CI ran
+`npm test` and went green without ever executing `src/App.test.tsx`. Now
+`vitest run && npm run test --workspaces`.
+
+Worth recording as a shape rather than a typo: the app *had* tests, they *were*
+wired to a config, and nothing anywhere reported that they were not running. A
+"tests exist" check is not a "tests run" check.
+
+### FIXED HERE – an `en.json` rewrite dropped a whole block and every test passed
+
+Re-keying `home.*` to `generator.*` left English pointing at the old block while
+Spanish got the new one. All thirteen smoke tests stayed green: the only
+untranslated-key assertion was pointed at Settings, which was untouched.
+
+The check is now a shared helper applied to every page, matching every top-level
+namespace. A raw-key assertion is only worth what it covers.
+
+### OPEN – the multi-select tile grid is still hand-rolled in two apps
+
+`ToggleGroup` owns the single-select version of this exact recipe (bordered
+tile, accent fill when chosen, icon above or beside the label). It is a
+`radiogroup` by construction, so a multi-select grid cannot use it -- Icon
+Stack's platform selection hand-rolls the same classes, and Chip Away's mode and
+weekday pickers hand-roll the single-select version *next to* an existing DS
+component that does it.
+
+Three copies of one recipe across two apps is the extraction threshold. The
+shape is either a `multiple` variant of `ToggleGroup` (with `role="group"` +
+`aria-pressed` and no roving tabindex) or a sibling component sharing the tile.
+
+### OPEN – Icon Stack ships no service worker, and generates its own icons by hand
+
+The app had icon assets and a PWA in the monorepo and neither survived the
+rebuild: `public/` held only the tombstone service worker. Icons, a
+`manifest.webmanifest` and the head links are restored here, so it is installable
+again -- but there is no offline support, and `public/sw.js` must stay a
+tombstone until the old registrations have cleared.
+
+The upstream question is whether `create-whiskeyjack` should scaffold this at
+all. Recommendation stands: an opt-in `--pwa` flag, not a default -- a service
+worker in a project that does not want one is worse than no service worker.
+
+Second-order, and a little pointed: the icon set was copied from the monorepo's
+`graphics/`, not generated by the app it belongs to. Icon Stack generating its
+own icons is the obvious dogfood.
+
+---
+
 ## Deliberately not findings
 
 - **Publishing friction is the point.** A design-system change this app needs
   means publish → install before it can be used. That is what every external
   consumer already experiences; it is the signal being bought, not a defect.
+- **`AppPanes` not covering Chip Away's every inset.** Chip Away clears a 64px
+  header and Icon Stack a 56px one, so `railPaddingTop` differs (5.5rem vs
+  5.25rem) and each app aligns its own first card to it. Parameterising the
+  header height inside `AppPanes` would couple it to a header it does not
+  render.

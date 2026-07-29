@@ -3,22 +3,21 @@
     "name": "Icon Stack"
   },
   "nav": {
-    "home": "Home",
+    "generator": "Generator",
     "settings": "Settings",
     "menu": "Menu"
   },
-  "home": {
-    "title": "Icon Stack",
-    "subtitle": "One source image in, a complete app-icon set out.",
+  "generator": {
+    "tagline": "One source image in, a complete app-icon set out.",
+    "sourceTab": "Source",
+    "platforms": "Platforms",
+    "preview": "Preview",
+    "export": "Export",
+    "exportAll": "Export every selected platform",
+    "exportEmpty": "Select at least one platform to export.",
+    "downloadPlatform": "Download {{platform}} icons",
     "generating": "Generating",
-    "exportAll": "Export everything",
-    "exportAllAction": "Export all",
-    "platformsSelected": "{{count}} platform selected",
-    "platformsSelected_other": "{{count}} platforms selected",
-    "exportOne": "Export {{platform}} only",
-    "included": "Included",
-    "excluded": "Excluded",
-    "includePlatform": "Include this platform in the export"
+    "generatingProgress": "Generating icons, {{progress}}% done"
   },
   "settings": {
     "title": "Settings",
@@ -103,6 +102,13 @@
   "actions": {
     "clear": "Clear sources",
     "replace": "Replace source",
-    "export": "Export all icons"
+    "export": "Export all icons",
+    "upload": "Upload a source image"
+  },
+  "replace": {
+    "title": "Replace the source image?",
+    "body": "Every per-platform setting is tuned against the current image. Replacing it with {{fileName}} keeps your platform selection and resets nothing else, but the previews all re-render.",
+    "cancel": "Keep current",
+    "confirm": "Replace"
   }
 }

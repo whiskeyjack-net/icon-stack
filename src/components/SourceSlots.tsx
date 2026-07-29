@@ -11,7 +11,6 @@ import {
 } from '@whiskeyjack-net/design-system'
 import { UploadSimple, Image as ImageIcon, X, ArrowsOut, ArrowsIn } from '@phosphor-icons/react'
 import type { ImageFit } from '@whiskeyjack-net/icon-stack-core'
-import { processFile } from '@/lib/process-file'
 import { useGenerator, type SourceSlot } from '@/contexts/GeneratorContext'
 
 /**
@@ -47,22 +46,18 @@ export function SourceSlots() {
 
 function Slot({ slot }: { slot: SourceSlot }) {
   const { t } = useTranslation()
-  const { source, alternate, sourceFit, alternateFit, setSlot, setFit } = useGenerator()
+  const { source, alternate, sourceFit, alternateFit, setSlot, setFit, requestFile, triggerUpload } =
+    useGenerator()
   const input = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
   const image = slot === 'main' ? source : alternate
   const fit = slot === 'main' ? sourceFit : alternateFit
 
-  const accept = async (file: File | undefined) => {
-    if (!file) return
-    try {
-      const { source: next, warning } = await processFile(file)
-      setSlot(slot, next, warning)
-    } catch (err) {
-      setSlot(slot, null, err instanceof Error ? err.message : 'Could not read that file.')
-    }
-  }
+  // The main slot borrows the Layout's picker, so the toolbar's Replace and this
+  // card's Choose open the same input and go through the same replace
+  // confirmation. The alternate slot carries its own, since nothing else opens it.
+  const openPicker = () => (slot === 'main' ? triggerUpload() : input.current?.click())
 
   return (
     <Card>
@@ -78,14 +73,20 @@ function Slot({ slot }: { slot: SourceSlot }) {
           )}
         </div>
 
-        <input
-          ref={input}
-          type="file"
-          data-source-input={slot}
-          accept="image/png,image/svg+xml"
-          className="sr-only"
-          onChange={(e) => void accept(e.target.files?.[0])}
-        />
+        {slot === 'alternate' && (
+          <input
+            ref={input}
+            type="file"
+            accept="image/png,image/svg+xml,.svg"
+            className="sr-only"
+            aria-label={t('source.choose')}
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              e.target.value = ''
+              void requestFile(slot, file)
+            }}
+          />
+        )}
 
         {image ? (
           <div className="space-y-4">
@@ -136,7 +137,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
             onDrop={(e) => {
               e.preventDefault()
               setDragging(false)
-              void accept(e.dataTransfer.files[0])
+              void requestFile(slot, e.dataTransfer.files[0])
             }}
             className={cn(
               'rounded-2xl border-2 border-dashed transition-colors',
@@ -151,7 +152,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
               title={t(`source.${slot}Title`)}
               subtitle={t(`source.${slot}Subtitle`)}
               action={
-                <Button variant={slot === 'main' ? 'accent' : 'outline'} onClick={() => input.current?.click()}>
+                <Button variant={slot === 'main' ? 'accent' : 'outline'} onClick={openPicker}>
                   <UploadSimple size={16} weight="bold" className="mr-1.5" />
                   {t('source.choose')}
                 </Button>

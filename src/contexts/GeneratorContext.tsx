@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react'
 import {
   createDefaultPlatforms,
   generateIcons,
@@ -10,6 +19,7 @@ import {
   type SourceImage,
 } from '@whiskeyjack-net/icon-stack-core'
 import { unzipSync } from 'fflate'
+import { processFile } from '@/lib/process-file'
 
 /** Platforms exposed in the UI, in the order the tabs present them. */
 export const PLATFORMS: Platform[] = [
@@ -44,6 +54,26 @@ interface GeneratorValue {
   error: string | null
 
   setSlot: (slot: SourceSlot, source: SourceImage | null, warning?: string | null) => void
+  /**
+   * The single entry point for a picked or dropped File, whichever control
+   * produced it. Replacing an existing MAIN source parks the file and raises
+   * `replacePending` instead of applying it -- every per-platform setting is
+   * tuned against that image, so a mis-drop would silently invalidate the whole
+   * session's work.
+   */
+  requestFile: (slot: SourceSlot, file: File | undefined) => Promise<void>
+  /** The file waiting on a replace confirmation, or null. */
+  replacePending: File | null
+  confirmReplace: () => Promise<void>
+  cancelReplace: () => void
+  /**
+   * The one hidden file input for the MAIN source, owned by the Layout so the
+   * toolbar can reach it from any tab -- on a platform tab the source cards are
+   * not mounted, so an input living beside them would not exist to click.
+   */
+  fileInputRef: RefObject<HTMLInputElement>
+  /** Opens the main-source file picker. */
+  triggerUpload: () => void
   setSelected: (platform: Platform) => void
   setFit: (slot: SourceSlot, fit: ImageFit) => void
   patchPlatform: <K extends Platform>(platform: K, patch: Partial<PlatformConfigs[K]>) => void
@@ -74,6 +104,8 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
   const [exporting, setExporting] = useState<Platform | 'all' | null>(null)
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [replacePending, setReplacePending] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const setSlot = useCallback(
     (slot: SourceSlot, next: SourceImage | null, warning: string | null = null) => {
@@ -92,6 +124,43 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
     },
     [],
   )
+
+  const acceptFile = useCallback(
+    async (slot: SourceSlot, file: File) => {
+      try {
+        const { source: next, warning } = await processFile(file)
+        setSlot(slot, next, warning)
+      } catch (err) {
+        // A rejected file leaves the slot empty rather than half-set, and the
+        // reason rides in the slot's own warning so it appears beside the card
+        // that failed.
+        setSlot(slot, null, err instanceof Error ? err.message : 'Could not read that file.')
+      }
+    },
+    [setSlot],
+  )
+
+  const requestFile = useCallback(
+    async (slot: SourceSlot, file: File | undefined) => {
+      if (!file) return
+      if (slot === 'main' && source) {
+        setReplacePending(file)
+        return
+      }
+      await acceptFile(slot, file)
+    },
+    [source, acceptFile],
+  )
+
+  const confirmReplace = useCallback(async () => {
+    const file = replacePending
+    setReplacePending(null)
+    if (file) await acceptFile('main', file)
+  }, [replacePending, acceptFile])
+
+  const cancelReplace = useCallback(() => setReplacePending(null), [])
+
+  const triggerUpload = useCallback(() => fileInputRef.current?.click(), [])
 
   const setFit = useCallback((slot: SourceSlot, fit: ImageFit) => {
     ;(slot === 'main' ? setSourceFit : setAlternateFit)(fit)
@@ -182,6 +251,12 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
       progress,
       error,
       setSlot,
+      requestFile,
+      replacePending,
+      confirmReplace,
+      cancelReplace,
+      fileInputRef,
+      triggerUpload,
       setSelected,
       setFit,
       patchPlatform,
@@ -190,6 +265,11 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
       render,
     }),
     [
+      requestFile,
+      replacePending,
+      confirmReplace,
+      cancelReplace,
+      triggerUpload,
       source,
       alternate,
       sourceWarning,

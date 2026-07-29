@@ -17,7 +17,7 @@ import { useGenerator } from '@/contexts/GeneratorContext'
  */
 export function GeneratorActions({ size }: { size: 'desktop' | 'mobile' }) {
   const { t } = useTranslation()
-  const { source, platforms, busy, generate, setSlot } = useGenerator()
+  const { source, platforms, busy, generate, setSlot, triggerUpload } = useGenerator()
 
   const hasSource = Boolean(source)
   const enabledCount = Object.values(platforms).filter((p) => p.enabled).length
@@ -36,8 +36,8 @@ export function GeneratorActions({ size }: { size: 'desktop' | 'mobile' }) {
       />
       <ActionPillStaticButton
         icon={<UploadSimple size={size === 'mobile' ? 22 : 18} weight="bold" />}
-        label={t('actions.replace')}
-        onClick={() => document.querySelector<HTMLInputElement>('[data-source-input="main"]')?.click()}
+        label={hasSource ? t('actions.replace') : t('actions.upload')}
+        onClick={triggerUpload}
       />
       <ActionPillStaticButton
         icon={<DownloadSimple size={size === 'mobile' ? 22 : 18} weight="bold" />}
