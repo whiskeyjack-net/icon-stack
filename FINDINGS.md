@@ -11,13 +11,25 @@ This file is the point of the exercise. Every entry is something a real external
 consumer hits.
 
 Status legend: **OPEN** needs a change upstream · **RESOLVED** upstream fix
-shipped and consumed here · **FIXED HERE** handled locally, upstream change
-still wanted · **PASS** worked as advertised · **WITHDRAWN** recorded, then
-found to be wrong.
+shipped and consumed here · **FOUND AND FIXED UPSTREAM** raised and fixed in the
+same cycle · **SHIPPED** a decision recorded here, then built · **FIXED HERE**
+handled locally, with any upstream ask stated in the entry and its status kept
+current there · **PASS** worked as advertised ·
+**WITHDRAWN** recorded, then found to be wrong · **NOT A FINDING** recorded,
+then found to be overstated.
 
 **Round trip so far:** findings raised across five stages and fixed upstream in
-`design-system@0.6.0`–`0.8.0` and `create-whiskeyjack@0.3.1`, published, and
-consumed back here. One withdrawn as incorrect, one overstated and corrected. Three open.
+`design-system@0.6.0`–`0.9.0` and `create-whiskeyjack@0.3.1`–`0.4.0`, published,
+and consumed back here. One withdrawn as incorrect, one overstated and corrected.
+One open.
+
+Two entries sat marked OPEN after their fix had already shipped, and an audit on
+2026-07-29 caught it. Both went out in `design-system@0.8.0` alongside the
+`useLayoutGate` work this app asked for, without a changeset naming them, so the
+release that resolved them never announced it. Worth stating as its own lesson:
+a findings file is only as good as its last audit, and "fixed upstream" and
+"recorded as fixed" are two separate events. The status column is now verified
+against the published artifacts rather than against memory of asking.
 
 ---
 
@@ -142,9 +154,13 @@ Recorded here initially and **it was wrong**. Checked against the actual
 tarballs: `@whiskeyjack-net/design-system`, `i18n` and `tauri` all ship
 `package/LICENSE`, and all four stage scripts copy it.
 
-What genuinely lacked a LICENSE were `icon-stack-core` and `icon-stack-cli` --
-packages created during the extraction and never published. That was an
-omission in new work, not a gap in the published set. Both carry one here.
+What genuinely lacked a LICENSE were this repo's own two packages, created
+during the extraction and unpublished at the time. That was an omission in new
+work rather than a gap in the published set. Both carry one here.
+
+Both have since published at `0.1.1`, as `@whiskeyjack-net/icon-stack` (the CLI,
+in `packages/cli`) and `@whiskeyjack-net/icon-stack-core`. The names matter now
+that `create-whiskeyjack --pwa` names the first one in its error message.
 
 Left in place rather than deleted, because a findings file that quietly drops
 its mistakes is not one anybody should trust.
@@ -174,22 +190,29 @@ the rules the reference implementation is held to cannot drift.
 
 `generateIcons` returns `Uint8Array`, and `new Blob([zip])` errors with
 `SharedArrayBuffer is not assignable to ArrayBuffer` because `Uint8Array` is now
-generic over its backing buffer. Cast at the call site for now.
+generic over its backing buffer. Cast at the call site.
 
-**Upstream fix:** worth a note in the core's README, since every browser consumer
-downloading the result hits it.
+**The upstream note is done.** `packages/core/README.md` carries the working
+snippet and the reason, since every browser consumer downloading the result hits
+it.
 
 ---
 
-### OPEN – `./package.json` is not in the design system's `exports` map
+### RESOLVED – `./package.json` is not in the design system's `exports` map
 
-`require('@whiskeyjack-net/design-system/package.json')` throws
+`require('@whiskeyjack-net/design-system/package.json')` threw
 `ERR_PACKAGE_PATH_NOT_EXPORTED`. Reading a dependency's manifest is routine –
 version checks, build tooling, bundler plugins – and an `exports` map silently
 forbids it unless the path is listed.
 
-**Upstream fix:** add `"./package.json": "./package.json"` to the exports map.
-Done in `icon-stack-core` already; costs nothing and removes a papercut.
+**Fixed in design-system 0.8.0.** `scripts/stage-package.mjs` writes
+`"./package.json": "./package.json"` into the published manifest, carrying a
+comment naming this finding. The workspace manifest still omits it, which is
+correct: the staged `dist-package/` is what publishes, and that is where a
+consumer-facing exports map belongs.
+
+Verified in the published artifacts rather than the workspace – present in the
+`0.8.0` manifest on npm, and `require`-able from the `0.9.0` installed here.
 
 ### OPEN – a caret on a `0.x` version pins the MINOR, and three places depend on it
 
@@ -204,10 +227,27 @@ which also means nothing bumps these when the range genuinely does go out of
 date. There are now **three** such places: tauri's `WJ_PUBLIC_PEERS`, the starter
 template's deps, and this repo's.
 
-**Upstream fix:** a release-time check that every declared Whiskeyjack range
-still admits the version about to ship. Both instances were fixed by hand in
-`tauri@0.3.2` / `create-whiskeyjack@0.3.1`, which is exactly the manual step
-worth automating before 0.7.0.
+**Partly addressed, and still open where it counts.** Two things shipped
+upstream: `verify-published.yml`, which scaffolds from the published CLI and
+asserts a new project installs the newest release, and a runbook item in the
+design system's `CLAUDE.md` naming all three places to re-check on a minor bump.
+
+Neither closes it, for two reasons.
+
+The workflow runs **after** publishing – dispatch plus a weekly cron – so it
+reports a range that already shipped stale. And it structurally cannot catch the
+**floor** case: npm resolves the newest version matching a range, so a template
+pinning `^0.3.4` installs `0.3.5` and passes, while a consumer who resolves to
+`0.3.4` gets a package whose own peer is `^0.8.0` and warns against the `0.9.0`
+the same install pulls in. The `0.9.0` release fixed that floor by hand.
+
+The evidence it is still open is the release itself. `0.9.0` is the **third
+minor in a row** where updating these ranges was the step a human had to
+remember, and its commit message says so.
+
+**Upstream fix, unchanged:** a check that runs *before* publishing and fails when
+any declared Whiskeyjack range excludes the version about to ship, or admits one
+whose own peers the release breaks.
 
 ---
 
@@ -236,17 +276,23 @@ next prop. `ColorInput`, `Toggle` and `DrawerAction` were all affected.
 was noticed within minutes of use, where a *missing* one had gone unremarked
 since the package first shipped.
 
-### OPEN – a Slider's essential props are invisible in its table
+### RESOLVED – a Slider's essential props are invisible in its table
 
-`min`, `max` and `step` do not appear in `docs/slider.md`, because `SliderProps`
+`min`, `max` and `step` did not appear in `docs/slider.md`, because `SliderProps`
 extends `React.InputHTMLAttributes` and they arrive through inheritance. The
-table lists only `label`, `value`, `onChange`, `formatValue` -- everything that
-makes a slider a *range* is left to a footnote saying HTML attributes are
+table listed only `label`, `value`, `onChange`, `formatValue` -- everything that
+makes a slider a *range* was left to a footnote saying HTML attributes are
 extended.
 
-Harmless once you know; puzzling if you do not. Worth either surfacing the
-handful of inherited props that are genuinely part of a component's API, or
-naming them in the `docs` prose.
+**Fixed in design-system 0.8.0**, by the second of the two routes suggested:
+the component's `docs` prose in `components.manifest.json` now names the three
+outright and says where they come from. The generator still emits tables from
+declared members only.
+
+That is the cheaper fix and the better one here. Teaching the generator to walk
+`React.InputHTMLAttributes` would flood every table with ~250 DOM attributes to
+surface three, and which inherited props are "genuinely part of the API" is a
+judgement per component rather than a rule a generator can apply.
 
 ### RESOLVED – writing to `PlatformConfigs[key]` requires the intersection of every config
 
@@ -534,10 +580,19 @@ it in one made every component reading it throw `ReferenceError` in the other.
 Five tests failed at once, which is the good outcome; a `define` used somewhere
 untested would have shipped.
 
-Worth flagging upstream as a starter-template note: any project that adds a
-`define` has to add it twice.
+**Still wanted upstream, and not yet written:** the starter template's README
+covers converting to workspaces and the raw-TypeScript export trap, and says
+nothing about `define`. Any project that adds one has to add it twice. Checked
+against `create-whiskeyjack@0.4.0`.
 
-### DECIDED – `create-whiskeyjack --pwa` verifies a directory of exported icons
+### SHIPPED – `create-whiskeyjack --pwa` verifies a directory of exported icons
+
+**Landed in `create-whiskeyjack@0.4.0`** as `bin/pwa.mjs`, built to the shape
+decided below. Two details the implementation added: it matches an export by
+size rather than by exact filename, so `icon-192.png`, `pwa-192x192.png` and
+`android-chrome-192x192.png` all satisfy the same slot; and `maskable` is read
+from the whole relative path rather than the basename, so an export that sorts
+its maskable icons into a folder still resolves.
 
 Opt-in rather than default, because a service worker in a project that did not ask
 for one is worse than none: it caches aggressively, it is invisible until it

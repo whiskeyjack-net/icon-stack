@@ -36,7 +36,7 @@ npm install
 npm run dev        # web app
 npm run lint
 npm run build
-npm test           # both packages
+npm test           # the app, then both packages
 ```
 
 Regenerate test artwork with `node fixtures/build.mjs` after editing
