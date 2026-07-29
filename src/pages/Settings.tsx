@@ -3,7 +3,18 @@ import { Card, CardContent, ToggleGroup, Select, useTheme } from '@whiskeyjack-n
 import { Sun, Moon, Desktop } from '@phosphor-icons/react'
 import { activeLanguage, SUPPORTED_LANGUAGES } from '@/i18n'
 
-const LANGUAGE_LABELS: Record<string, string> = { en: 'English', es: 'Español' }
+// Endonyms: a language picker is read by someone who does not yet have the app
+// in a language they read, so each option names itself.
+const LANGUAGE_LABELS: Record<string, string> = {
+  de: 'Deutsch',
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
+  it: 'Italiano',
+  ja: '日本語',
+  pt: 'Português',
+  zh: '中文',
+}
 
 export function Settings() {
   const { t, i18n } = useTranslation()

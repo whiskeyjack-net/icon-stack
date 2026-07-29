@@ -1,0 +1,108 @@
+{
+  "app": { "name": "Icon Stack" },
+  "nav": { "generator": "生成器", "settings": "设置", "menu": "菜单" },
+  "generator": {
+    "tagline": "输入一张源图片，输出一整套应用图标。",
+    "sourceTab": "来源",
+    "platforms": "平台",
+    "preview": "预览",
+    "export": "导出",
+    "exportAll": "导出所有已选平台",
+    "exportEmpty": "请至少选择一个要导出的平台。",
+    "downloadPlatform": "下载 {{platform}} 图标",
+    "generating": "正在生成",
+    "generatingProgress": "正在生成图标，已完成 {{progress}}%"
+  },
+  "settings": {
+    "title": "设置",
+    "theme": "主题",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeSystem": "跟随系统",
+    "language": "语言"
+  },
+  "background": {
+    "transparent": "透明背景",
+    "transparentHint": "导出时不在图形后面加底板。",
+    "solid": "纯色",
+    "gradient": "渐变",
+    "preset": "预设颜色 {{color}}",
+    "custom": "自定义颜色",
+    "gradientTop": "渐变顶部颜色",
+    "autoTop": "顶部色标自动推导",
+    "customTop": "自定义顶部色标"
+  },
+  "preview": {
+    "title": "预览",
+    "alt": "以 {{size}} 像素渲染的图标",
+    "none": "此平台没有位图尺寸。"
+  },
+  "source": {
+    "main": "源图片",
+    "alternate": "备用图片",
+    "optional": "可选",
+    "mainTitle": "拖入一张源图片",
+    "mainSubtitle": "PNG 或 SVG，1024x1024 的正方形效果最好。",
+    "alternateTitle": "添加备用图片",
+    "alternateSubtitle": "用于深色、单色和任务栏变体。",
+    "choose": "选择文件",
+    "remove": "移除这张图片",
+    "contain": "适应",
+    "cover": "填充",
+    "alternateHint": "备用图片可以让深色、单色和任务栏变体使用另一套图形。在浅色底板上清晰的标志，反白放到深色底板上往往就看不清了。"
+  },
+  "platform": {
+    "background": "背景",
+    "artwork": "图形",
+    "zoom": "缩放",
+    "cornerRadius": "圆角半径",
+    "cornerSmoothing": "圆角平滑度",
+    "square": "直角",
+    "circular": "圆形",
+    "notes": {
+      "favicon": "浏览器会把它缩到 16px，标志要尽量简单。",
+      "pwa": "可遮罩变体会为 Android 增加安全区留白。",
+      "windowsStore": "商店磁贴保持透明；底板颜色写在 MSIX 清单里。",
+      "trayIcon": "在 macOS 上，菜单栏图标是模板图片。"
+    },
+    "artworkSource": "图形来源",
+    "backgroundDark": "深色背景",
+    "appleIcon": "Apple .icon",
+    "appleIconHint": ".icon 格式会叠加浅色、深色和单色三层渲染，玻璃与阴影由系统添加。",
+    "glass": "玻璃效果",
+    "glassHint": "添加 Apple 为分层图标加上的高光。",
+    "shadowOpacity": "阴影不透明度",
+    "none": "无",
+    "translucency": "半透明",
+    "translucencyHint": "让下面的图层透出来。",
+    "translucencyAmount": "半透明程度",
+    "maskableZoom": "可遮罩缩放",
+    "unplatedZoom": "无底板缩放",
+    "monochrome": "单色图层",
+    "monochromeHint": "Android 13 及以上的主题图标使用单色剪影。",
+    "includeSvg": "包含 SVG favicon",
+    "includeSvgHint": "现代浏览器更倾向于它；缩放时无需经过位图。",
+    "source": {
+      "main": "主图形",
+      "light": "浅色变体",
+      "dark": "深色变体",
+      "mono": "单色",
+      "maskable": "可遮罩",
+      "unplated": "无底板（任务栏）",
+      "useMain": "来源",
+      "useAlternate": "备用"
+    }
+  },
+  "actions": {
+    "clear": "清除来源",
+    "replace": "替换来源",
+    "upload": "上传源图片",
+    "export": "导出所有图标"
+  },
+  "replace": {
+    "title": "替换源图片？",
+    "body": "每个平台的设置都是针对当前图片调好的。换成 {{fileName}} 会保留你选择的平台，也不会重置其他设置，但所有预览都会重新生成。",
+    "cancel": "保留当前",
+    "confirm": "替换"
+  }
+}

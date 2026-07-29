@@ -1,0 +1,108 @@
+{
+  "app": { "name": "Icon Stack" },
+  "nav": { "generator": "Generator", "settings": "Einstellungen", "menu": "Menü" },
+  "generator": {
+    "tagline": "Ein Quellbild rein, ein vollständiger App-Icon-Satz raus.",
+    "sourceTab": "Quelle",
+    "platforms": "Plattformen",
+    "preview": "Vorschau",
+    "export": "Exportieren",
+    "exportAll": "Alle ausgewählten Plattformen exportieren",
+    "exportEmpty": "Wähle mindestens eine Plattform zum Exportieren aus.",
+    "downloadPlatform": "{{platform}}-Icons herunterladen",
+    "generating": "Wird erstellt",
+    "generatingProgress": "Icons werden erstellt, {{progress}} % fertig"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "theme": "Design",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "themeSystem": "System",
+    "language": "Sprache"
+  },
+  "background": {
+    "transparent": "Transparenter Hintergrund",
+    "transparentHint": "Ohne Platte hinter der Grafik exportieren.",
+    "solid": "Einfarbig",
+    "gradient": "Verlauf",
+    "preset": "Vorgabefarbe {{color}}",
+    "custom": "Eigene Farbe",
+    "gradientTop": "Obere Verlaufsfarbe",
+    "autoTop": "Oberer Stopp automatisch abgeleitet",
+    "customTop": "Eigener oberer Stopp"
+  },
+  "preview": {
+    "title": "Vorschau",
+    "alt": "Icon in {{size}} Pixeln gerendert",
+    "none": "Keine Rastergrößen für diese Plattform."
+  },
+  "source": {
+    "main": "Quellbild",
+    "alternate": "Alternatives Bild",
+    "optional": "optional",
+    "mainTitle": "Quellbild hier ablegen",
+    "mainSubtitle": "PNG oder SVG, quadratisch mit 1024x1024 funktioniert am besten.",
+    "alternateTitle": "Alternative hinzufügen",
+    "alternateSubtitle": "Für dunkle, monochrome und Taskleisten-Varianten.",
+    "choose": "Datei auswählen",
+    "remove": "Dieses Bild entfernen",
+    "contain": "Einpassen",
+    "cover": "Füllen",
+    "alternateHint": "Mit einem alternativen Bild können dunkle, monochrome und Taskleisten-Varianten eine andere Grafik verwenden – eine Marke, die auf heller Platte funktioniert, liest sich ausgestanzt auf dunkler oft nicht."
+  },
+  "platform": {
+    "background": "Hintergrund",
+    "artwork": "Grafik",
+    "zoom": "Zoom",
+    "cornerRadius": "Eckenradius",
+    "cornerSmoothing": "Eckenglättung",
+    "square": "Eckig",
+    "circular": "Rund",
+    "notes": {
+      "favicon": "Browser skalieren das auf 16 px – halte die Marke einfach.",
+      "pwa": "Maskierbare Varianten fügen für Android einen Sicherheitsrand hinzu.",
+      "windowsStore": "Store-Kacheln bleiben transparent; die Plattenfarbe steht im MSIX-Manifest.",
+      "trayIcon": "Menüleisten-Icons sind unter macOS Template-Bilder."
+    },
+    "artworkSource": "Grafikquelle",
+    "backgroundDark": "Dunkler Hintergrund",
+    "appleIcon": "Apple .icon",
+    "appleIconHint": "Das .icon-Format legt helle, dunkle und monochrome Renderings übereinander, Glas und Schatten kommen vom System.",
+    "glass": "Glaseffekt",
+    "glassHint": "Fügt das Glanzlicht hinzu, das Apple auf geschichtete Icons legt.",
+    "shadowOpacity": "Schattendeckkraft",
+    "none": "Keine",
+    "translucency": "Transluzenz",
+    "translucencyHint": "Lässt die darunterliegende Ebene durchscheinen.",
+    "translucencyAmount": "Stärke der Transluzenz",
+    "maskableZoom": "Maskierbarer Zoom",
+    "unplatedZoom": "Zoom ohne Platte",
+    "monochrome": "Monochrome Ebene",
+    "monochromeHint": "Themenbezogene Icons ab Android 13 nutzen eine einfarbige Silhouette.",
+    "includeSvg": "SVG-Favicon einschließen",
+    "includeSvgHint": "Moderne Browser bevorzugen es; es skaliert ohne Rasterschritt.",
+    "source": {
+      "main": "Hauptgrafik",
+      "light": "Helle Variante",
+      "dark": "Dunkle Variante",
+      "mono": "Monochrom",
+      "maskable": "Maskierbar",
+      "unplated": "Ohne Platte (Taskleiste)",
+      "useMain": "Quelle",
+      "useAlternate": "Alternative"
+    }
+  },
+  "actions": {
+    "clear": "Quellen löschen",
+    "replace": "Quelle ersetzen",
+    "upload": "Quellbild hochladen",
+    "export": "Alle Icons exportieren"
+  },
+  "replace": {
+    "title": "Quellbild ersetzen?",
+    "body": "Jede plattformspezifische Einstellung ist auf das aktuelle Bild abgestimmt. Ein Ersetzen durch {{fileName}} behält deine Plattformauswahl und setzt nichts weiter zurück, aber alle Vorschauen werden neu erstellt.",
+    "cancel": "Aktuelles behalten",
+    "confirm": "Ersetzen"
+  }
+}

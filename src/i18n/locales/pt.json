@@ -1,0 +1,108 @@
+{
+  "app": { "name": "Icon Stack" },
+  "nav": { "generator": "Gerador", "settings": "Definições", "menu": "Menu" },
+  "generator": {
+    "tagline": "Uma imagem de origem à entrada, um conjunto completo de ícones à saída.",
+    "sourceTab": "Origem",
+    "platforms": "Plataformas",
+    "preview": "Pré-visualização",
+    "export": "Exportar",
+    "exportAll": "Exportar todas as plataformas selecionadas",
+    "exportEmpty": "Seleciona pelo menos uma plataforma para exportar.",
+    "downloadPlatform": "Baixar ícones de {{platform}}",
+    "generating": "A gerar",
+    "generatingProgress": "A gerar ícones, {{progress}} % concluído"
+  },
+  "settings": {
+    "title": "Definições",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
+    "themeSystem": "Sistema",
+    "language": "Idioma"
+  },
+  "background": {
+    "transparent": "Fundo transparente",
+    "transparentHint": "Exportar sem placa atrás da arte.",
+    "solid": "Sólido",
+    "gradient": "Gradiente",
+    "preset": "Cor predefinida {{color}}",
+    "custom": "Cor personalizada",
+    "gradientTop": "Cor superior do gradiente",
+    "autoTop": "Paragem superior derivada automaticamente",
+    "customTop": "Paragem superior personalizada"
+  },
+  "preview": {
+    "title": "Pré-visualização",
+    "alt": "Ícone renderizado a {{size}} píxeis",
+    "none": "Sem tamanhos raster para esta plataforma."
+  },
+  "source": {
+    "main": "Imagem de origem",
+    "alternate": "Imagem alternativa",
+    "optional": "opcional",
+    "mainTitle": "Larga aqui uma imagem de origem",
+    "mainSubtitle": "PNG ou SVG, um quadrado de 1024x1024 funciona melhor.",
+    "alternateTitle": "Adicionar uma alternativa",
+    "alternateSubtitle": "Para variantes escuras, monocromáticas e de barra de tarefas.",
+    "choose": "Escolher um ficheiro",
+    "remove": "Remover esta imagem",
+    "contain": "Conter",
+    "cover": "Cobrir",
+    "alternateHint": "Uma imagem alternativa permite que as variantes escuras, monocromáticas e de barra de tarefas usem outra arte – uma marca que funciona sobre placa clara muitas vezes não se lê recortada sobre uma escura."
+  },
+  "platform": {
+    "background": "Fundo",
+    "artwork": "Arte",
+    "zoom": "Zoom",
+    "cornerRadius": "Raio dos cantos",
+    "cornerSmoothing": "Suavização dos cantos",
+    "square": "Quadrado",
+    "circular": "Circular",
+    "notes": {
+      "favicon": "Os navegadores reduzem isto a 16 px – mantém a marca simples.",
+      "pwa": "As variantes mascaráveis acrescentam margem de segurança para Android.",
+      "windowsStore": "Os mosaicos da Store ficam transparentes; a cor da placa vive no manifesto MSIX.",
+      "trayIcon": "Os ícones da barra de menus são imagens template no macOS."
+    },
+    "artworkSource": "Origem da arte",
+    "backgroundDark": "Fundo escuro",
+    "appleIcon": "Apple .icon",
+    "appleIconHint": "O formato .icon sobrepõe renderizações clara, escura e monocromática, com vidro e sombra aplicados pelo sistema.",
+    "glass": "Efeito vidro",
+    "glassHint": "Acrescenta o brilho especular que a Apple aplica a ícones em camadas.",
+    "shadowOpacity": "Opacidade da sombra",
+    "none": "Nenhuma",
+    "translucency": "Translucidez",
+    "translucencyHint": "Deixa ver a camada por baixo.",
+    "translucencyAmount": "Nível de translucidez",
+    "maskableZoom": "Zoom mascarável",
+    "unplatedZoom": "Zoom sem placa",
+    "monochrome": "Camada monocromática",
+    "monochromeHint": "Os ícones temáticos do Android 13+ usam uma silhueta de uma só cor.",
+    "includeSvg": "Incluir favicon SVG",
+    "includeSvgHint": "Os navegadores modernos preferem-no; escala sem passo raster.",
+    "source": {
+      "main": "Arte principal",
+      "light": "Variante clara",
+      "dark": "Variante escura",
+      "mono": "Monocromática",
+      "maskable": "Mascarável",
+      "unplated": "Sem placa (barra de tarefas)",
+      "useMain": "Origem",
+      "useAlternate": "Alternativa"
+    }
+  },
+  "actions": {
+    "clear": "Limpar origens",
+    "replace": "Substituir origem",
+    "upload": "Carregar uma imagem de origem",
+    "export": "Exportar todos os ícones"
+  },
+  "replace": {
+    "title": "Substituir a imagem de origem?",
+    "body": "Cada definição por plataforma está calibrada para a imagem atual. Substituí-la por {{fileName}} mantém a tua seleção de plataformas e não reinicia mais nada, mas todas as pré-visualizações são geradas de novo.",
+    "cancel": "Manter a atual",
+    "confirm": "Substituir"
+  }
+}
