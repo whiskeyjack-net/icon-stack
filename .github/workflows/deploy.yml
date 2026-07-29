@@ -83,7 +83,17 @@ jobs:
           publish_branch: main
           publish_dir: ./dist
           destination_dir: icon-stack
-          # Scoped write: everything outside icon-stack/ is left alone.
+          # Scoped write: everything outside icon-stack/ is left alone. That is
+          # the reason it started as `true` -- the monorepo publishes the rest of
+          # this site from a different repo.
+          #
+          # It is now also what keeps a service-worker update safe. Each build
+          # emits a fresh `workbox-<hash>.js` that `service-worker.js` pulls in
+          # via importScripts. A device still running the PREVIOUS worker asks for
+          # the previous hash, so pruning old files would break every client
+          # between deploy and its next update check. The cost is unreferenced
+          # hashed assets accumulating under icon-stack/, which is dead weight
+          # rather than a hazard.
           keep_files: true
           commit_message: 'Deploy icon-stack from ${{ github.sha }}'
 
