@@ -51,8 +51,8 @@ export function BackgroundEditor({
           value={fill.type}
           onChange={setKind}
           options={[
-            { value: 'solid' as const, label: t('background.solid'), icon: <PaintBucket size={18} weight="duotone" /> },
-            { value: 'gradient' as const, label: t('background.gradient'), icon: <Drop size={18} weight="duotone" /> },
+            { value: 'solid' as const, label: t('background.solid'), icon: <PaintBucket size={18} /> },
+            { value: 'gradient' as const, label: t('background.gradient'), icon: <Drop size={18} /> },
           ]}
         />
 

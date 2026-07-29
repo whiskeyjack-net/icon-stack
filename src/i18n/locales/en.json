@@ -126,8 +126,6 @@
     "dedicatedRemove": "Remove the {{label}}"
   },
   "actions": {
-    "clear": "Clear sources",
-    "replace": "Replace source",
     "export": "Export all icons",
     "upload": "Upload a source image"
   },

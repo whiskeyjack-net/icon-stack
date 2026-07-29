@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Navigate, Routes, Route } from 'react-router-dom'
 import { GeneratorProvider } from '@/contexts/GeneratorContext'
 import { Layout } from '@/components/Layout'
 import { Generator } from '@/pages/Generator'
@@ -14,6 +14,14 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Generator />} />
           <Route path="/settings" element={<Settings />} />
+          {/*
+            An unmatched path rendered nothing at all, so the shell painted
+            around an empty main and read as a broken page. It is reachable
+            without anyone typing a bad URL: the domain's shared 404 handler
+            stores the requested path and index.html replays it before React
+            mounts, so a stale entry restores a route this app has never had.
+          */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
     </GeneratorProvider>

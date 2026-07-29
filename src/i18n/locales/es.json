@@ -126,8 +126,6 @@
     "dedicatedRemove": "Quitar {{label}}"
   },
   "actions": {
-    "clear": "Borrar orígenes",
-    "replace": "Reemplazar origen",
     "export": "Exportar todos los iconos",
     "upload": "Subir una imagen de origen"
   },

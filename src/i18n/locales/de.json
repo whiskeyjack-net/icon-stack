@@ -126,8 +126,6 @@
     "dedicatedRemove": "{{label}} entfernen"
   },
   "actions": {
-    "clear": "Quellen löschen",
-    "replace": "Quelle ersetzen",
     "upload": "Quellbild hochladen",
     "export": "Alle Icons exportieren"
   },

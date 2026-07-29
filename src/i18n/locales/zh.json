@@ -126,8 +126,6 @@
     "dedicatedRemove": "移除{{label}}"
   },
   "actions": {
-    "clear": "清除来源",
-    "replace": "替换来源",
     "upload": "上传源图片",
     "export": "导出所有图标"
   },

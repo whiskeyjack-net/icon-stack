@@ -121,8 +121,8 @@ function Slot({ slot }: { slot: SourceSlot }) {
                 value={fit}
                 onChange={(next: ImageFit) => setFit(slot, next)}
                 options={[
-                  { value: 'contain' as const, label: t('source.contain'), icon: <ArrowsIn size={18} weight="duotone" /> },
-                  { value: 'cover' as const, label: t('source.cover'), icon: <ArrowsOut size={18} weight="duotone" /> },
+                  { value: 'contain' as const, label: t('source.contain'), icon: <ArrowsIn size={18} /> },
+                  { value: 'cover' as const, label: t('source.cover'), icon: <ArrowsOut size={18} /> },
                 ]}
               />
             )}
@@ -148,7 +148,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
           >
             <EmptyState
               className="py-10"
-              icon={<ImageIcon size={28} weight="duotone" />}
+              icon={<ImageIcon size={28} />}
               title={t(`source.${slot}Title`)}
               subtitle={t(`source.${slot}Subtitle`)}
               action={
