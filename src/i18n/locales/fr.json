@@ -1,0 +1,108 @@
+{
+  "app": { "name": "Icon Stack" },
+  "nav": { "generator": "Générateur", "settings": "Réglages", "menu": "Menu" },
+  "generator": {
+    "tagline": "Une image source en entrée, un jeu d'icônes complet en sortie.",
+    "sourceTab": "Source",
+    "platforms": "Plateformes",
+    "preview": "Aperçu",
+    "export": "Exporter",
+    "exportAll": "Exporter toutes les plateformes sélectionnées",
+    "exportEmpty": "Sélectionnez au moins une plateforme à exporter.",
+    "downloadPlatform": "Télécharger les icônes {{platform}}",
+    "generating": "Génération",
+    "generatingProgress": "Génération des icônes, {{progress}} % terminé"
+  },
+  "settings": {
+    "title": "Réglages",
+    "theme": "Thème",
+    "themeLight": "Clair",
+    "themeDark": "Sombre",
+    "themeSystem": "Système",
+    "language": "Langue"
+  },
+  "background": {
+    "transparent": "Fond transparent",
+    "transparentHint": "Exporter sans plaque derrière le visuel.",
+    "solid": "Uni",
+    "gradient": "Dégradé",
+    "preset": "Couleur prédéfinie {{color}}",
+    "custom": "Couleur personnalisée",
+    "gradientTop": "Couleur haute du dégradé",
+    "autoTop": "Arrêt haut déduit automatiquement",
+    "customTop": "Arrêt haut personnalisé"
+  },
+  "preview": {
+    "title": "Aperçu",
+    "alt": "Icône rendue à {{size}} pixels",
+    "none": "Aucune taille raster pour cette plateforme."
+  },
+  "source": {
+    "main": "Image source",
+    "alternate": "Image alternative",
+    "optional": "facultatif",
+    "mainTitle": "Déposez une image source",
+    "mainSubtitle": "PNG ou SVG, un carré de 1024x1024 fonctionne mieux.",
+    "alternateTitle": "Ajouter une alternative",
+    "alternateSubtitle": "Pour les variantes sombres, monochromes et de barre des tâches.",
+    "choose": "Choisir un fichier",
+    "remove": "Retirer cette image",
+    "contain": "Contenir",
+    "cover": "Couvrir",
+    "alternateHint": "Une image alternative permet aux variantes sombres, monochromes et de barre des tâches d'utiliser un autre visuel – une marque lisible sur une plaque claire l'est souvent moins détourée sur une plaque sombre."
+  },
+  "platform": {
+    "background": "Fond",
+    "artwork": "Visuel",
+    "zoom": "Zoom",
+    "cornerRadius": "Rayon des coins",
+    "cornerSmoothing": "Lissage des coins",
+    "square": "Carré",
+    "circular": "Circulaire",
+    "notes": {
+      "favicon": "Les navigateurs la réduisent à 16 px – gardez la marque simple.",
+      "pwa": "Les variantes masquables ajoutent une marge de sécurité pour Android.",
+      "windowsStore": "Les tuiles du Store restent transparentes ; la couleur de plaque vit dans le manifeste MSIX.",
+      "trayIcon": "Les icônes de barre de menus sont des images template sur macOS."
+    },
+    "artworkSource": "Source du visuel",
+    "backgroundDark": "Fond sombre",
+    "appleIcon": "Apple .icon",
+    "appleIconHint": "Le format .icon superpose des rendus clair, sombre et monochrome, le verre et l'ombre venant du système.",
+    "glass": "Effet verre",
+    "glassHint": "Ajoute le reflet spéculaire qu'Apple applique aux icônes en couches.",
+    "shadowOpacity": "Opacité de l'ombre",
+    "none": "Aucune",
+    "translucency": "Translucidité",
+    "translucencyHint": "Laisse apparaître la couche du dessous.",
+    "translucencyAmount": "Niveau de translucidité",
+    "maskableZoom": "Zoom masquable",
+    "unplatedZoom": "Zoom sans plaque",
+    "monochrome": "Couche monochrome",
+    "monochromeHint": "Les icônes thématiques d'Android 13+ utilisent une silhouette d'une seule couleur.",
+    "includeSvg": "Inclure un favicon SVG",
+    "includeSvgHint": "Les navigateurs modernes le préfèrent ; il s'adapte sans passer par un raster.",
+    "source": {
+      "main": "Visuel principal",
+      "light": "Variante claire",
+      "dark": "Variante sombre",
+      "mono": "Monochrome",
+      "maskable": "Masquable",
+      "unplated": "Sans plaque (barre des tâches)",
+      "useMain": "Source",
+      "useAlternate": "Alternative"
+    }
+  },
+  "actions": {
+    "clear": "Effacer les sources",
+    "replace": "Remplacer la source",
+    "upload": "Importer une image source",
+    "export": "Exporter toutes les icônes"
+  },
+  "replace": {
+    "title": "Remplacer l'image source ?",
+    "body": "Chaque réglage par plateforme est ajusté sur l'image actuelle. La remplacer par {{fileName}} conserve votre sélection de plateformes et ne réinitialise rien d'autre, mais tous les aperçus sont regénérés.",
+    "cancel": "Garder l'actuelle",
+    "confirm": "Remplacer"
+  }
+}

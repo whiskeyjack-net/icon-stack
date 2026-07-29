@@ -15,9 +15,9 @@ shipped and consumed here · **FIXED HERE** handled locally, upstream change
 still wanted · **PASS** worked as advertised · **WITHDRAWN** recorded, then
 found to be wrong.
 
-**Round trip so far:** findings raised across three stages and fixed upstream in
+**Round trip so far:** findings raised across four stages and fixed upstream in
 `design-system@0.6.0`–`0.8.0` and `create-whiskeyjack@0.3.1`, published, and
-consumed back here. One withdrawn as incorrect. Six open.
+consumed back here. One withdrawn as incorrect. Five open, one blocked on source art.
 
 ---
 
@@ -376,6 +376,31 @@ Three copies of one recipe across two apps is the extraction threshold. The
 shape is either a `multiple` variant of `ToggleGroup` (with `role="group"` +
 `aria-pressed` and no roving tabindex) or a sibling component sharing the tile.
 
+## Stage D – the things the rebuild quietly dropped
+
+### FIXED HERE – six locales came back, and a test now guards all eight
+
+The monorepo app shipped 8 locales; the rebuild launched with 2. That reads as a
+deliberate scope choice until you check, which is exactly why it survived a
+review.
+
+de, fr, it, ja, pt and zh are restored. 26 of the 88 keys had a human translation
+in the retired locale files under a different key path, matched by English value
+rather than by key, so the established terminology carried over -- de
+"Maskierbarer Zoom", fr "masquable", ja "マスカブル" -- instead of being reinvented
+one file at a time.
+
+`src/i18n/locales.test.ts` now pins what no type check can see: identical key sets
+across all eight, `{{placeholder}}` survival per key, no empty values, and the
+em-dash ban. It also asserts the *count* is at least 8 and that every file on disk
+is registered in the i18n bootstrap -- a locale file nobody imports is dead weight
+that looks like support.
+
+It caught something immediately: the Chinese `alternateHint` used `——`, which is
+correct Chinese punctuation and a violation of the repo-wide em-dash rule. The
+sentence was restructured into two clauses rather than the rule exempted, because
+one uniform ban is worth more than a per-language carve-out.
+
 ### FIXED HERE – the PWA is back, at a different service-worker filename
 
 The app had icon assets and a PWA in the monorepo and neither survived the
@@ -413,11 +438,42 @@ default. A service worker in a project that did not ask for one is worse than no
 service worker -- it caches aggressively, it is invisible until it misbehaves, and
 retiring one takes a tombstone, as this repo just demonstrated at length.
 
-### OPEN – Icon Stack does not generate its own icons
+### BLOCKED – Icon Stack cannot generate its own icons: there is no source art
 
-A little pointed: the icon set was copied out of the monorepo's `graphics/`, not
-produced by the app it belongs to. Icon Stack generating its own icons is the
-obvious dogfood, and the CLI makes it a one-liner.
+The obvious dogfood is Icon Stack producing its own icon set. It cannot, and the
+reason is worth recording rather than leaving as a to-do.
+
+`graphics/icon-stack/` in the monorepo holds only **outputs**: a 180px
+apple-touch-icon, a 16px favicon, and 192/512 PWA pairs. No 1024px master, no
+SVG. The largest asset is 512×512, so regenerating the set from what exists would
+upscale into the 1024-class outputs, and the result would be measurably worse
+than what is already shipped. Chip Away, by contrast, keeps 1024×1024 masters
+(`icons/ios/AppIcon-1024x1024.png`, `icons/apple/AppIcon.icon/Assets/*.png`).
+
+So the finding is not "nobody ran the tool" but **the monorepo's `graphics/`
+convention was never actually applied to this app** – the root CLAUDE.md
+describes `graphics/{app}/icons/` as holding "1024px PNGs, SVGs, .icon", and for
+Icon Stack it never did. Every other icon here descends from a lost original.
+
+Unblocking it needs source art, not code. Once a ≥1024px master or an SVG exists,
+`npx @whiskeyjack-net/icon-stack generate` produces the whole set and the dogfood
+becomes real.
+
+### DECIDED – `create-whiskeyjack --pwa` must ask for icon files
+
+Settled while wiring the PWA here: the flag is **opt-in**, and when it is passed
+the CLI has to obtain icons rather than scaffold a manifest pointing at files
+that do not exist.
+
+That constraint follows directly from this repo's experience. A PWA manifest
+without real icons is not a smaller PWA, it is a broken one: install prompts fail,
+and the failure surfaces late and quietly. Shipping placeholders instead trains
+people to ignore them.
+
+So `--pwa` should prompt for a source image and generate the set from it – which
+is `@whiskeyjack-net/icon-stack` doing the job it exists for, composed into the
+scaffold. It also means a generated project inherits the master-art discipline the
+finding above shows this app never had.
 
 ---
 

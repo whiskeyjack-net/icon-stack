@@ -1,0 +1,108 @@
+{
+  "app": { "name": "Icon Stack" },
+  "nav": { "generator": "ジェネレーター", "settings": "設定", "menu": "メニュー" },
+  "generator": {
+    "tagline": "ソース画像を 1 枚渡すと、アプリアイコン一式が出てきます。",
+    "sourceTab": "ソース",
+    "platforms": "プラットフォーム",
+    "preview": "プレビュー",
+    "export": "エクスポート",
+    "exportAll": "選択したすべてのプラットフォームをエクスポート",
+    "exportEmpty": "エクスポートするプラットフォームを 1 つ以上選択してください。",
+    "downloadPlatform": "{{platform}} のアイコンをダウンロード",
+    "generating": "生成中",
+    "generatingProgress": "アイコンを生成中、{{progress}}% 完了"
+  },
+  "settings": {
+    "title": "設定",
+    "theme": "テーマ",
+    "themeLight": "ライト",
+    "themeDark": "ダーク",
+    "themeSystem": "システム",
+    "language": "言語"
+  },
+  "background": {
+    "transparent": "透明な背景",
+    "transparentHint": "アートワークの背後にプレートを付けずに書き出します。",
+    "solid": "単色",
+    "gradient": "グラデーション",
+    "preset": "プリセットカラー {{color}}",
+    "custom": "カスタムカラー",
+    "gradientTop": "グラデーション上端の色",
+    "autoTop": "上端のストップを自動で算出",
+    "customTop": "上端のストップをカスタム指定"
+  },
+  "preview": {
+    "title": "プレビュー",
+    "alt": "{{size}} ピクセルでレンダリングしたアイコン",
+    "none": "このプラットフォームにはラスターサイズがありません。"
+  },
+  "source": {
+    "main": "ソース画像",
+    "alternate": "代替画像",
+    "optional": "任意",
+    "mainTitle": "ソース画像をドロップ",
+    "mainSubtitle": "PNG または SVG。1024x1024 の正方形が最適です。",
+    "alternateTitle": "代替画像を追加",
+    "alternateSubtitle": "ダーク・モノクロ・タスクバー用のバリアントに使います。",
+    "choose": "ファイルを選択",
+    "remove": "この画像を削除",
+    "contain": "収める",
+    "cover": "覆う",
+    "alternateHint": "代替画像を使うと、ダーク・モノクロ・タスクバーのバリアントに別のアートワークを割り当てられます。明るいプレート上で読めるマークが、暗いプレートに白抜きすると読めなくなることはよくあります。"
+  },
+  "platform": {
+    "background": "背景",
+    "artwork": "アートワーク",
+    "zoom": "ズーム",
+    "cornerRadius": "角丸の半径",
+    "cornerSmoothing": "角の滑らかさ",
+    "square": "角あり",
+    "circular": "円形",
+    "notes": {
+      "favicon": "ブラウザーは 16px まで縮小します。マークはシンプルに。",
+      "pwa": "マスカブルのバリアントは Android 用にセーフエリアの余白を追加します。",
+      "windowsStore": "ストアのタイルは透明のままです。プレートの色は MSIX マニフェストで指定します。",
+      "trayIcon": "メニューバーのアイコンは macOS ではテンプレート画像です。"
+    },
+    "artworkSource": "アートワークのソース",
+    "backgroundDark": "ダーク時の背景",
+    "appleIcon": "Apple .icon",
+    "appleIconHint": ".icon 形式はライト・ダーク・モノクロのレンダリングを重ね、ガラスと影はシステムが付けます。",
+    "glass": "ガラス効果",
+    "glassHint": "Apple がレイヤードアイコンに加えるスペキュラーハイライトを追加します。",
+    "shadowOpacity": "影の不透明度",
+    "none": "なし",
+    "translucency": "半透明",
+    "translucencyHint": "下のレイヤーを透けさせます。",
+    "translucencyAmount": "半透明の強さ",
+    "maskableZoom": "マスカブルのズーム",
+    "unplatedZoom": "プレートなしのズーム",
+    "monochrome": "モノクロレイヤー",
+    "monochromeHint": "Android 13 以降のテーマアイコンは単色のシルエットを使います。",
+    "includeSvg": "SVG favicon を含める",
+    "includeSvgHint": "モダンなブラウザーはこちらを優先します。ラスター化せずに拡大縮小できます。",
+    "source": {
+      "main": "メインのアートワーク",
+      "light": "ライト用バリアント",
+      "dark": "ダーク用バリアント",
+      "mono": "モノクロ",
+      "maskable": "マスカブル",
+      "unplated": "プレートなし（タスクバー）",
+      "useMain": "ソース",
+      "useAlternate": "代替"
+    }
+  },
+  "actions": {
+    "clear": "ソースをクリア",
+    "replace": "ソースを置き換える",
+    "upload": "ソース画像をアップロード",
+    "export": "すべてのアイコンをエクスポート"
+  },
+  "replace": {
+    "title": "ソース画像を置き換えますか？",
+    "body": "プラットフォームごとの設定は現在の画像に合わせて調整されています。{{fileName}} に置き換えてもプラットフォームの選択は保持され、他の設定もリセットされませんが、すべてのプレビューが作り直されます。",
+    "cancel": "現在のまま",
+    "confirm": "置き換える"
+  }
+}
