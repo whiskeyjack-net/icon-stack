@@ -9,6 +9,7 @@ import {
   ProgressBar,
   SidebarTabs,
   TabBar,
+  useLayoutGate,
   useRailHost,
   useSidebarHost,
   useSwipeNavigation,
@@ -22,7 +23,6 @@ import { PlatformSettings } from '@/components/PlatformSettings'
 import { SizePreview } from '@/components/SizePreview'
 import { PLATFORM_ICONS } from '@/lib/platform-icons'
 import { useGenerator, PLATFORMS } from '@/contexts/GeneratorContext'
-import { useLayoutGate } from '@/hooks/use-layout-gate'
 
 /** The meta tab holding the sources, the platform selection, and the exports. */
 const SOURCE_TAB = 'source'

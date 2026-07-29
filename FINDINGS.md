@@ -303,15 +303,26 @@ The obvious `matchMedia('(min-width: 1280px)')` is wrong, and wrong *quietly* --
 it disagrees with the CSS on a landscape tablet, portaling the preview into a
 rail that has not deployed. The retired monorepo app did exactly this.
 
-**Added `useLayoutGate` + `LAYOUT_GATES` in design-system 0.8.0.** The queries
-are declared twice by necessity -- Tailwind loads the preset as a config module
-with no TypeScript transform, and the published package ships no `src/` for it
-to read, while the hook ships as a self-contained registry item and so cannot
-import a package-root file. A test pins both declarations against the variants
-the preset actually registers, so the two cannot drift silently.
+**Added `useLayoutGate` + `LAYOUT_GATES` in design-system 0.8.0**, published and
+consumed here. The queries are declared twice by necessity -- Tailwind loads the
+preset as a config module with no TypeScript transform, and the published package
+ships no `src/` for it to read, while the hook ships as a self-contained registry
+item and so cannot import a package-root file. A test pins both declarations
+against the variants the preset actually registers, so the two cannot drift
+silently.
 
-Consumed here via a temporary local mirror (`src/hooks/use-layout-gate.ts`) with
-a note to delete it once 0.8.0 is on npm.
+The publishing gap was bridged by a clearly-labelled local mirror
+(`src/hooks/use-layout-gate.ts`) carrying the same signature and a
+delete-on-publish note, so adopting the real hook was a one-line import change
+and a `rm`. Worth keeping as the pattern: this app is *always* one publish behind
+a fix it asked for, and a mirror that advertises its own expiry beats either
+waiting or quietly diverging.
+
+One thing the round trip surfaced that the local mirror could not: the published
+`tailwind-preset.js` now imports `layout-gates.js`, and the published package
+ships no `src/`, so that file had to be added to the staged tarball by hand.
+Verified in the published artifact rather than the workspace -- exactly the class
+of defect this repo exists to catch.
 
 ### RESOLVED – no scaffolded project can type-check `import.meta.env`
 
