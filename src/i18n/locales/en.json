@@ -25,7 +25,10 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System",
-    "language": "Language"
+    "language": "Language",
+    "about": "About",
+    "version": "Version",
+    "aboutText": "Icon Stack generates production-ready app icons for the web, macOS, iOS, Android, Windows and Linux. Everything runs in your browser – no image ever leaves your device."
   },
   "background": {
     "transparent": "Transparent background",
@@ -41,7 +44,18 @@
   "preview": {
     "title": "Preview",
     "alt": "Icon rendered at {{size}} pixels",
-    "none": "No raster sizes for this platform."
+    "none": "No raster sizes for this platform.",
+    "from": "from {{size}}",
+    "variant": {
+      "regular": "Regular",
+      "maskable": "Maskable",
+      "light": "Light",
+      "dark": "Dark",
+      "mono": "Monochrome",
+      "unplated": "Unplated",
+      "foreground": "Foreground",
+      "background": "Background"
+    }
   },
   "source": {
     "main": "Source image",

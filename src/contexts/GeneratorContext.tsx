@@ -78,6 +78,8 @@ interface GeneratorValue {
   setFit: (slot: SourceSlot, fit: ImageFit) => void
   patchPlatform: <K extends Platform>(platform: K, patch: Partial<PlatformConfigs[K]>) => void
   togglePlatform: (platform: Platform) => void
+  /** Set the whole enabled set at once, for a multi-select control. */
+  setEnabledPlatforms: (enabled: Platform[]) => void
   generate: (which: Platform | 'all') => Promise<void>
   /** Renders one platform and returns its files, for the live preview. */
   render: (platform: Platform) => Promise<Record<string, Uint8Array>>
@@ -177,6 +179,22 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
     setPlatforms((prev) => updatePlatform(prev, platform, { enabled: !prev[platform].enabled }))
   }, [])
 
+  // A multi-select control hands back the whole set rather than a delta, so this
+  // reconciles every platform's `enabled` against it in one pass.
+  const setEnabledPlatforms = useCallback((enabled: Platform[]) => {
+    const wanted = new Set(enabled)
+    setPlatforms((prev) => {
+      let next = prev
+      for (const platform of PLATFORMS) {
+        const should = wanted.has(platform)
+        if (next[platform].enabled !== should) {
+          next = updatePlatform(next, platform, { enabled: should })
+        }
+      }
+      return next
+    })
+  }, [])
+
   const buildOptions = useCallback(
     (which: Platform | 'all') => ({
       source: source as SourceImage,
@@ -261,6 +279,7 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
       setFit,
       patchPlatform,
       togglePlatform,
+      setEnabledPlatforms,
       generate,
       render,
     }),
@@ -286,6 +305,7 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
       setFit,
       patchPlatform,
       togglePlatform,
+      setEnabledPlatforms,
       generate,
       render,
     ],

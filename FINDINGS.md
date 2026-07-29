@@ -15,9 +15,9 @@ shipped and consumed here · **FIXED HERE** handled locally, upstream change
 still wanted · **PASS** worked as advertised · **WITHDRAWN** recorded, then
 found to be wrong.
 
-**Round trip so far:** findings raised across four stages and fixed upstream in
+**Round trip so far:** findings raised across five stages and fixed upstream in
 `design-system@0.6.0`–`0.8.0` and `create-whiskeyjack@0.3.1`, published, and
-consumed back here. One withdrawn as incorrect, one overstated and corrected. Four open.
+consumed back here. One withdrawn as incorrect, one overstated and corrected. Three open.
 
 ---
 
@@ -363,18 +363,23 @@ untranslated-key assertion was pointed at Settings, which was untouched.
 The check is now a shared helper applied to every page, matching every top-level
 namespace. A raw-key assertion is only worth what it covers.
 
-### OPEN – the multi-select tile grid is still hand-rolled in two apps
+### RESOLVED – the multi-select tile grid was hand-rolled in two apps
 
-`ToggleGroup` owns the single-select version of this exact recipe (bordered
-tile, accent fill when chosen, icon above or beside the label). It is a
-`radiogroup` by construction, so a multi-select grid cannot use it -- Icon
-Stack's platform selection hand-rolls the same classes, and Chip Away's mode and
-weekday pickers hand-roll the single-select version *next to* an existing DS
-component that does it.
+`ToggleGroup` owned the single-select version of the recipe (bordered tile, accent
+fill when chosen) and was a `radiogroup` by construction, so a multi-select grid
+could not use it. The real count turned out to be worse than "two apps": **sixteen
+copies across five app files**, plus `ToggleGroup` itself.
 
-Three copies of one recipe across two apps is the extraction threshold. The
-shape is either a `multiple` variant of `ToggleGroup` (with `role="group"` +
-`aria-pressed` and no roving tabindex) or a sibling component sharing the tile.
+**Fixed in design-system 0.9.0** -- `CheckboxGroup` for pick-any, and
+`optionTileClass` holding the tile both group components now draw from, so a
+pick-one and a pick-any control cannot drift apart. A DS test renders both and
+asserts the selected tile carries the same classes.
+
+Icon Stack's `PlatformGrid` is that component's **first external consumer** and is
+now nine lines of configuration. The one thing worth passing back: a multi-select
+control hands back the whole set rather than a delta, so the app needed a
+`setEnabledPlatforms` that reconciles every platform in one pass -- `togglePlatform`
+per changed item would have been the wrong shape.
 
 ## Stage D – the things the rebuild quietly dropped
 
@@ -448,6 +453,52 @@ Left in place because a findings file that quietly rewrites its own overstatemen
 is not one anybody should trust. The lesson is about the analysis rather than the
 code: "the exports are missing a source" and "the exports are insufficient" are
 different claims, and only the first was true.
+
+## Stage E – functional parity with the monorepo build
+
+### FIXED HERE – the preview showed whichever same-size render came first
+
+The worst bug found so far in this app, and it was invisible because the output
+always looked plausible.
+
+`SizePreview` picked "the closest render at or above this size" across a
+platform's **entire** file set. A platform export is not one icon at several
+sizes -- it is several *different* icons. So for PWA, `icon-192.png` and
+`icon-maskable-192.png` were interchangeable candidates and whichever
+`Object.entries` yielded first won: the preview could show the maskable icon,
+with its safe-area padding, while presenting itself as the icon. For Android it
+could show `ic_launcher_background.png`, a solid plate with no artwork on it.
+For tray it could show the dark variant on a light page.
+
+Fixed by grouping a render into variants derived from the emitted paths --
+regular, maskable, light, dark, mono, unplated, and Android's adaptive layers --
+and showing one at a time behind a `ToggleGroup`. Deriving them from paths rather
+than hardcoding per platform means a variant added in the core surfaces here
+without a change.
+
+This also restores, more generally, the light/dark/maskable/monochrome preview
+toggles the monorepo version had and the rebuild dropped.
+
+Writing the tests against **real CLI output paths** rather than invented ones paid
+for itself immediately: the first classifier enumerated its delimiters as `/_-.`
+and so read `trayTemplate-dark@2x.png` -- macOS's retina tray icon -- as regular,
+putting the dark tray icon in the same bucket as the light one. The delimiter is
+now "not alphanumeric", which cannot be outrun by the next separator someone picks.
+
+### FIXED HERE – a Vite `define` does not reach the test config
+
+Settings gained an About card showing the build version, injected via
+`define: { __APP_VERSION__ }` from `package.json` -- the retired app hardcoded
+`1.0.0` in the component, which is why it read 1.0.0 forever.
+
+This app has **two** Vite configs: `vite.config.ts` for dev and build,
+`vitest.config.ts` for tests. `define` does not carry between them, so declaring
+it in one made every component reading it throw `ReferenceError` in the other.
+Five tests failed at once, which is the good outcome; a `define` used somewhere
+untested would have shipped.
+
+Worth flagging upstream as a starter-template note: any project that adds a
+`define` has to add it twice.
 
 ### DECIDED – `create-whiskeyjack --pwa` verifies a directory of exported icons
 

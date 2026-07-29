@@ -88,6 +88,14 @@ describe('Settings', () => {
     expect(screen.getByRole('combobox', { name: 'Language' })).toBeInTheDocument()
   })
 
+  it('shows the build version rather than a hardcoded one', () => {
+    mount(<Settings />, '/settings')
+    expect(screen.getByRole('heading', { name: 'About' })).toBeInTheDocument()
+    // Injected by both Vite configs from package.json. The retired app hardcoded
+    // 1.0.0 in the component, which is why it stayed 1.0.0 forever.
+    expect(screen.getByText(__APP_VERSION__)).toBeInTheDocument()
+  })
+
   it('renders no untranslated keys anywhere', () => {
     const { container } = mount(<Settings />, '/settings')
     expectNoRawKeys(container)

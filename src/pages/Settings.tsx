@@ -58,6 +58,25 @@ export function Settings() {
           />
         </CardContent>
       </Card>
+
+      <Card>
+        <CardContent className="p-5">
+          <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+            {t('settings.about')}
+          </h2>
+          <div className="space-y-2 text-sm text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+            <p className="flex justify-between gap-4">
+              <span>{t('settings.version')}</span>
+              {/* Injected from package.json at build time, so it cannot go stale
+                  the way the retired app's hardcoded 1.0.0 did. */}
+              <span className="font-mono tabular-nums">{__APP_VERSION__}</span>
+            </p>
+            <p className="border-t border-[var(--color-border-light)] pt-2 dark:border-[var(--color-border-dark)]">
+              {t('settings.aboutText')}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

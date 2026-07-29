@@ -1,6 +1,12 @@
 {
-  "app": { "name": "Icon Stack" },
-  "nav": { "generator": "Generator", "settings": "Einstellungen", "menu": "Menü" },
+  "app": {
+    "name": "Icon Stack"
+  },
+  "nav": {
+    "generator": "Generator",
+    "settings": "Einstellungen",
+    "menu": "Menü"
+  },
   "generator": {
     "tagline": "Ein Quellbild rein, ein vollständiger App-Icon-Satz raus.",
     "sourceTab": "Quelle",
@@ -19,7 +25,10 @@
     "themeLight": "Hell",
     "themeDark": "Dunkel",
     "themeSystem": "System",
-    "language": "Sprache"
+    "language": "Sprache",
+    "about": "Über",
+    "version": "Version",
+    "aboutText": "Icon Stack erzeugt produktionsreife App-Icons für Web, macOS, iOS, Android, Windows und Linux. Alles läuft in deinem Browser – kein Bild verlässt dein Gerät."
   },
   "background": {
     "transparent": "Transparenter Hintergrund",
@@ -35,7 +44,18 @@
   "preview": {
     "title": "Vorschau",
     "alt": "Icon in {{size}} Pixeln gerendert",
-    "none": "Keine Rastergrößen für diese Plattform."
+    "none": "Keine Rastergrößen für diese Plattform.",
+    "from": "aus {{size}}",
+    "variant": {
+      "regular": "Standard",
+      "maskable": "Maskierbar",
+      "light": "Hell",
+      "dark": "Dunkel",
+      "mono": "Monochrom",
+      "unplated": "Ohne Platte",
+      "foreground": "Vordergrund",
+      "background": "Hintergrund"
+    }
   },
   "source": {
     "main": "Quellbild",
