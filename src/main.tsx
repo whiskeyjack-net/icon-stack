@@ -13,7 +13,18 @@ setCanvasBackend(browserCanvasBackend)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/*
+      The app is served from a subpath (whiskeyjack.net/icon-stack/), so the
+      router has to be told, or it matches its routes against `/icon-stack/` and
+      nothing matches -- the shell paints and `<Routes>` renders nothing, which
+      looks exactly like a blank page. Following a nav link then "fixes" it by
+      moving to `/`, at the wrong URL, which is why the symptom reads as
+      intermittent.
+
+      Taken from Vite's BASE_URL rather than written out again, so the path is
+      declared once. A second hardcoded copy is the kind that drifts.
+    */}
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <App />
     </BrowserRouter>
   </React.StrictMode>,

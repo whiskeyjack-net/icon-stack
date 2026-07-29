@@ -122,12 +122,12 @@ export function DedicatedSource({
                 {
                   value: 'contain' as const,
                   label: t('source.contain'),
-                  icon: <ArrowsIn size={18} weight="duotone" />,
+                  icon: <ArrowsIn size={18} />,
                 },
                 {
                   value: 'cover' as const,
                   label: t('source.cover'),
-                  icon: <ArrowsOut size={18} weight="duotone" />,
+                  icon: <ArrowsOut size={18} />,
                 },
               ]}
             />

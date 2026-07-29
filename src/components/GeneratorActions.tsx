@@ -1,66 +1,78 @@
 import { useTranslation } from 'react-i18next'
-import {
-  ActionPill,
-  ActionPillButton,
-  ActionPillStaticButton,
-} from '@whiskeyjack-net/design-system'
-import { DownloadSimple, UploadSimple, Trash } from '@phosphor-icons/react'
+import { ActionPill, ActionPillButton } from '@whiskeyjack-net/design-system'
+import { DownloadSimple, Plus } from '@phosphor-icons/react'
 import { useGenerator } from '@/contexts/GeneratorContext'
 
 /**
- * The app's toolbar actions, for the desktop header and the mobile bottom nav.
+ * The app's toolbar action, for the desktop header and the mobile bottom nav.
  *
- * Same buttons in the same order on both, per the design system's rule -- only
- * `size` differs. Export is the primary action and always present; the
- * contextual ones collapse away until a source exists, which is what
- * `ActionPillButton`'s `visible` is for.
+ * ONE action at a time, and which one is the whole design: with no source the
+ * only thing worth offering is adding one, and once there is a source the only
+ * thing worth offering is the export. The two swap in place.
+ *
+ * It briefly carried three buttons -- clear, upload/replace, export -- which
+ * read as a toolbar of equals and duplicated controls that already live on the
+ * source cards, where they have the file in front of them. `SourceSlots` owns
+ * remove (per slot) and replace (with its confirmation), so nothing was lost by
+ * taking them out of here.
+ *
+ * Same button in the same place on both sizes, per the design system's rule;
+ * only `size` differs.
  */
 export function GeneratorActions({ size }: { size: 'desktop' | 'mobile' }) {
   const { t } = useTranslation()
-  const { source, platforms, busy, generate, setSlot, triggerUpload } = useGenerator()
+  const { source, platforms, busy, generate, triggerUpload } = useGenerator()
 
-  const hasSource = Boolean(source)
+  const showExport = Boolean(source)
   const enabledCount = Object.values(platforms).filter((p) => p.enabled).length
-  const canExport = hasSource && enabledCount > 0 && !busy
+  const canExport = showExport && enabledCount > 0 && !busy
+  const iconSize = size === 'mobile' ? 24 : 20
 
   return (
-    <ActionPill size={size} variant="accent">
+    <ActionPill size={size}>
       <ActionPillButton
-        visible={hasSource}
-        icon={<Trash size={size === 'mobile' ? 22 : 18} weight="bold" />}
-        label={t('actions.clear')}
-        onClick={() => {
-          setSlot('alternate', null)
-          setSlot('main', null)
-        }}
-      />
-      <ActionPillStaticButton
-        icon={<UploadSimple size={size === 'mobile' ? 22 : 18} weight="bold" />}
-        label={hasSource ? t('actions.replace') : t('actions.upload')}
-        onClick={triggerUpload}
-      />
-      <ActionPillStaticButton
-        icon={<DownloadSimple size={size === 'mobile' ? 22 : 18} weight="bold" />}
-        label={t('actions.export')}
+        visible={showExport}
         disabled={!canExport}
+        icon={<DownloadSimple size={iconSize} weight="bold" />}
+        label={t('actions.export')}
+        size={size}
         onClick={() => void generate('all')}
+      />
+      <ActionPillButton
+        visible={!showExport}
+        icon={<Plus size={iconSize} weight="bold" />}
+        label={t('actions.upload')}
+        size={size}
+        onClick={triggerUpload}
       />
     </ActionPill>
   )
 }
 
 /**
- * Worst-case copy for MobileBottomNav's overflow measurement: every action
- * visible, so the collapse decision stays stable instead of flipping as the
- * contextual buttons appear.
+ * Worst-case copy for `MobileBottomNav`'s overflow measurement, which the design
+ * system defines as "every action visible".
+ *
+ * Only one is ever on screen, so this deliberately over-reserves. That is the
+ * documented trade: a stable collapse decision beats a nav that flips between
+ * inline and hamburger the moment a source is added.
  */
 export function GeneratorActionsMeasure() {
   const { t } = useTranslation()
   return (
-    <ActionPill size="mobile" variant="accent">
-      <ActionPillButton visible icon={<Trash size={22} weight="bold" />} label={t('actions.clear')} />
-      <ActionPillStaticButton icon={<UploadSimple size={22} weight="bold" />} label={t('actions.replace')} />
-      <ActionPillStaticButton icon={<DownloadSimple size={22} weight="bold" />} label={t('actions.export')} />
+    <ActionPill size="mobile">
+      <ActionPillButton
+        visible
+        icon={<DownloadSimple size={24} weight="bold" />}
+        label={t('actions.export')}
+        size="mobile"
+      />
+      <ActionPillButton
+        visible
+        icon={<Plus size={24} weight="bold" />}
+        label={t('actions.upload')}
+        size="mobile"
+      />
     </ActionPill>
   )
 }

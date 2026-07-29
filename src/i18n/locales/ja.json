@@ -126,8 +126,6 @@
     "dedicatedRemove": "{{label}}を削除"
   },
   "actions": {
-    "clear": "ソースをクリア",
-    "replace": "ソースを置き換える",
     "upload": "ソース画像をアップロード",
     "export": "すべてのアイコンをエクスポート"
   },
