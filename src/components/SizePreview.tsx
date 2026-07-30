@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, Notice, SegmentedControl, cn } from '@whiskeyjack-net/design-system'
+import {
+  Card,
+  CardContent,
+  Notice,
+  SegmentedControl,
+  cn,
+  compactControlClass,
+} from '@whiskeyjack-net/design-system'
 import {
   BoundingBox,
   Circle,
@@ -219,8 +226,13 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
                     type="button"
                     aria-pressed={s === selected}
                     onClick={() => setSize(s)}
+                    // Geometry from the DS recipe, so the chips, the segmented
+                    // controls and the pills below all land on one line. Only the
+                    // fill is local: a chosen size is a neutral rather than the
+                    // accent, which the strips keep for "one of several".
                     className={cn(
-                      'wj-focus-ring rounded-lg px-2.5 py-1 font-mono text-xs font-medium transition-colors',
+                      compactControlClass(),
+                      'font-mono',
                       s === selected
                         ? 'bg-[var(--color-neutral-700)] text-white dark:bg-[var(--color-neutral-300)] dark:text-[var(--color-neutral-900)]'
                         : 'bg-[var(--color-surface-light)] text-[var(--color-text-secondary-light)] hover:bg-[var(--color-warm-100)] dark:bg-[var(--color-surface-dark)] dark:text-[var(--color-text-secondary-dark)] dark:hover:bg-[var(--color-neutral-800)]',
@@ -434,7 +446,11 @@ function TogglePill({
       onClick={onClick}
       title={label}
       className={cn(
-        'wj-focus-ring flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors',
+        // Same recipe as the chips and the segmented strips. Tailwind's
+        // border-box means adding a border here costs no height, so a bordered
+        // pill still lines up with an unbordered chip.
+        compactControlClass(),
+        'border',
         active
           ? 'border-[var(--color-neutral-700)] bg-[var(--color-neutral-700)] text-white dark:border-white dark:bg-white dark:text-[var(--color-neutral-900)]'
           : 'border-[var(--color-border-light)] bg-[var(--color-surface-light)] text-[var(--color-text-muted-light)] dark:border-[var(--color-border-dark)] dark:bg-[var(--color-surface-dark)] dark:text-[var(--color-text-muted-dark)]',
