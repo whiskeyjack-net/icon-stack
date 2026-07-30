@@ -15,6 +15,7 @@ import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createDefaultPlatforms, encodeIco } from '@whiskeyjack-net/icon-stack-core'
+import { COMPACT_CONTROL_HEIGHT, compactControlClass } from '@whiskeyjack-net/design-system'
 import '@/i18n'
 
 /**
@@ -202,6 +203,26 @@ describe('SizePreview', () => {
     const hero = await icon(256, 'Windows')
     expect(hero.parentElement!.style.borderRadius).toBe('')
     await waitFor(() => expect(screen.queryByText(/preview only/i)).toBeNull())
+  })
+
+  it('lines up every control in the row, from the design system recipe', async () => {
+    // Apple's row is the busiest: size chips, an appearance strip and the watch
+    // pill. They had each grown their own padding and sat at three heights, which
+    // reads as a rendering fault rather than a design.
+    const { container } = render(<SizePreview platform="apple" />)
+    await icon(1024, 'Apple')
+
+    const chip = screen.getByRole('button', { name: '1024' })
+    const strip = container.querySelector('[role="radiogroup"]')!
+    const pill = screen.getByRole('button', { name: /watch/i })
+
+    for (const el of [chip, strip, pill]) {
+      expect(el.className, el.textContent ?? '').toContain(COMPACT_CONTROL_HEIGHT)
+    }
+
+    // Height comes from the shared recipe rather than three local guesses, so a
+    // future control matches by construction.
+    expect(compactControlClass()).toContain(COMPACT_CONTROL_HEIGHT)
   })
 
   it('opens favicon.ico too', async () => {
