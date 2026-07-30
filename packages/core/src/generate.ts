@@ -340,10 +340,20 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
 
     // Helper: generate a macOS PNG with or without background
     const generateMacosPng = async (src: IconCanvas, size: number, bgFill?: BackgroundFill) => {
-      if (bgFill) {
-        return generatePngWithBg(src, size, bgFill)
+      // Legacy macOS is the one OS-shaped platform that rounds its OWN artwork:
+      // a `.icns` is not masked by the system, so the image IS the icon's
+      // silhouette. Every other dark-variant platform leaves the shape to the OS,
+      // which is why the corner fields sit on MacosConfig rather than on
+      // DarkVariantConfig.
+      //
+      // Rounding needs a plate to clip, so it only applies with a background --
+      // the same condition the settings UI gates the sliders on.
+      let canvas = await resizeCanvas(src, size, size)
+      if (bgFill) canvas = drawWithBackground(canvas, bgFill)
+      if (bgFill && macosConfig.cornerRadius > 0) {
+        canvas = applyRoundedCorners(canvas, macosConfig.cornerRadius, macosConfig.cornerSmoothing)
       }
-      return generatePng(src, size)
+      return { data: await canvasToPng(canvas) }
     }
 
     // Generate iconset PNGs (light)

@@ -139,16 +139,6 @@
     "monochromeHint": "Android 13 以降のテーマアイコンは単色のシルエットを使います。",
     "includeSvg": "SVG favicon を含める",
     "includeSvgHint": "モダンなブラウザーはこちらを優先します。ラスター化せずに拡大縮小できます。",
-    "source": {
-      "main": "メインのアートワーク",
-      "light": "ライト用バリアント",
-      "dark": "ダーク用バリアント",
-      "mono": "モノクロ",
-      "maskable": "マスカブル",
-      "unplated": "プレートなし（タスクバー）",
-      "useMain": "ソース",
-      "useAlternate": "代替"
-    },
     "faviconSource": "favicon 専用のソース",
     "faviconSourceHint": "favicon はブラウザーのタブで 16px で描かれます。簡略化した図案なら耐えますが、描き込んだものは潰れます。",
     "traySource": "トレイアイコン専用のソース",
@@ -158,7 +148,21 @@
     "maskableBackground": "マスカブルの背景",
     "unplatedBackground": "タスクバーアイコンの背景",
     "dedicatedUsingMain": "メインのソースを使用中",
-    "dedicatedRemove": "{{label}}を削除"
+    "dedicatedRemove": "{{label}}を削除",
+    "windowsStoreHint": "背景は 2 種類あります。タイルの色はプレビュー専用で、書き出したタイル PNG は透過のまま、実際のプレートはアプリマニフェストの BackgroundColor から来ます。タスクバーアイコンの背景は、プレートなし PNG に焼き込まれます。実行ファイル用の Windows .ico とは別物です。",
+    "legacyHint": "旧形式です。ガラスとティントを使うなら Apple プラットフォームの .icon バンドルを使ってください。",
+    "appleGenerates": "macOS・iOS・watchOS 向けの .icon バンドルを生成します。Xcode 16 以降が必要です。",
+    "includeSvgRequiresSvg": "SVG のソースが必要です。ラスター画像からベクター favicon は作れません。",
+    "source": {
+      "main": "メインのアートワーク",
+      "light": "ライト用バリアント",
+      "dark": "ダーク用バリアント",
+      "mono": "モノクロ",
+      "maskable": "マスカブル",
+      "unplated": "プレートなし（タスクバー）",
+      "useMain": "ソース",
+      "useAlternate": "代替"
+    }
   },
   "actions": {
     "upload": "ソース画像をアップロード",

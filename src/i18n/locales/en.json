@@ -139,16 +139,6 @@
     "monochromeHint": "Android 13+ themed icons use a single-color silhouette.",
     "includeSvg": "Include SVG favicon",
     "includeSvgHint": "Modern browsers prefer it; it scales without a raster step.",
-    "source": {
-      "main": "Main artwork",
-      "light": "Light variant",
-      "dark": "Dark variant",
-      "mono": "Monochrome",
-      "maskable": "Maskable",
-      "unplated": "Unplated (taskbar)",
-      "useMain": "Source",
-      "useAlternate": "Alternate"
-    },
     "faviconSource": "Dedicated favicon source",
     "faviconSourceHint": "Favicons render at 16px in a browser tab. A simplified drawing survives that; a detailed one turns to mud.",
     "traySource": "Dedicated tray icon source",
@@ -158,7 +148,21 @@
     "maskableBackground": "Maskable background",
     "unplatedBackground": "Taskbar icon background",
     "dedicatedUsingMain": "Using the main source",
-    "dedicatedRemove": "Remove the {{label}}"
+    "dedicatedRemove": "Remove the {{label}}",
+    "windowsStoreHint": "Two kinds of background here. The tile colour is PREVIEW ONLY -- the exported tile PNGs stay transparent and the real plate comes from BackgroundColor in your app manifest. The taskbar icon background IS baked into the exported unplated PNGs. Separate from the Windows .ico, which is the exe icon.",
+    "legacyHint": "Legacy format. Use the Apple platform for .icon bundles with glass and tinting.",
+    "appleGenerates": "Generates an .icon bundle for macOS, iOS and watchOS. Needs Xcode 16 or newer.",
+    "includeSvgRequiresSvg": "Needs an SVG source -- a raster image cannot produce a vector favicon.",
+    "source": {
+      "main": "Main artwork",
+      "light": "Light variant",
+      "dark": "Dark variant",
+      "mono": "Monochrome",
+      "maskable": "Maskable",
+      "unplated": "Unplated (taskbar)",
+      "useMain": "Source",
+      "useAlternate": "Alternate"
+    }
   },
   "actions": {
     "export": "Export all icons",

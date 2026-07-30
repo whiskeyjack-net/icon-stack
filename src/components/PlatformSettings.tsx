@@ -21,7 +21,7 @@ import { useGenerator } from '@/contexts/GeneratorContext'
  */
 export function PlatformSettings({ platform }: { platform: Platform }) {
   const { t } = useTranslation()
-  const { platforms, alternate, patchPlatform, faviconFit, trayFit, setFaviconFit, setTrayFit } =
+  const { source, platforms, alternate, patchPlatform, faviconFit, trayFit, setFaviconFit, setTrayFit } =
     useGenerator()
   // Read generically so each control can be gated on its field existing;
   // the config union has no index signature, hence the step through unknown.
@@ -33,6 +33,11 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
   return (
     <Card>
       <CardContent className="space-y-6 p-5 pt-3">
+        {/* --- What this platform produces, before how to configure it ------ */}
+        {platform === 'windowsStore' && <Hint>{t('platform.windowsStoreHint')}</Hint>}
+        {(platform === 'macos' || platform === 'ios') && <Hint>{t('platform.legacyHint')}</Hint>}
+        {platform === 'apple' && <Hint>{t('platform.appleGenerates')}</Hint>}
+
         {/* --- A source belonging to this platform alone ------------------- */}
         {has('faviconSource') && (
           <DedicatedSource
@@ -272,7 +277,13 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
         {has('includeSvg') && (
           <Toggle
             label={t('platform.includeSvg')}
-            description={t('platform.includeSvgHint')}
+            // A raster source cannot produce a vector favicon, so say which of the
+            // two hints applies rather than letting the toggle look available.
+            description={
+              source?.type === 'svg'
+                ? t('platform.includeSvgHint')
+                : t('platform.includeSvgRequiresSvg')
+            }
             checked={config.includeSvg as boolean}
             onChange={(includeSvg) => patch({ includeSvg } as never)}
           />
@@ -358,5 +369,14 @@ function SourcePicker({
         ]}
       />
     </div>
+  )
+}
+
+/** A quiet explanatory line. The same treatment the preview uses for its notes. */
+function Hint({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs leading-snug text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+      {children}
+    </p>
   )
 }

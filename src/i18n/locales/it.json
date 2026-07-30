@@ -139,16 +139,6 @@
     "monochromeHint": "Le icone a tema di Android 13+ usano una sagoma a un solo colore.",
     "includeSvg": "Includi favicon SVG",
     "includeSvgHint": "I browser moderni lo preferiscono; scala senza passare da un raster.",
-    "source": {
-      "main": "Grafica principale",
-      "light": "Variante chiara",
-      "dark": "Variante scura",
-      "mono": "Monocromatica",
-      "maskable": "Mascherabile",
-      "unplated": "Senza piastra (barra delle applicazioni)",
-      "useMain": "Origine",
-      "useAlternate": "Alternativa"
-    },
     "faviconSource": "Origine dedicata per la favicon",
     "faviconSourceHint": "Le favicon vengono disegnate a 16 px nella scheda del browser. Un disegno semplificato regge; uno dettagliato diventa illeggibile.",
     "traySource": "Origine dedicata per l'icona della barra",
@@ -158,7 +148,21 @@
     "maskableBackground": "Sfondo mascherabile",
     "unplatedBackground": "Sfondo dell'icona nella barra delle applicazioni",
     "dedicatedUsingMain": "Usa l'origine principale",
-    "dedicatedRemove": "Rimuovi {{label}}"
+    "dedicatedRemove": "Rimuovi {{label}}",
+    "windowsStoreHint": "Qui ci sono due tipi di sfondo. Il colore della piastrella è SOLO ANTEPRIMA: i PNG esportati restano trasparenti e la piastra reale viene da BackgroundColor nel manifest dell'app. Lo sfondo dell'icona della barra delle applicazioni VIENE incorporato nei PNG senza piastra. Separato dal .ico di Windows, che è l'icona dell'eseguibile.",
+    "legacyHint": "Formato legacy. Usa la piattaforma Apple per i bundle .icon con vetro e tinta.",
+    "appleGenerates": "Genera un bundle .icon per macOS, iOS e watchOS. Richiede Xcode 16 o successivo.",
+    "includeSvgRequiresSvg": "Richiede una sorgente SVG: un'immagine raster non può produrre una favicon vettoriale.",
+    "source": {
+      "main": "Grafica principale",
+      "light": "Variante chiara",
+      "dark": "Variante scura",
+      "mono": "Monocromatica",
+      "maskable": "Mascherabile",
+      "unplated": "Senza piastra (barra delle applicazioni)",
+      "useMain": "Origine",
+      "useAlternate": "Alternativa"
+    }
   },
   "actions": {
     "upload": "Carica un'immagine di origine",

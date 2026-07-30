@@ -139,16 +139,6 @@
     "monochromeHint": "Los iconos temáticos de Android 13+ usan una silueta de un color.",
     "includeSvg": "Incluir favicon SVG",
     "includeSvgHint": "Los navegadores modernos lo prefieren; escala sin rasterizar.",
-    "source": {
-      "main": "Gráfico principal",
-      "light": "Variante clara",
-      "dark": "Variante oscura",
-      "mono": "Monocromo",
-      "maskable": "Maskable",
-      "unplated": "Sin placa (barra)",
-      "useMain": "Origen",
-      "useAlternate": "Alternativa"
-    },
     "faviconSource": "Origen dedicado para el favicon",
     "faviconSourceHint": "Los favicons se dibujan a 16 px en la pestaña del navegador. Un dibujo simplificado lo resiste; uno detallado se convierte en barro.",
     "traySource": "Origen dedicado para el icono de bandeja",
@@ -158,7 +148,21 @@
     "maskableBackground": "Fondo enmascarable",
     "unplatedBackground": "Fondo del icono de la barra de tareas",
     "dedicatedUsingMain": "Usando el origen principal",
-    "dedicatedRemove": "Quitar {{label}}"
+    "dedicatedRemove": "Quitar {{label}}",
+    "windowsStoreHint": "Aquí hay dos tipos de fondo. El color del mosaico es SOLO VISTA PREVIA: los PNG exportados siguen siendo transparentes y la placa real viene de BackgroundColor en el manifiesto de tu app. El fondo del icono de la barra de tareas SÍ se integra en los PNG sin placa. Es independiente del .ico de Windows, que es el icono del ejecutable.",
+    "legacyHint": "Formato antiguo. Usa la plataforma Apple para paquetes .icon con cristal y tintado.",
+    "appleGenerates": "Genera un paquete .icon para macOS, iOS y watchOS. Requiere Xcode 16 o superior.",
+    "includeSvgRequiresSvg": "Requiere una fuente SVG: una imagen ráster no puede producir un favicon vectorial.",
+    "source": {
+      "main": "Gráfico principal",
+      "light": "Variante clara",
+      "dark": "Variante oscura",
+      "mono": "Monocromo",
+      "maskable": "Maskable",
+      "unplated": "Sin placa (barra)",
+      "useMain": "Origen",
+      "useAlternate": "Alternativa"
+    }
   },
   "actions": {
     "export": "Exportar todos los iconos",

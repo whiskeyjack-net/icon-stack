@@ -139,16 +139,6 @@
     "monochromeHint": "Themenbezogene Icons ab Android 13 nutzen eine einfarbige Silhouette.",
     "includeSvg": "SVG-Favicon einschließen",
     "includeSvgHint": "Moderne Browser bevorzugen es; es skaliert ohne Rasterschritt.",
-    "source": {
-      "main": "Hauptgrafik",
-      "light": "Helle Variante",
-      "dark": "Dunkle Variante",
-      "mono": "Monochrom",
-      "maskable": "Maskierbar",
-      "unplated": "Ohne Platte (Taskleiste)",
-      "useMain": "Quelle",
-      "useAlternate": "Alternative"
-    },
     "faviconSource": "Eigene Favicon-Quelle",
     "faviconSourceHint": "Favicons werden im Browser-Tab mit 16 px gezeichnet. Eine vereinfachte Zeichnung übersteht das; eine detaillierte verschwimmt.",
     "traySource": "Eigene Quelle für das Menüleisten-Icon",
@@ -158,7 +148,21 @@
     "maskableBackground": "Maskierbarer Hintergrund",
     "unplatedBackground": "Hintergrund des Taskleisten-Icons",
     "dedicatedUsingMain": "Nutzt die Hauptquelle",
-    "dedicatedRemove": "{{label}} entfernen"
+    "dedicatedRemove": "{{label}} entfernen",
+    "windowsStoreHint": "Zwei Arten von Hintergrund. Die Kachelfarbe ist NUR VORSCHAU -- die exportierten Kachel-PNGs bleiben transparent, die echte Platte kommt aus BackgroundColor im App-Manifest. Der Hintergrund des Taskleisten-Icons WIRD in die ungeplatteten PNGs eingebacken. Getrennt von der Windows-.ico, dem EXE-Icon.",
+    "legacyHint": "Altes Format. Nutze die Apple-Plattform für .icon-Bundles mit Glas und Tönung.",
+    "appleGenerates": "Erzeugt ein .icon-Bundle für macOS, iOS und watchOS. Benötigt Xcode 16 oder neuer.",
+    "includeSvgRequiresSvg": "Benötigt eine SVG-Quelle -- ein Rasterbild kann kein Vektor-Favicon erzeugen.",
+    "source": {
+      "main": "Hauptgrafik",
+      "light": "Helle Variante",
+      "dark": "Dunkle Variante",
+      "mono": "Monochrom",
+      "maskable": "Maskierbar",
+      "unplated": "Ohne Platte (Taskleiste)",
+      "useMain": "Quelle",
+      "useAlternate": "Alternative"
+    }
   },
   "actions": {
     "upload": "Quellbild hochladen",

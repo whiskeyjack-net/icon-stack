@@ -139,16 +139,6 @@
     "monochromeHint": "Les icônes thématiques d'Android 13+ utilisent une silhouette d'une seule couleur.",
     "includeSvg": "Inclure un favicon SVG",
     "includeSvgHint": "Les navigateurs modernes le préfèrent ; il s'adapte sans passer par un raster.",
-    "source": {
-      "main": "Visuel principal",
-      "light": "Variante claire",
-      "dark": "Variante sombre",
-      "mono": "Monochrome",
-      "maskable": "Masquable",
-      "unplated": "Sans plaque (barre des tâches)",
-      "useMain": "Source",
-      "useAlternate": "Alternative"
-    },
     "faviconSource": "Source dédiée pour le favicon",
     "faviconSourceHint": "Les favicons sont dessinés à 16 px dans un onglet. Un dessin simplifié y survit ; un dessin détaillé devient illisible.",
     "traySource": "Source dédiée pour l'icône de barre",
@@ -158,7 +148,21 @@
     "maskableBackground": "Fond masquable",
     "unplatedBackground": "Fond de l'icône de barre des tâches",
     "dedicatedUsingMain": "Utilise la source principale",
-    "dedicatedRemove": "Retirer {{label}}"
+    "dedicatedRemove": "Retirer {{label}}",
+    "windowsStoreHint": "Deux types d'arrière-plan ici. La couleur de la tuile est UNIQUEMENT un aperçu : les PNG exportés restent transparents et la vraie plaque vient de BackgroundColor dans le manifeste de l'app. L'arrière-plan de l'icône de la barre des tâches EST incrusté dans les PNG sans plaque. Distinct du .ico Windows, qui est l'icône de l'exécutable.",
+    "legacyHint": "Format ancien. Utilisez la plateforme Apple pour les bundles .icon avec verre et teinte.",
+    "appleGenerates": "Génère un bundle .icon pour macOS, iOS et watchOS. Nécessite Xcode 16 ou plus.",
+    "includeSvgRequiresSvg": "Nécessite une source SVG : une image raster ne peut pas produire un favicon vectoriel.",
+    "source": {
+      "main": "Visuel principal",
+      "light": "Variante claire",
+      "dark": "Variante sombre",
+      "mono": "Monochrome",
+      "maskable": "Masquable",
+      "unplated": "Sans plaque (barre des tâches)",
+      "useMain": "Source",
+      "useAlternate": "Alternative"
+    }
   },
   "actions": {
     "upload": "Importer une image source",
