@@ -188,33 +188,6 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
               formatValue={(v) => (v === 0 ? t('platform.none') : `${v}%`)}
             />
 
-            <Toggle
-              label={t('platform.translucency')}
-              description={t('platform.translucencyHint')}
-              checked={(config.translucency as { enabled: boolean }).enabled}
-              onChange={(enabled) =>
-                patch({
-                  translucency: {
-                    enabled,
-                    value: (config.translucency as { value: number }).value,
-                  },
-                } as never)
-              }
-            />
-
-            {(config.translucency as { enabled: boolean }).enabled && (
-              <Slider
-                label={t('platform.translucencyAmount')}
-                min={0}
-                max={100}
-                step={1}
-                value={Math.round((config.translucency as { value: number }).value * 100)}
-                onChange={(v) =>
-                  patch({ translucency: { enabled: true, value: v / 100 } } as never)
-                }
-                formatValue={(v) => `${v}%`}
-              />
-            )}
           </section>
         )}
 

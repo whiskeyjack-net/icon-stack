@@ -45,7 +45,18 @@ const UI = [
  * the app smoke tests. Keep this list short and justified -- it is the escape
  * hatch that would let the original bug back in.
  */
-const NOT_A_CONTROL = new Set(['enabled'])
+const NOT_A_CONTROL = new Set([
+  'enabled',
+  // The platform grid's job, checked separately by the grid's own test.
+  //
+  // `translucency` is an Apple `.icon` layer-group property that the core writes
+  // into `icon.json`. The retired monorepo build never surfaced it, exposing only
+  // the glass effect and zoom for Apple, and a control for it read as noise in a
+  // settings card next to settings that change the exported pixels. Dropped on the
+  // owner's call. The field is still honoured by the export; it simply uses the
+  // core's default.
+  'translucency',
+])
 
 const configs = createDefaultPlatforms()
 

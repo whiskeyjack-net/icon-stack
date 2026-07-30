@@ -1,21 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Card, CardContent, Notice, SegmentedControl } from '@whiskeyjack-net/design-system'
-import { Shuffle, Watch } from '@phosphor-icons/react'
+import { Card, CardContent, Notice, SegmentedControl, cn } from '@whiskeyjack-net/design-system'
+import {
+  BoundingBox,
+  Circle,
+  Drop,
+  ImageSquare,
+  Moon,
+  Shuffle,
+  Sun,
+  Watch,
+} from '@phosphor-icons/react'
 import {
   PLATFORM_LABELS,
+  WINDOWS_STORE_UNPLATED_SIZES,
   fillToCss,
   type BackgroundFill,
   type Platform,
 } from '@whiskeyjack-net/icon-stack-core'
 import { useGenerator } from '@/contexts/GeneratorContext'
-import {
-  LEGIBILITY_MAX,
-  groupByVariant,
-  sizesOf,
-  type IconVariant,
-  type RenderedIcon,
-} from '@/lib/icon-variants'
+import { groupByVariant, sizesOf, type IconVariant, type RenderedIcon } from '@/lib/icon-variants'
 import { osMaskFor } from '@/lib/os-mask'
 import {
   APPLE_APPEARANCES,
@@ -25,12 +29,32 @@ import {
 } from '@/lib/apple-appearance'
 import { DEFAULT_BACKDROP, backdropStyle, randomBackdrop } from '@/lib/backdrop'
 
+/** Largest the preview is drawn. A 1024px icon at 1:1 is taller than its rail. */
+const DISPLAY_MAX = 256
+
 /**
- * Widest the large preview is drawn. A 1024px render at 1:1 would be taller than
- * the rail it lives in, so the hero is scaled while the caption keeps naming the
- * real pixel size.
+ * At or below this, a browser's smooth scaling flatters the icon and hides the
+ * thing you are looking for. `pixelated` shows the pixels the pipeline resampled.
  */
-const HERO_MAX = 208
+const PIXELATED_UPTO = 32
+
+/**
+ * Layers, not icons -- **on Android**.
+ *
+ * A launcher composites Android's adaptive layers and masks the RESULT, so a
+ * foreground on its own is a state no device renders. Offering them in a picker
+ * put two non-answers beside the real one; the finalized `ic_launcher` is what
+ * Android shows, and that is what this previews.
+ *
+ * The platform qualifier is load-bearing. `foreground` is a layer on Android and
+ * the ARTWORK on Apple -- `AppIcon.icon/Assets/foreground.png` is the only raster
+ * an Apple export contains, with the plate declared in `icon.json` beside it.
+ * Filtering the variant name globally left Apple with nothing to preview at all.
+ */
+const ANDROID_LAYERS: IconVariant[] = ['foreground', 'background']
+
+/** Platforms whose exported file already carries a drawn corner radius. */
+const BAKES_A_CORNER: Platform[] = ['windows', 'linux', 'favicon']
 
 export interface SizePreviewProps {
   platform: Platform
@@ -43,38 +67,38 @@ export interface SizePreviewProps {
 }
 
 /**
- * Renders the selected platform through the real pipeline and shows the result at
- * the sizes where legibility fails, rather than scaling one large render down in
- * CSS -- a 16px icon looks nothing like a 512px one shrunk by the browser, which
- * is the whole reason the pipeline resamples per size.
+ * One icon, at one size, shaped the way the platform will shape it.
  *
- * A platform exports several *different* icons, not one at several sizes, so the
- * renders are grouped into variants (plain, maskable, dark, monochrome, Android's
- * adaptive layers) and one is shown at a time. Before that, the preview picked
- * whichever same-size render came first out of the file map -- so a PWA preview
- * could be the maskable icon without saying so, and an Android preview could be
- * the bare background plate.
+ * The controls pick WHICH icon -- per platform: an Apple appearance, a light or
+ * dark variant, monochrome, maskable -- and at WHAT size. The box below shows
+ * that one, on a wallpaper, masked.
  *
- * Two things it shows, because they answer different questions:
+ * That structure is the monorepo build's and it is the right one. Rendering every
+ * size at once answers a question nobody asked while burying the one they did,
+ * and it cost the size picker, the pixelated small end, and any notion of a
+ * platform-shaped choice.
  *
- *   HERO   the largest render, carrying the shape the OS gives it. This is where
- *          you see artwork run into a corner and get sliced off.
- *   ROW    every size at or below 128, at 1:1. This is where you see a mark stop
- *          being readable.
+ * The pixels are the real exported bytes. A platform export is several
+ * *different* icons rather than one at several sizes, so renders are grouped by
+ * variant and the toggles select among them -- which is also what stops the
+ * preview showing a maskable icon while presenting itself as the plain one.
  *
- * Both are the real exported bytes at their own resolution, so a baked corner
- * radius needs no simulating -- it is already in the pixels. Only the shape the
- * OS imposes at display time is drawn on top, and the caption says so.
+ * Two things it therefore never simulates: a baked corner radius is already in
+ * the pixels, and so is a squircle. Only what the OS adds at display time goes on
+ * top -- its mask, and Apple's declared plate.
  */
 export function SizePreview({ platform, title }: SizePreviewProps) {
   const { source, platforms, alternate, render } = useGenerator()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [variants, setVariants] = useState<Map<IconVariant, RenderedIcon[]>>(new Map())
-  const [active, setActive] = useState<IconVariant | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  const [size, setSize] = useState<number | null>(null)
   const [appearance, setAppearance] = useState<AppleAppearance>('light')
   const [watch, setWatch] = useState(false)
+  const [dark, setDark] = useState(false)
+  const [mono, setMono] = useState(false)
+  const [maskable, setMaskable] = useState(false)
   const [backdrop, setBackdrop] = useState(DEFAULT_BACKDROP)
   const runRef = useRef(0)
 
@@ -100,60 +124,76 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
     return () => clearTimeout(timer)
   }, [platform, platforms, source, alternate, render])
 
-  const available = [...variants.keys()]
+  const available = [...variants.keys()].filter(
+    (v) => platform !== 'android' || !ANDROID_LAYERS.includes(v),
+  )
+  const has = (v: IconVariant) => available.includes(v)
+  const config = platforms[platform] as unknown as Record<string, unknown>
 
-  // Hold the chosen variant across re-renders, but fall back when it disappears
-  // -- switching a platform's monochrome layer off should not leave a blank card.
-  const picked = active && variants.has(active) ? active : (available[0] ?? null)
-
-  // Apple ships a transparent foreground and declares its plate in icon.json, so
-  // the appearance picker REPLACES the variant picker here: the exported layers
-  // are the appearances, and two controls would be two names for one choice.
   const isApple = platform === 'apple'
-  const appleConfig = platforms.apple as unknown as {
-    bgFill: BackgroundFill
-    bgFillDark: BackgroundFill
-  }
+  const hasDark = has('dark')
+  const hasMono = has('mono') && !isApple
+  const hasMaskable = has('maskable')
+
+  /**
+   * Which exported variant the current toggles select.
+   *
+   * Resolved per platform rather than through one generic picker, because the
+   * question is platform-shaped: an Apple appearance is not the same kind of
+   * choice as "regular or maskable", even though both land on a variant.
+   */
   const appleLayer = isApple ? appleLayerFor(appearance, available) : null
-  const shown = appleLayer?.variant ?? picked
+  let shown: IconVariant | null
+  if (appleLayer) shown = appleLayer.variant
+  else if (hasMono && mono) shown = 'mono'
+  else if (hasMaskable && maskable) shown = 'maskable'
+  else if (hasDark && dark) shown = 'dark'
+  else if (hasDark) shown = has('light') ? 'light' : 'regular'
+  else shown = available[0] ?? null
 
-  // Object URLs are derived from the bytes and revoked when they change, so a
-  // long session does not leak every preview it made.
-  //
-  // Every distinct size in the variant gets one URL. The row below shows the
-  // small end at 1:1 and the hero shows the largest, so both read from this map
-  // rather than building blobs twice for the same bytes.
-  const rendered = useMemo(() => {
-    if (!shown) return []
-    const icons = variants.get(shown) ?? []
-    return sizesOf(icons).flatMap((size) => {
-      const match = icons.find((i) => i.size === size)
-      if (!match) return []
-      const blob = new Blob([match.bytes as unknown as BlobPart], { type: 'image/png' })
-      return [{ size, url: URL.createObjectURL(blob) }]
-    })
-  }, [variants, shown])
+  // Memoised because the object URL below depends on it, and a fresh array every
+  // render would rebuild the blob on every render with it.
+  const icons = useMemo(() => (shown ? (variants.get(shown) ?? []) : []), [variants, shown])
+  const sizes = sizesOf(icons)
 
-  useEffect(() => () => rendered.forEach((p) => URL.revokeObjectURL(p.url)), [rendered])
+  // Hold the chosen size across variant switches, and fall back to the largest
+  // when this variant does not carry it: tray tops out at 48 where windows
+  // reaches 256, so a stale selection would otherwise empty the box.
+  const selected = size !== null && sizes.includes(size) ? size : (sizes[sizes.length - 1] ?? null)
 
-  const legible = rendered.filter((r) => r.size <= LEGIBILITY_MAX)
-  const largest = rendered[rendered.length - 1]
+  const url = useMemo(() => {
+    const match = icons.find((i) => i.size === selected)
+    if (!match) return null
+    return URL.createObjectURL(
+      new Blob([match.bytes as unknown as BlobPart], { type: 'image/png' }),
+    )
+  }, [icons, selected])
 
-  // Only worth a hero when it shows something the 1:1 row cannot. A favicon tops
-  // out at 32 and a tray icon at 48, so for those the row already IS the icon.
-  const hero = largest && largest.size > LEGIBILITY_MAX ? largest : null
+  useEffect(() => () => void (url && URL.revokeObjectURL(url)), [url])
 
+  // --- Shape -----------------------------------------------------------------
   const mask = shown ? osMaskFor(platform, shown) : { radius: null }
-  // An Apple Watch icon is circular whatever the desktop does with the same file.
-  const radius = isApple && watch ? '50%' : mask.radius
-  const maskStyle = radius ? { borderRadius: radius } : undefined
+  const smoothing = Number(config.cornerSmoothing ?? 0)
+  const bakesACorner =
+    BAKES_A_CORNER.includes(platform) &&
+    !config.bgTransparent &&
+    Number(config.cornerRadius ?? 0) > 0
 
-  // The plate the OS puts behind the artwork, which this export never bakes.
-  const applePlate = !isApple
+  // An Apple Watch icon is circular whatever the desktop does with the same file.
+  // Otherwise: only what the OS applies. A baked corner is in the pixels already,
+  // and a baked squircle is a superellipse that CSS `border-radius` cannot
+  // express -- rounding on top of either clips the shape the pipeline just drew.
+  const radius = isApple && watch ? '50%' : bakesACorner && smoothing > 0 ? null : mask.radius
+
+  const plate = !isApple
     ? null
     : appearance === 'tinted'
       ? TINTED_PLATE
-      : fillToCss(appearance === 'dark' ? appleConfig.bgFillDark : appleConfig.bgFill)
+      : fillToCss((appearance === 'dark' ? config.bgFillDark : config.bgFill) as BackgroundFill)
+
+  const display = Math.min(selected ?? 0, DISPLAY_MAX)
+  const label = PLATFORM_LABELS[platform]
+  const unplated = selected !== null && WINDOWS_STORE_UNPLATED_SIZES.includes(selected)
 
   return (
     <Card>
@@ -164,149 +204,244 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
 
         {error ? (
           <Notice tone="error">{error}</Notice>
+        ) : selected === null ? (
+          <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+            {t('preview.none')}
+          </p>
         ) : (
-          <div className="space-y-4">
-            {isApple ? (
-              <div className="space-y-3">
-                <SegmentedControl
-                  aria-label={t('preview.title')}
-                  options={APPLE_APPEARANCES.map((a) => ({
-                    value: a,
-                    label: t(`preview.appearance.${a}`),
-                  }))}
-                  value={appearance}
-                  onChange={setAppearance}
-                />
-                <Button
-                  variant={watch ? 'accent' : 'outline'}
-                  size="sm"
-                  aria-pressed={watch}
-                  onClick={() => setWatch(!watch)}
-                >
-                  <Watch size={16} weight={watch ? 'fill' : 'regular'} className="mr-1.5" />
-                  {t('preview.watch')}
-                </Button>
-              </div>
-            ) : (
-              /* Only worth showing when there is a choice: most platforms export
-                 one variant, and a one-option segmented control is noise. */
-              available.length > 1 && (
-                <SegmentedControl
-                  aria-label={t('preview.title')}
-                  // Wraps rather than scrolls: Windows Store exports four
-                  // variants, and a strip that overflows the rail would hide the
-                  // one you wanted behind a scroll nobody looks for.
-                  className="flex-wrap"
-                  options={available.map((v) => ({ value: v, label: t(`preview.variant.${v}`) }))}
-                  value={shown as IconVariant}
-                  onChange={setActive}
-                />
-              )
-            )}
-
-            <div className="space-y-5 transition-opacity" style={{ opacity: pending ? 0.5 : 1 }}>
-              {hero && (
-                <figure className="flex flex-col items-center gap-2">
-                  {/* An icon is judged against a wallpaper, never against a card:
-                      a pale plate or a white outer edge vanishes on a real
-                      desktop and looks fine here. Re-roll to check. */}
-                  <div
-                    className="flex w-full items-center justify-center rounded-xl p-6"
-                    style={backdropStyle(backdrop)}
+          <div className="space-y-3 transition-opacity" style={{ opacity: pending ? 0.6 : 1 }}>
+            {/* --- Which size, and which icon -------------------------------- */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-1 flex-wrap gap-1.5">
+                {sizes.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    aria-pressed={s === selected}
+                    onClick={() => setSize(s)}
+                    className={cn(
+                      'wj-focus-ring rounded-lg px-2.5 py-1 font-mono text-xs font-medium transition-colors',
+                      s === selected
+                        ? 'bg-[var(--color-neutral-700)] text-white dark:bg-[var(--color-neutral-300)] dark:text-[var(--color-neutral-900)]'
+                        : 'bg-[var(--color-surface-light)] text-[var(--color-text-secondary-light)] hover:bg-[var(--color-warm-100)] dark:bg-[var(--color-surface-dark)] dark:text-[var(--color-text-secondary-dark)] dark:hover:bg-[var(--color-neutral-800)]',
+                    )}
                   >
-                    <div
-                      style={{
-                        ...maskStyle,
-                        // Apple declares its plate rather than baking it, so the
-                        // preview supplies the one the OS would composite.
-                        ...(applePlate ? { background: applePlate } : null),
-                        width: Math.min(hero.size, HERO_MAX),
-                        height: Math.min(hero.size, HERO_MAX),
-                      }}
-                      className="overflow-hidden"
-                    >
-                      <img
-                        src={hero.url}
-                        width={Math.min(hero.size, HERO_MAX)}
-                        height={Math.min(hero.size, HERO_MAX)}
-                        alt={t('preview.alt', { size: hero.size })}
-                        // Tinted mode renders the layer as a white silhouette,
-                        // which is what macOS does with the monochrome layer.
-                        style={
-                          appleLayer?.monochrome
-                            ? { filter: 'brightness(0) invert(1)' }
-                            : undefined
-                        }
-                        className="[image-rendering:auto]"
-                      />
-                    </div>
-                  </div>
-
-                  <figcaption className="flex items-center gap-2 text-xs tabular-nums text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                    <span>
-                      {hero.size}px
-                      {hero.size > HERO_MAX && (
-                        <span className="ms-1 opacity-70">
-                          {t('preview.shownAt', { size: HERO_MAX })}
-                        </span>
-                      )}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setBackdrop(randomBackdrop())}
-                      aria-label={t('preview.shuffleBackdrop')}
-                      title={t('preview.shuffleBackdrop')}
-                      className="wj-focus-ring rounded p-1 hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-text-primary-dark)]"
-                    >
-                      <Shuffle size={14} weight="bold" />
-                    </button>
-                  </figcaption>
-                </figure>
-              )}
-
-              <div className="flex flex-wrap items-end gap-6">
-                {legible.map(({ size, url }) => (
-                  <figure key={size} className="flex flex-col items-center gap-2">
-                    <img
-                      src={url}
-                      width={size}
-                      height={size}
-                      alt={t('preview.alt', { size })}
-                      style={maskStyle}
-                      className="[image-rendering:auto]"
-                    />
-                    <figcaption className="text-xs tabular-nums text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                      {size}px
-                    </figcaption>
-                  </figure>
+                    {s}
+                  </button>
                 ))}
               </div>
 
-              {!rendered.length && (
-                <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                  {t('preview.none')}
-                </p>
+              {isApple && (
+                <>
+                  <SegmentedControl
+                    aria-label={t('preview.appearanceLabel')}
+                    value={appearance}
+                    onChange={setAppearance}
+                    options={APPLE_APPEARANCES.map((a) => ({
+                      value: a,
+                      label: t(`preview.appearance.${a}`),
+                      icon: APPEARANCE_ICON[a],
+                    }))}
+                  />
+                  <TogglePill
+                    active={watch}
+                    onClick={() => setWatch(!watch)}
+                    icon={<Watch size={12} weight={watch ? 'fill' : 'bold'} />}
+                    label={t('preview.watch')}
+                  />
+                </>
               )}
 
-              {/* Said out loud because the exported PNG stays square: without
-                  this, a rounded preview reads as a claim about the file. */}
-              {mask.radius && (
-                <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                  {t('preview.maskApplied', { platform: PLATFORM_LABELS[platform] })}
-                </p>
+              {/* Icon-only: a sun and a moon ARE the vocabulary, and spelling
+                  them out costs more room than it earns. */}
+              {!isApple && hasDark && (
+                <SegmentedControl
+                  aria-label={t('preview.appearanceLabel')}
+                  hideLabels
+                  value={dark ? 'dark' : 'light'}
+                  onChange={(v) => setDark(v === 'dark')}
+                  options={[
+                    {
+                      value: 'light',
+                      label: t('preview.appearance.light'),
+                      icon: <Sun size={14} weight="bold" />,
+                    },
+                    {
+                      value: 'dark',
+                      label: t('preview.appearance.dark'),
+                      icon: <Moon size={14} weight="bold" />,
+                    },
+                  ]}
+                />
               )}
 
-              {/* What the OS does that the file cannot show. Only the platforms
-                  with something non-obvious to say carry one. */}
-              {i18n.exists(`preview.note.${platform}`) && (
-                <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-                  {t(`preview.note.${platform}`)}
-                </p>
+              {hasMono && (
+                <TogglePill
+                  active={mono}
+                  onClick={() => setMono(!mono)}
+                  icon={<Circle size={12} weight={mono ? 'fill' : 'bold'} />}
+                  label={t('preview.variant.mono')}
+                />
+              )}
+
+              {hasMaskable && (
+                <SegmentedControl
+                  aria-label={t('preview.variantLabel')}
+                  value={maskable ? 'maskable' : 'regular'}
+                  onChange={(v) => setMaskable(v === 'maskable')}
+                  options={[
+                    {
+                      value: 'regular',
+                      label: t('preview.variant.regular'),
+                      icon: <ImageSquare size={12} weight="bold" />,
+                    },
+                    {
+                      value: 'maskable',
+                      label: t('preview.variant.maskable'),
+                      icon: <BoundingBox size={12} weight="bold" />,
+                    },
+                  ]}
+                />
               )}
             </div>
+
+            {/* --- The icon, on a wallpaper ---------------------------------- */}
+            <div
+              className="relative flex items-center justify-center rounded-xl border border-[var(--color-border-light)] p-6 dark:border-[var(--color-border-dark)]"
+              style={backdropStyle(backdrop)}
+            >
+              <button
+                type="button"
+                onClick={() => setBackdrop(randomBackdrop())}
+                aria-label={t('preview.shuffleBackdrop')}
+                title={t('preview.shuffleBackdrop')}
+                className="wj-focus-ring absolute end-2 top-2 rounded-lg bg-white/40 p-1.5 transition-colors hover:bg-white/60 dark:bg-black/20 dark:hover:bg-black/40"
+              >
+                <Shuffle
+                  size={14}
+                  weight="bold"
+                  className="text-[var(--color-neutral-700)] dark:text-[var(--color-neutral-200)]"
+                />
+              </button>
+
+              <div
+                className="overflow-hidden"
+                style={{
+                  width: display,
+                  height: display,
+                  ...(radius ? { borderRadius: radius } : null),
+                  // Apple declares its plate in icon.json rather than baking it,
+                  // so the preview supplies what the OS would composite.
+                  ...(plate ? { background: plate } : null),
+                }}
+              >
+                {url && (
+                  <img
+                    src={url}
+                    width={display}
+                    height={display}
+                    alt={t('preview.canvasAriaLabel', { size: selected, platform: label })}
+                    style={{
+                      imageRendering: selected <= PIXELATED_UPTO ? 'pixelated' : 'auto',
+                      ...(appleLayer?.monochrome ? { filter: 'brightness(0) invert(1)' } : null),
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* --- What you are looking at ----------------------------------- */}
+            <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+              {t('preview.captionBase', { size: selected, platform: label })}
+              {isApple &&
+                t(watch ? 'preview.appleModeWatchSuffix' : 'preview.appleModeSuffix', {
+                  mode: t(`preview.appearance.${appearance}`).toLowerCase(),
+                })}
+              {hasDark && t(dark ? 'preview.darkSuffix' : 'preview.lightSuffix')}
+              {hasMono && mono && t('preview.monochromeSuffix')}
+              {hasMaskable && t(maskable ? 'preview.maskableSuffix' : 'preview.regularSuffix')}
+              {/* Boolean() because the config is read as `unknown` per field, and
+                  a bare `||` would put that straight into the tree. */}
+              {Boolean(config.faviconSource || config.traySource) &&
+                t('preview.dedicatedSourceSuffix')}
+            </p>
+
+            {isApple && <Hint>{t('preview.appleDisclaimer')}</Hint>}
+
+            {/* Said out loud because the exported file stays square: a rounded
+                preview would otherwise read as a claim about the PNG. */}
+            {!isApple && mask.radius && (
+              <Hint>{t('preview.osMaskDisclaimer', { platform: label })}</Hint>
+            )}
+
+            {platform === 'pwa' && (
+              <Hint>
+                {maskable
+                  ? t('preview.pwaMaskableCaption')
+                  : config.bgTransparent
+                    ? t('preview.pwaRegularTransparentCaption')
+                    : t('preview.pwaRegularFilledCaption')}
+              </Hint>
+            )}
+
+            {platform === 'windowsStore' && (
+              <Hint>
+                {unplated ? t('preview.windowsStoreUnplated') : t('preview.windowsStoreTile')}
+              </Hint>
+            )}
           </div>
         )}
       </CardContent>
     </Card>
+  )
+}
+
+const APPEARANCE_ICON: Record<AppleAppearance, React.ReactNode> = {
+  light: <Sun size={12} weight="bold" />,
+  dark: <Moon size={12} weight="bold" />,
+  tinted: <Drop size={12} weight="bold" />,
+}
+
+function Hint({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs leading-snug text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+      {children}
+    </p>
+  )
+}
+
+/**
+ * A bordered on/off pill, for the two controls that are a state rather than a
+ * choice between named options: watch shape, and monochrome. A two-segment
+ * `SegmentedControl` would frame either as a pair of alternatives, which reads
+ * wrong when the off state is simply "the normal icon".
+ */
+function TogglePill({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean
+  onClick: () => void
+  icon: React.ReactNode
+  label: string
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      title={label}
+      className={cn(
+        'wj-focus-ring flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors',
+        active
+          ? 'border-[var(--color-neutral-700)] bg-[var(--color-neutral-700)] text-white dark:border-white dark:bg-white dark:text-[var(--color-neutral-900)]'
+          : 'border-[var(--color-border-light)] bg-[var(--color-surface-light)] text-[var(--color-text-muted-light)] dark:border-[var(--color-border-dark)] dark:bg-[var(--color-surface-dark)] dark:text-[var(--color-text-muted-dark)]',
+      )}
+    >
+      {icon}
+      {label}
+    </button>
   )
 }
