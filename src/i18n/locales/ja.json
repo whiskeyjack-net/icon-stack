@@ -26,6 +26,17 @@
     "themeDark": "ダーク",
     "themeSystem": "システム",
     "language": "言語",
+    "cli": "コマンドライン",
+    "cliIntro": "CLI はこのページと同じパイプラインを使うので、書き出しと同じファイルができます。ビルドスクリプトに組み込むときや、素材の更新が手作業より多いときに向いています。",
+    "cliExamples": {
+      "install": "インストールせずに全オプションを見る",
+      "generate": "1 枚のソースから標準セットをすべて生成",
+      "subset": "必要なプラットフォームだけ",
+      "background": "背景を焼き込んで角を丸める"
+    },
+    "cliHelp": "Node 18 以降が必要です。--json で機械可読な出力、--quiet でエラーのみ報告します。",
+    "cliCopy": "コマンドをコピー",
+    "cliCopied": "コピーしました",
     "about": "このアプリについて",
     "version": "バージョン",
     "aboutText": "Icon Stack は Web、macOS、iOS、Android、Windows、Linux 向けの製品版アプリアイコンを生成します。すべてブラウザー内で処理され、画像が端末から送信されることはありません。"

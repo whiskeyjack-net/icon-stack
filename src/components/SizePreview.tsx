@@ -204,7 +204,7 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent className="p-5 pt-3">
         <h3 className="mb-4 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
           {title ?? t('preview.title')}
         </h3>

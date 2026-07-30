@@ -26,6 +26,17 @@
     "themeDark": "Dunkel",
     "themeSystem": "System",
     "language": "Sprache",
+    "cli": "Kommandozeile",
+    "cliIntro": "Die CLI nutzt dieselbe Pipeline wie diese Seite und erzeugt damit dieselben Dateien wie Exportieren. Sinnvoll in einem Build-Skript oder wenn sich die Quelle häufiger ändert, als du klicken möchtest.",
+    "cliExamples": {
+      "install": "Alle Optionen, ohne Installation",
+      "generate": "Der komplette Standardsatz aus einer Quelle",
+      "subset": "Nur die Plattformen, die du brauchst",
+      "background": "Hintergrund einbacken und Ecken abrunden"
+    },
+    "cliHelp": "Node 18 oder neuer. --json liefert maschinenlesbare Ausgabe, --quiet meldet nur Fehler.",
+    "cliCopy": "Befehl kopieren",
+    "cliCopied": "Kopiert",
     "about": "Über",
     "version": "Version",
     "aboutText": "Icon Stack erzeugt produktionsreife App-Icons für Web, macOS, iOS, Android, Windows und Linux. Alles läuft in deinem Browser – kein Bild verlässt dein Gerät."

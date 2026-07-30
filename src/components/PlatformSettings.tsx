@@ -32,7 +32,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
   return (
     <Card>
-      <CardContent className="space-y-6 pt-6">
+      <CardContent className="space-y-6 p-5 pt-3">
         {/* --- A source belonging to this platform alone ------------------- */}
         {has('faviconSource') && (
           <DedicatedSource
@@ -205,7 +205,11 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
             formatValue={(v) => `${v}%`}
           />
 
-          {has('cornerRadius') && (
+          {/* Only when there is a plate to round. A corner radius clips the
+              exported PNG's background, so with a transparent export it changes
+              nothing -- the retired build gated on this and the rebuild did not,
+              leaving two sliders that moved and did nothing. */}
+          {has('cornerRadius') && !config.bgTransparent && (
             <>
               <Slider
                 label={t('platform.cornerRadius')}

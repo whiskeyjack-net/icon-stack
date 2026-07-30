@@ -26,6 +26,17 @@
     "themeDark": "Dark",
     "themeSystem": "System",
     "language": "Language",
+    "cli": "Command line",
+    "cliIntro": "The CLI runs the same pipeline as this page, so it produces the same files as Export. Reach for it in a build script or when the source changes more often than you want to click.",
+    "cliExamples": {
+      "install": "Every option, without installing anything",
+      "generate": "The whole standard set, from one source",
+      "subset": "Only the platforms you need",
+      "background": "Bake a background and round the corners"
+    },
+    "cliHelp": "Node 18 or newer. Add --json for machine-readable output, or --quiet to report only errors.",
+    "cliCopy": "Copy command",
+    "cliCopied": "Copied",
     "about": "About",
     "version": "Version",
     "aboutText": "Icon Stack generates production-ready app icons for the web, macOS, iOS, Android, Windows and Linux. Everything runs in your browser – no image ever leaves your device."

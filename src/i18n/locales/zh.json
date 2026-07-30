@@ -26,6 +26,17 @@
     "themeDark": "深色",
     "themeSystem": "跟随系统",
     "language": "语言",
+    "cli": "命令行",
+    "cliIntro": "命令行工具与本页使用同一套流程，因此生成的文件与「导出」完全一致。适合放进构建脚本，或者在素材更新频繁到不想反复点击时使用。",
+    "cliExamples": {
+      "install": "查看所有选项，无需安装",
+      "generate": "从一张源图生成完整的标准套件",
+      "subset": "只生成需要的平台",
+      "background": "烘入背景并设置圆角"
+    },
+    "cliHelp": "需要 Node 18 或更高版本。加上 --json 可输出机器可读结果，加上 --quiet 则只报告错误。",
+    "cliCopy": "复制命令",
+    "cliCopied": "已复制",
     "about": "关于",
     "version": "版本",
     "aboutText": "Icon Stack 为 Web、macOS、iOS、Android、Windows 和 Linux 生成可直接用于生产的应用图标。全部在你的浏览器中完成，图片不会离开你的设备。"

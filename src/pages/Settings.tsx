@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, ToggleGroup, Select, useTheme } from '@whiskeyjack-net/design-system'
-import { Sun, Moon, Desktop } from '@phosphor-icons/react'
+import { Button, Card, CardContent, ToggleGroup, Select, useTheme } from '@whiskeyjack-net/design-system'
+import { Sun, Moon, Desktop, Copy, Check } from '@phosphor-icons/react'
 import { activeLanguage, SUPPORTED_LANGUAGES } from '@/i18n'
 
 // Endonyms: a language picker is read by someone who does not yet have the app
@@ -37,7 +38,7 @@ export function Settings() {
       </h1>
 
       <Card>
-        <CardContent className="p-5">
+        <CardContent className="p-5 pt-3">
           <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('settings.theme')}
           </h2>
@@ -46,7 +47,7 @@ export function Settings() {
       </Card>
 
       <Card>
-        <CardContent className="p-5">
+        <CardContent className="p-5 pt-3">
           <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('settings.language')}
           </h2>
@@ -59,8 +60,39 @@ export function Settings() {
         </CardContent>
       </Card>
 
+      {/* The CLI is the same pipeline this page is a front end for -- the app and
+          the CLI both call `generateIcons` from the core -- so the commands here
+          produce byte-identical output to the Export button. Worth saying, because
+          the reason to reach for it is a build script rather than a different
+          feature set. */}
       <Card>
-        <CardContent className="p-5">
+        <CardContent className="p-5 pt-3">
+          <h2 className="mb-1 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+            {t('settings.cli')}
+          </h2>
+          <p className="mb-4 text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+            {t('settings.cliIntro')}
+          </p>
+
+          <div className="space-y-4">
+            {CLI_EXAMPLES.map(({ key, command }) => (
+              <div key={key}>
+                <p className="mb-1.5 text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+                  {t(`settings.cliExamples.${key}`)}
+                </p>
+                <Command text={command} />
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-4 text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+            {t('settings.cliHelp')}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-5 pt-3">
           <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('settings.about')}
           </h2>
@@ -77,6 +109,52 @@ export function Settings() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+/**
+ * The commands worth putting in front of someone, in the order they would meet
+ * them: install, the common case, a subset, and the two flags that change the
+ * output rather than the destination.
+ */
+const CLI_EXAMPLES = [
+  { key: 'install', command: 'npx @whiskeyjack-net/icon-stack --help' },
+  { key: 'generate', command: 'npx @whiskeyjack-net/icon-stack generate --source icon.png --out icons' },
+  { key: 'subset', command: 'npx @whiskeyjack-net/icon-stack generate -s icon.svg -p pwa,favicon,windows' },
+  { key: 'background', command: 'npx @whiskeyjack-net/icon-stack generate -s icon.png -b "#1E90FF" --corner-radius 20' },
+] as const
+
+/** A copyable command line. Selectable, wraps, and never truncates. */
+function Command({ text }: { text: string }) {
+  const { t } = useTranslation()
+  const [copied, setCopied] = useState(false)
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // A denied clipboard permission is not worth an error state -- the text is
+      // selectable, which is the fallback either way.
+    }
+  }
+
+  return (
+    <div className="flex items-start gap-2">
+      <code className="min-w-0 flex-1 break-all rounded-lg bg-[var(--color-warm-100)] px-3 py-2 font-mono text-xs text-[var(--color-text-primary-light)] dark:bg-[var(--color-neutral-800)] dark:text-[var(--color-text-primary-dark)]">
+        {text}
+      </code>
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() => void copy()}
+        aria-label={copied ? t('settings.cliCopied') : t('settings.cliCopy')}
+        title={copied ? t('settings.cliCopied') : t('settings.cliCopy')}
+      >
+        {copied ? <Check size={16} weight="bold" /> : <Copy size={16} weight="bold" />}
+      </Button>
     </div>
   )
 }
