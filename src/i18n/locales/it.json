@@ -85,10 +85,11 @@
     "alternateSubtitle": "Per varianti scure, monocromatiche e da barra delle applicazioni.",
     "choose": "Scegli un file",
     "remove": "Rimuovi questa immagine",
-    "contain": "Adatta",
-    "cover": "Riempi",
     "alternateHint": "Un'immagine alternativa permette alle varianti scure, monocromatiche e da barra delle applicazioni di usare una grafica diversa – un marchio leggibile su piastra chiara spesso non funziona scontornato su una scura.",
-    "readFailed": "Impossibile leggere quel file."
+    "readFailed": "Impossibile leggere quel file.",
+    "fit": "Adattamento",
+    "contain": "Adatta",
+    "cover": "Riempi"
   },
   "platform": {
     "background": "Sfondo",

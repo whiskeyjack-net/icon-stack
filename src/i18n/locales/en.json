@@ -85,10 +85,11 @@
     "alternateSubtitle": "For dark, monochrome and taskbar variants.",
     "choose": "Choose a file",
     "remove": "Remove this image",
-    "contain": "Contain",
-    "cover": "Cover",
     "alternateHint": "An alternate image lets dark, monochrome and taskbar variants use different artwork – a mark that reads on a light plate often does not read knocked out on a dark one.",
-    "readFailed": "Could not read that file."
+    "readFailed": "Could not read that file.",
+    "fit": "Fit",
+    "contain": "Contain",
+    "cover": "Cover"
   },
   "platform": {
     "background": "Background",

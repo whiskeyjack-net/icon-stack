@@ -18,10 +18,10 @@ current there · **PASS** worked as advertised ·
 **WITHDRAWN** recorded, then found to be wrong · **NOT A FINDING** recorded,
 then found to be overstated.
 
-**Round trip so far:** findings raised across five stages and fixed upstream in
-`design-system@0.6.0`–`0.9.0` and `create-whiskeyjack@0.3.1`–`0.4.0`, published,
+**Round trip so far:** findings raised across six stages and fixed upstream in
+`design-system@0.6.0`–`0.10.0` and `create-whiskeyjack@0.3.1`–`0.4.1`, published,
 and consumed back here. One withdrawn as incorrect, one overstated and corrected.
-One open.
+**None open.**
 
 Two entries sat marked OPEN after their fix had already shipped, and an audit on
 2026-07-29 caught it. Both went out in `design-system@0.8.0` alongside the
@@ -214,7 +214,7 @@ consumer-facing exports map belongs.
 Verified in the published artifacts rather than the workspace – present in the
 `0.8.0` manifest on npm, and `require`-able from the `0.9.0` installed here.
 
-### OPEN – a caret on a `0.x` version pins the MINOR, and three places depend on it
+### RESOLVED – a caret on a `0.x` version pins the MINOR, and three places depend on it
 
 The 0.6.0 release left two ranges stale, both silently: the starter template
 pinned `design-system ^0.5.0`, so every scaffolded app installed 0.5.0 and did
@@ -245,9 +245,36 @@ The evidence it is still open is the release itself. `0.9.0` is the **third
 minor in a row** where updating these ranges was the step a human had to
 remember, and its commit message says so.
 
-**Upstream fix, unchanged:** a check that runs *before* publishing and fails when
-any declared Whiskeyjack range excludes the version about to ship, or admits one
-whose own peers the release breaks.
+**Fixed, and then proven on the next release.**
+`scripts/check-version-ranges.mjs` reads the workspace versions -- the ones a
+publish would push -- and fails on both modes: a **ceiling**, where a declared
+range excludes what is about to ship, and a **floor**, where it admits an older
+version whose own peers the release breaks. Wired into `npm run check:ranges`, the
+publish runbook, and CI, where it is a no-op except while a release is being cut.
+
+It went in for `0.9.0` and its first real outing was `0.10.0`, which is the part
+worth recording. The moment the versions moved it failed all three declarations at
+once:
+
+```
+^0.9.0 EXCLUDES design-system@0.10.0    tauri's published peer
+^0.9.0 EXCLUDES design-system@0.10.0    the starter template's dep
+^0.3.5 admits tauri@0.3.5, whose peer ^0.9.0 excludes design-system@0.10.0
+```
+
+The third is the floor case, and it had never been caught before publishing.
+A probe install takes `tauri@0.3.6` and goes green; only a consumer resolving to
+the floor sees the breakage, which is exactly why `verify-published` cannot
+replace this. Four minors in, the fourth is the first that nobody had to
+remember.
+
+Both modes were mutation-tested before the release rather than trusted: setting
+the template to design-system `^0.8.0` fails the ceiling, setting it to tauri
+`^0.3.4` passes the ceiling and fails the floor.
+
+**This app is still the third site, and no script upstream can reach it.** The
+check prints a reminder saying so, and these ranges moved to `^0.10.0` / `^0.3.6`
+by hand.
 
 ---
 
@@ -580,10 +607,14 @@ it in one made every component reading it throw `ReferenceError` in the other.
 Five tests failed at once, which is the good outcome; a `define` used somewhere
 untested would have shipped.
 
-**Still wanted upstream, and not yet written:** the starter template's README
-covers converting to workspaces and the raw-TypeScript export trap, and says
-nothing about `define`. Any project that adds one has to add it twice. Checked
-against `create-whiskeyjack@0.4.0`.
+**Written upstream in `create-whiskeyjack@0.4.1`.** The template README now says a
+`define` has to be declared in every Vite config a project has, with the failure
+spelled out: loud where a test covers the component, silent where none does, so
+the constant reaches production undefined.
+
+The same release added the other half of this lesson, which was also found here:
+`npm test` has to name the app's own suite, because `--workspaces` skips the root
+and an app can go green in CI without running one of its tests.
 
 ### SHIPPED – `create-whiskeyjack --pwa` verifies a directory of exported icons
 
@@ -615,6 +646,56 @@ What the flag must not do is scaffold a manifest pointing at icons that do not
 exist. That is a broken PWA rather than a smaller one -- install prompts fail
 quietly and late -- and shipping placeholders instead just trains people to ignore
 them.
+
+---
+
+## Stage F – the density the tile grid could not give
+
+### RESOLVED – `ToggleGroup` had one density, and a settings card needs two
+
+`ToggleGroup` is a grid of separate bordered tiles, icon stacked above the label,
+sized to be the primary choice on a screen. Every segmented control in this app is
+the other thing: the trailing control of a labelled row -- fit, source, preview
+variant, Apple appearance -- and each one has a `text-sm` label sitting to its
+left. Rendered as tiles they were taller than the rows they belonged to, and the
+settings card read as a stack of unrelated blocks.
+
+**Fixed in design-system 0.10.0 as `SegmentedControl`**, a separate component
+rather than a `size` variant. The argument for separating them is that the
+difference is construction rather than scale: the border moves from per-tile to
+per-group, the icon from stacked to inline, and the layout from a gap-separated
+grid to a joined strip. A `size="sm"` that changed all three would leave the two
+sharing only a name.
+
+What they share instead is behaviour, and the DS pins it rather than documenting
+it: a test drives *both* components through the same key sequences and asserts the
+call logs are equal. That paid out immediately here -- this app's preview tests
+select by `getByRole('radio', …)` and click through appearances, and they passed
+across the migration with no edit at all.
+
+`SegmentedControlOption.icon` is `ReactNode`, so the source picker keeps its
+thumbnails while every other control passes a Phosphor glyph. That distinction is
+the point: three of the four controls are asking "which mode", and the icon is
+decoration beside the label; the fourth asks "which artwork", where the label
+cannot answer and the thumbnail is the whole control.
+
+### RESOLVED – `Toggle`'s label was the smallest text in the card
+
+`Toggle` rendered its label at `text-xs` on **muted** while every sibling label --
+`Input`'s, `Select`'s, and the ones this app puts beside a `Slider` or a
+`SegmentedControl` -- is `text-sm` on **secondary**. So a toggle's title was the
+faintest text in a settings card while being the primary thing in its own row.
+
+It was invisible in Chip Away, where `Toggle` always carries a `description` and
+the pair reads as a self-contained two-line block. It only showed once one sat
+beside another labelled control, which is a good illustration of why a second
+consumer finds things a first cannot: the component was tuned for the one usage
+that hid the problem.
+
+**Fixed in design-system 0.10.0** as a default change rather than a variant, on
+the owner's call that the old size was wrong everywhere rather than wrong here. The
+description keeps its smaller muted treatment, so the pair still reads as
+title-then-hint.
 
 ---
 

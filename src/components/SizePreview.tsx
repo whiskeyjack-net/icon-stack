@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Card, CardContent, Notice, ToggleGroup } from '@whiskeyjack-net/design-system'
+import { Button, Card, CardContent, Notice, SegmentedControl } from '@whiskeyjack-net/design-system'
 import { Shuffle, Watch } from '@phosphor-icons/react'
 import {
   PLATFORM_LABELS,
@@ -168,8 +168,8 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
           <div className="space-y-4">
             {isApple ? (
               <div className="space-y-3">
-                <ToggleGroup
-                  className="!grid-cols-3"
+                <SegmentedControl
+                  aria-label={t('preview.title')}
                   options={APPLE_APPEARANCES.map((a) => ({
                     value: a,
                     label: t(`preview.appearance.${a}`),
@@ -191,8 +191,12 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
               /* Only worth showing when there is a choice: most platforms export
                  one variant, and a one-option segmented control is noise. */
               available.length > 1 && (
-                <ToggleGroup
-                  className="!grid-cols-2 sm:!grid-cols-4"
+                <SegmentedControl
+                  aria-label={t('preview.title')}
+                  // Wraps rather than scrolls: Windows Store exports four
+                  // variants, and a strip that overflows the rail would hide the
+                  // one you wanted behind a scroll nobody looks for.
+                  className="flex-wrap"
                   options={available.map((v) => ({ value: v, label: t(`preview.variant.${v}`) }))}
                   value={shown as IconVariant}
                   onChange={setActive}

@@ -6,7 +6,7 @@ import {
   CardContent,
   EmptyState,
   Notice,
-  ToggleGroup,
+  SegmentedControl,
   cn,
 } from '@whiskeyjack-net/design-system'
 import { UploadSimple, Image as ImageIcon, X, ArrowsOut, ArrowsIn } from '@phosphor-icons/react'
@@ -121,14 +121,20 @@ function Slot({ slot }: { slot: SourceSlot }) {
 
             {/* Only meaningful for a non-square source; square art fills either way. */}
             {image.width !== image.height && (
-              <ToggleGroup
-                value={fit}
-                onChange={(next: ImageFit) => setFit(slot, next)}
-                options={[
-                  { value: 'contain' as const, label: t('source.contain'), icon: <ArrowsIn size={18} /> },
-                  { value: 'cover' as const, label: t('source.cover'), icon: <ArrowsOut size={18} /> },
-                ]}
-              />
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+                  {t('source.fit')}
+                </span>
+                <SegmentedControl
+                  aria-label={t('source.fit')}
+                  value={fit}
+                  onChange={(next: ImageFit) => setFit(slot, next)}
+                  options={[
+                    { value: 'contain' as const, label: t('source.contain'), icon: <ArrowsIn size={14} /> },
+                    { value: 'cover' as const, label: t('source.cover'), icon: <ArrowsOut size={14} /> },
+                  ]}
+                />
+              </div>
             )}
           </div>
         ) : (

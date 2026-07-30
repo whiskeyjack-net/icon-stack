@@ -85,10 +85,11 @@
     "alternateSubtitle": "用于深色、单色和任务栏变体。",
     "choose": "选择文件",
     "remove": "移除这张图片",
-    "contain": "适应",
-    "cover": "填充",
     "alternateHint": "备用图片可以让深色、单色和任务栏变体使用另一套图形。在浅色底板上清晰的标志，反白放到深色底板上往往就看不清了。",
-    "readFailed": "无法读取该文件。"
+    "readFailed": "无法读取该文件。",
+    "fit": "适配方式",
+    "contain": "适应",
+    "cover": "填充"
   },
   "platform": {
     "background": "背景",
