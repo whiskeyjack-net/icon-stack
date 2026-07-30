@@ -85,10 +85,11 @@
     "alternateSubtitle": "Pour les variantes sombres, monochromes et de barre des tâches.",
     "choose": "Choisir un fichier",
     "remove": "Retirer cette image",
-    "contain": "Contenir",
-    "cover": "Couvrir",
     "alternateHint": "Une image alternative permet aux variantes sombres, monochromes et de barre des tâches d'utiliser un autre visuel – une marque lisible sur une plaque claire l'est souvent moins détourée sur une plaque sombre.",
-    "readFailed": "Impossible de lire ce fichier."
+    "readFailed": "Impossible de lire ce fichier.",
+    "fit": "Cadrage",
+    "contain": "Contenir",
+    "cover": "Couvrir"
   },
   "platform": {
     "background": "Fond",

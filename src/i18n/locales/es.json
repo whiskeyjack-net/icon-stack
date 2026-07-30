@@ -85,10 +85,11 @@
     "alternateSubtitle": "Para variantes oscuras, monocromas y de barra.",
     "choose": "Elegir archivo",
     "remove": "Quitar esta imagen",
-    "contain": "Contener",
-    "cover": "Cubrir",
     "alternateHint": "Una imagen alternativa permite que las variantes oscuras, monocromas y de barra usen otro gráfico.",
-    "readFailed": "No se pudo leer ese archivo."
+    "readFailed": "No se pudo leer ese archivo.",
+    "fit": "Ajuste",
+    "contain": "Contener",
+    "cover": "Cubrir"
   },
   "platform": {
     "background": "Fondo",

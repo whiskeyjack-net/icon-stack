@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, Slider, Toggle, ToggleGroup } from '@whiskeyjack-net/design-system'
+import { Card, CardContent, SegmentedControl, Slider, Toggle } from '@whiskeyjack-net/design-system'
 import type {
   BackgroundFill,
   Platform,
@@ -336,10 +336,10 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
  * and those words say nothing about which artwork you are choosing. With two
  * images loaded, the thumbnail IS the answer.
  *
- * No new component was needed for it. `ToggleGroupOption.icon` is already
- * `ReactNode`, documented as caller-supplied precisely because the design system
- * bundles no icon library -- an `<img>` is as valid there as a Phosphor glyph.
- * The gap was in how this called it rather than in the primitive.
+ * `SegmentedControlOption.icon` is `ReactNode`, caller-supplied precisely because
+ * the design system bundles no icon library -- so an `<img>` is as valid there as
+ * a Phosphor glyph. Every other segmented control in this app passes a glyph;
+ * this one passes artwork, because artwork is what the question is about.
  */
 function SourcePicker({
   label,
@@ -358,7 +358,7 @@ function SourcePicker({
       <img
         src={image.dataUrl}
         alt=""
-        className="h-5 w-5 rounded-sm bg-[var(--color-neutral-200)] object-contain dark:bg-[var(--color-neutral-700)]"
+        className="h-4 w-4 rounded-sm bg-[var(--color-neutral-200)] object-contain dark:bg-[var(--color-neutral-700)]"
       />
     ) : undefined
 
@@ -367,7 +367,8 @@ function SourcePicker({
       <span className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
         {label}
       </span>
-      <ToggleGroup
+      <SegmentedControl
+        aria-label={label}
         value={value}
         onChange={onChange}
         options={[

@@ -85,10 +85,11 @@
     "alternateSubtitle": "Para variantes escuras, monocromáticas e de barra de tarefas.",
     "choose": "Escolher um ficheiro",
     "remove": "Remover esta imagem",
-    "contain": "Conter",
-    "cover": "Cobrir",
     "alternateHint": "Uma imagem alternativa permite que as variantes escuras, monocromáticas e de barra de tarefas usem outra arte – uma marca que funciona sobre placa clara muitas vezes não se lê recortada sobre uma escura.",
-    "readFailed": "Não foi possível ler esse ficheiro."
+    "readFailed": "Não foi possível ler esse ficheiro.",
+    "fit": "Ajuste",
+    "contain": "Conter",
+    "cover": "Cobrir"
   },
   "platform": {
     "background": "Fundo",

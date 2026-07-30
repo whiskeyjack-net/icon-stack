@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Notice, ToggleGroup, cn } from '@whiskeyjack-net/design-system'
+import { Button, Notice, SegmentedControl, cn } from '@whiskeyjack-net/design-system'
 import { UploadSimple, X, ArrowsIn, ArrowsOut } from '@phosphor-icons/react'
 import type { ImageFit, SourceImage } from '@whiskeyjack-net/icon-stack-core'
 import { processFile } from '@/lib/process-file'
@@ -115,19 +115,20 @@ export function DedicatedSource({
 
           {/* Only meaningful for a non-square source; square art fills either way. */}
           {value.width !== value.height && (
-            <ToggleGroup
+            <SegmentedControl
+              aria-label={t('source.fit')}
               value={fit}
               onChange={onFitChange}
               options={[
                 {
                   value: 'contain' as const,
                   label: t('source.contain'),
-                  icon: <ArrowsIn size={18} />,
+                  icon: <ArrowsIn size={14} />,
                 },
                 {
                   value: 'cover' as const,
                   label: t('source.cover'),
-                  icon: <ArrowsOut size={18} />,
+                  icon: <ArrowsOut size={14} />,
                 },
               ]}
             />
