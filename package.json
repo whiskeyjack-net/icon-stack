@@ -9,8 +9,12 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "npm run build:packages && vitest run && npm run test --workspaces --if-present",
-    "typecheck": "tsc -b && npm run typecheck --workspaces --if-present",
-    "build:packages": "npm run build --workspace @whiskeyjack-net/icon-stack-core"
+    "typecheck": "npm run build:packages && tsc -b && npm run typecheck --workspaces --if-present",
+    "build:packages": "npm run build --workspace @whiskeyjack-net/icon-stack-core",
+    "check:release": "node scripts/check-release.mjs",
+    "changeset": "changeset",
+    "changeset:status": "changeset status",
+    "changeset:version": "changeset version"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -27,6 +31,7 @@
     "react-router-dom": "^7.12.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.11",
     "@eslint/js": "^9.17.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

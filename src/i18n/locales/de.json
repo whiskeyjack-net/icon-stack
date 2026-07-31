@@ -104,12 +104,12 @@
     "alternateTitle": "Alternative hinzufügen",
     "alternateSubtitle": "Für dunkle, monochrome und Taskleisten-Varianten.",
     "choose": "Datei auswählen",
-    "remove": "Dieses Bild entfernen",
     "alternateHint": "Mit einem alternativen Bild können dunkle, monochrome und Taskleisten-Varianten eine andere Grafik verwenden – eine Marke, die auf heller Platte funktioniert, liest sich ausgestanzt auf dunkler oft nicht.",
     "readFailed": "Diese Datei konnte nicht gelesen werden.",
     "fit": "Anpassung",
     "contain": "Einpassen",
-    "cover": "Füllen"
+    "cover": "Füllen",
+    "clear": "Leeren"
   },
   "platform": {
     "background": "Hintergrund",

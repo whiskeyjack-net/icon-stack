@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, SegmentedControl, Slider, Toggle } from '@whiskeyjack-net/design-system'
+import { PLATFORM_LABELS } from '@whiskeyjack-net/icon-stack-core'
 import type {
   BackgroundFill,
   Platform,
@@ -33,10 +34,11 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
   return (
     <Card>
       <CardContent className="space-y-6 p-5 pt-3">
-        {/* --- What this platform produces, before how to configure it ------ */}
-        {platform === 'windowsStore' && <Hint>{t('platform.windowsStoreHint')}</Hint>}
-        {(platform === 'macos' || platform === 'ios') && <Hint>{t('platform.legacyHint')}</Hint>}
-        {platform === 'apple' && <Hint>{t('platform.appleGenerates')}</Hint>}
+        {/* The platform's name lives here rather than on the preview card beside
+            it: this is the card you act on, and the preview is the result. */}
+        <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+          {PLATFORM_LABELS[platform]}
+        </h3>
 
         {/* --- A source belonging to this platform alone ------------------- */}
         {has('faviconSource') && (
@@ -300,9 +302,17 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
           />
         )}
 
-        <p className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-          {t(`platform.notes.${platform}`, { defaultValue: '' })}
-        </p>
+        {/* --- Footnotes ---------------------------------------------------- */}
+        {/* A note that frames the whole card belongs after the controls, not
+            before them: ahead of the settings it is a wall of text between you
+            and the thing you came to change, and it cannot be understood yet
+            anyway. This is where the per-platform note already lived. */}
+        <div className="space-y-2">
+          {platform === 'windowsStore' && <Hint>{t('platform.windowsStoreHint')}</Hint>}
+          {(platform === 'macos' || platform === 'ios') && <Hint>{t('platform.legacyHint')}</Hint>}
+          {platform === 'apple' && <Hint>{t('platform.appleGenerates')}</Hint>}
+          <Hint>{t(`platform.notes.${platform}`, { defaultValue: '' })}</Hint>
+        </div>
       </CardContent>
     </Card>
   )

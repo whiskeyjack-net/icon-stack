@@ -9,8 +9,9 @@ import {
   SegmentedControl,
   cn,
 } from '@whiskeyjack-net/design-system'
-import { UploadSimple, Image as ImageIcon, ArrowsOut, ArrowsIn } from '@phosphor-icons/react'
+import { UploadSimple, Image as ImageIcon, X, ArrowsOut, ArrowsIn } from '@phosphor-icons/react'
 import type { ImageFit } from '@whiskeyjack-net/icon-stack-core'
+import { CompactIconButton } from './CompactIconButton'
 import { useGenerator, type SourceSlot } from '@/contexts/GeneratorContext'
 
 /**
@@ -76,14 +77,29 @@ function Slot({ slot }: { slot: SourceSlot }) {
   return (
     <Card>
       <CardContent className="p-5 pt-3">
-        <div className="mb-3 flex items-baseline justify-between gap-2">
+        {/* `items-center` rather than baseline: the trailing slot holds a button
+            as often as text, and a 32px control cannot sit on a text baseline. */}
+        <div className="mb-3 flex min-h-8 items-center justify-between gap-2">
           <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t(`source.${slot}`)}
           </h3>
-          {slot === 'alternate' && (
-            <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
-              {t('source.optional')}
-            </span>
+
+          {/* One trailing slot, two states. Loaded, it is the remove button; empty
+              and optional, it is the word "optional" -- which has nothing to say
+              once a file is there. */}
+          {image ? (
+            <CompactIconButton
+              destructive
+              label={t('source.clear')}
+              icon={<X size={14} weight="bold" />}
+              onClick={() => setSlot(slot, null)}
+            />
+          ) : (
+            slot === 'alternate' && (
+              <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+                {t('source.optional')}
+              </span>
+            )
           )}
         </div>
 
@@ -126,17 +142,6 @@ function Slot({ slot }: { slot: SourceSlot }) {
                   {image.width}&times;{image.height} &middot; {image.type.toUpperCase()}
                 </p>
               </div>
-              {/* A quiet text button that turns red on hover, as the retired build
-                  had it. An outlined icon button gave a destructive action the same
-                  weight as the primary one beside it. */}
-              <button
-                type="button"
-                onClick={() => setSlot(slot, null)}
-                title={t('source.remove')}
-                className="wj-focus-ring shrink-0 rounded px-2 py-1 text-xs text-[var(--color-text-muted-light)] transition-colors hover:text-[var(--color-error-500)] dark:text-[var(--color-text-muted-dark)] dark:hover:text-[var(--color-error-400)]"
-              >
-                {t('source.remove')}
-              </button>
             </div>
 
             {/* Only meaningful for a non-square source; square art fills either way. */}

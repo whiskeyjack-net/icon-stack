@@ -24,11 +24,24 @@ npm run build      # core → tsc -b → vite build
 npm run lint       # ESLint (run this before you consider a change done)
 npm run typecheck  # tsc -b across the app and both packages
 npm test           # the app's suite, then each package's
+npm run check:release   # before publishing: version lockstep + a fresh CLI bundle
 ```
+
+**Publishing the two packages has its own rules**, and they are not obvious: the CLI
+BUNDLES the core, so the versions move together and a `dist` built before a core
+change ships a pipeline that no longer exists. `RELEASING.md` has the runbook and
+the two traps that have already cost time.
 
 Every one of those builds `packages/core` first. The app consumes the core's
 `dist`, and npm does not order workspace builds topologically, so a script that
 skipped that step would compile against whatever `dist` was left over.
+
+`typecheck` was the exception until CI existed, and nobody noticed because a
+developer always has a `dist` lying around from the last build. On a clean checkout
+`tsc -b` could not resolve `@whiskeyjack-net/icon-stack-core` at all -- 16 errors,
+every one of them "cannot find module". If you add a script that compiles or runs
+the app, it builds the core first; `dist/` is gitignored, so on fresh ground it does
+not exist.
 
 `npm test` runs `vitest run` explicitly before `--workspaces`, because the app's
 vitest config lives at the repo root and `--workspaces` alone silently skipped
