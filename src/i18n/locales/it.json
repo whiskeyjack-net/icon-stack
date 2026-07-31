@@ -25,6 +25,10 @@
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
     "themeSystem": "Sistema",
+    "extraDark": {
+      "label": "Extra scuro",
+      "description": "Usa uno sfondo nero puro con schede e bordi più scuri. Più riposante per gli occhi e riduce i consumi sugli schermi OLED."
+    },
     "language": "Lingua",
     "cli": "Riga di comando",
     "cliIntro": "La CLI esegue la stessa pipeline di questa pagina, quindi produce gli stessi file di Esporta. Utile in uno script di build o quando la sorgente cambia più spesso di quanto vuoi cliccare.",
@@ -39,6 +43,8 @@
     "cliCopied": "Copiato",
     "about": "Informazioni",
     "version": "Versione",
+    "license": "Licenza",
+    "sourceCode": "Codice sorgente",
     "aboutText": "Icon Stack genera icone applicative pronte per la produzione per web, macOS, iOS, Android, Windows e Linux. Tutto avviene nel tuo browser: nessuna immagine lascia il tuo dispositivo."
   },
   "background": {
