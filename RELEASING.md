@@ -1,7 +1,17 @@
 # Releasing the two packages
 
 This repo publishes `@whiskeyjack-net/icon-stack-core` and
-`@whiskeyjack-net/icon-stack` (the CLI). The web app is private and never publishes.
+`@whiskeyjack-net/icon-stack` (the CLI). The web app is private and never
+publishes, and **it still carries the same version number as the two packages**.
+All three describe one pipeline – the app and the CLI both call `generateIcons`
+from the core – so one number across the three is the honest description, and
+Settings' About card shows it to users.
+
+The web app is the workspace **root**, which changesets cannot version:
+`linked` and `privatePackages` both operate on workspace members. That is why it
+sat at 1.0.0 through the whole rebuild while the packages reached 0.2.0.
+`changeset:version` now runs `scripts/sync-web-version.mjs` on its tail to carry
+the number across, and `check:release` asserts the three agree.
 
 Both prior releases were hand-rolled version-bump commits, and both went wrong in a
 way worth naming, because the guardrails below exist for exactly these:
