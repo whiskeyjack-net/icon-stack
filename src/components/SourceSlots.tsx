@@ -74,34 +74,47 @@ function Slot({ slot }: { slot: SourceSlot }) {
   // confirmation. The alternate slot carries its own, since nothing else opens it.
   const openPicker = () => (slot === 'main' ? triggerUpload() : input.current?.click())
 
+  // The heading earns its place only when it has something to sit beside. An
+  // empty main slot is the whole of the landing page, and the EmptyState below
+  // already titles it ("Drop a source image") -- so a card heading reading
+  // "Source image" directly above says the same thing twice. Dropping it takes
+  // the `pt-3` with it, since that compensation exists ONLY to balance a title,
+  // and the padding goes back to even on all four sides.
+  //
+  // The empty ALTERNATE slot keeps its header, because the "optional" marker
+  // lives there and is the one thing the drop target does not say. The two
+  // empty states never appear together: the alternate slot only renders once
+  // the main one is loaded.
+  const showHeader = Boolean(image) || slot === 'alternate'
+
   return (
     <Card>
-      <CardContent className="p-5 pt-3">
-        {/* `items-center` rather than baseline: the trailing slot holds a button
-            as often as text, and a 32px control cannot sit on a text baseline. */}
-        <div className="mb-3 flex min-h-8 items-center justify-between gap-2">
-          <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-            {t(`source.${slot}`)}
-          </h3>
+      <CardContent className={cn('p-5', showHeader && 'pt-3')}>
+        {showHeader && (
+          /* `items-center` rather than baseline: the trailing slot holds a button
+             as often as text, and a 32px control cannot sit on a text baseline. */
+          <div className="mb-3 flex min-h-8 items-center justify-between gap-2">
+            <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+              {t(`source.${slot}`)}
+            </h3>
 
-          {/* One trailing slot, two states. Loaded, it is the remove button; empty
-              and optional, it is the word "optional" -- which has nothing to say
-              once a file is there. */}
-          {image ? (
-            <CompactIconButton
-              destructive
-              label={t('source.clear')}
-              icon={<X size={14} weight="bold" />}
-              onClick={() => setSlot(slot, null)}
-            />
-          ) : (
-            slot === 'alternate' && (
+            {/* One trailing slot, two states. Loaded, it is the remove button; empty
+                and optional, it is the word "optional" -- which has nothing to say
+                once a file is there. */}
+            {image ? (
+              <CompactIconButton
+                destructive
+                label={t('source.clear')}
+                icon={<X size={14} weight="bold" />}
+                onClick={() => setSlot(slot, null)}
+              />
+            ) : (
               <span className="text-xs text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
                 {t('source.optional')}
               </span>
-            )
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {slot === 'alternate' && (
           <input
