@@ -24,7 +24,13 @@ npm run build      # core → tsc -b → vite build
 npm run lint       # ESLint (run this before you consider a change done)
 npm run typecheck  # tsc -b across the app and both packages
 npm test           # the app's suite, then each package's
+npm run check:release   # before publishing: version lockstep + a fresh CLI bundle
 ```
+
+**Publishing the two packages has its own rules**, and they are not obvious: the CLI
+BUNDLES the core, so the versions move together and a `dist` built before a core
+change ships a pipeline that no longer exists. `RELEASING.md` has the runbook and
+the two traps that have already cost time.
 
 Every one of those builds `packages/core` first. The app consumes the core's
 `dist`, and npm does not order workspace builds topologically, so a script that

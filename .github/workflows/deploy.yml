@@ -27,6 +27,10 @@ on:
     paths:
       - 'src/**'
       - 'packages/core/**'
+      # The CLI was missing here, so a CLI-only change deployed without ever
+      # running lint or the tests. CI now covers pull requests too, but this
+      # filter still decides what a push to main revalidates.
+      - 'packages/cli/**'
       - 'index.html'
       - 'vite.config.ts'
       - 'tailwind.config.js'
