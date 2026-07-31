@@ -1,6 +1,6 @@
 {
   "name": "@whiskeyjack-net/icon-stack",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "description": "Generate a complete app-icon set for every platform from one source image.",
   "keywords": [

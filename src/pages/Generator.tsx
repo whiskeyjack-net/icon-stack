@@ -116,7 +116,14 @@ export function Generator() {
     activeTab === SOURCE_TAB && !railDeployed
       ? null
       : previewPlatforms.map((p) => (
-          <SizePreview key={p} platform={p as Platform} title={PLATFORM_LABELS[p as Platform]} />
+          <SizePreview
+            key={p}
+            platform={p as Platform}
+            // Titled only where several stack together. On a platform tab the tab
+            // itself names the platform and the settings card carries the heading,
+            // so a third copy is noise.
+            title={activeTab === SOURCE_TAB ? PLATFORM_LABELS[p as Platform] : undefined}
+          />
         ))
 
   const tabs = (

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Card, CardContent, ToggleGroup, Select, useTheme } from '@whiskeyjack-net/design-system'
+import { Card, CardContent, ToggleGroup, Select, useTheme } from '@whiskeyjack-net/design-system'
 import { Sun, Moon, Desktop, Copy, Check } from '@phosphor-icons/react'
+import { CompactIconButton } from '@/components/CompactIconButton'
 import { activeLanguage, SUPPORTED_LANGUAGES } from '@/i18n'
 
 // Endonyms: a language picker is read by someone who does not yet have the app
@@ -146,15 +147,11 @@ function Command({ text }: { text: string }) {
       <code className="min-w-0 flex-1 break-all rounded-lg bg-[var(--color-warm-100)] px-3 py-2 font-mono text-xs text-[var(--color-text-primary-light)] dark:bg-[var(--color-neutral-800)] dark:text-[var(--color-text-primary-dark)]">
         {text}
       </code>
-      <Button
-        variant="outline"
-        size="icon"
+      <CompactIconButton
+        label={copied ? t('settings.cliCopied') : t('settings.cliCopy')}
+        icon={copied ? <Check size={14} weight="bold" /> : <Copy size={14} weight="bold" />}
         onClick={() => void copy()}
-        aria-label={copied ? t('settings.cliCopied') : t('settings.cliCopy')}
-        title={copied ? t('settings.cliCopied') : t('settings.cliCopy')}
-      >
-        {copied ? <Check size={16} weight="bold" /> : <Copy size={16} weight="bold" />}
-      </Button>
+      />
     </div>
   )
 }

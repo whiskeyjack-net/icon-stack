@@ -74,9 +74,12 @@ const bakesCorners = (config: Record<string, unknown>) => 'cornerRadius' in conf
 export interface SizePreviewProps {
   platform: Platform
   /**
-   * Card heading. Defaults to a plain "Preview"; the rail passes the platform
-   * name instead, because on the source tab it stacks one card per enabled
-   * platform and identical headings would make them indistinguishable.
+   * Card heading, or omitted for no heading at all.
+   *
+   * The Source tab stacks one card per enabled platform and passes each platform's
+   * name, since identical headings would make them indistinguishable. A platform
+   * tab passes nothing: the tab names the platform and the settings card beside it
+   * carries the heading, so the preview repeating it is a third copy of one word.
    */
   title?: string
 }
@@ -211,9 +214,11 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
   return (
     <Card>
       <CardContent className="p-5 pt-3">
-        <h3 className="mb-4 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-          {title ?? t('preview.title')}
-        </h3>
+        {title && (
+          <h3 className="mb-4 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+            {title}
+          </h3>
+        )}
 
         {error ? (
           <Notice tone="error">{error}</Notice>
