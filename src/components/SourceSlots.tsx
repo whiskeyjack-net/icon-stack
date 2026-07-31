@@ -9,7 +9,7 @@ import {
   SegmentedControl,
   cn,
 } from '@whiskeyjack-net/design-system'
-import { UploadSimple, Image as ImageIcon, X, ArrowsOut, ArrowsIn } from '@phosphor-icons/react'
+import { UploadSimple, Image as ImageIcon, ArrowsOut, ArrowsIn } from '@phosphor-icons/react'
 import type { ImageFit } from '@whiskeyjack-net/icon-stack-core'
 import { useGenerator, type SourceSlot } from '@/contexts/GeneratorContext'
 
@@ -21,6 +21,16 @@ import { useGenerator, type SourceSlot } from '@/contexts/GeneratorContext'
  * plate often does not read knocked out on a dark one. Platforms pick between
  * them per-variant; see PlatformSettings.
  */
+/**
+ * A two-tone checkerboard, as an inline SVG data URI so it needs no asset.
+ *
+ * It is what makes a transparent source legible: against the card's own surface,
+ * "transparent" and "the same colour as the card" look identical, and for an icon
+ * tool that distinction is the whole point of the preview.
+ */
+const CHECKERBOARD =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='16' height='16' fill='%23f4f4f4'/%3E%3Crect width='8' height='8' fill='%23dcdcdc'/%3E%3Crect x='8' y='8' width='8' height='8' fill='%23dcdcdc'/%3E%3C/svg%3E\")"
+
 export function SourceSlots() {
   const { t } = useTranslation()
   const { source, alternate, sourceWarning, alternateWarning } = useGenerator()
@@ -65,7 +75,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent className="p-5 pt-3">
         <div className="mb-3 flex items-baseline justify-between gap-2">
           <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t(`source.${slot}`)}
@@ -93,13 +103,21 @@ function Slot({ slot }: { slot: SourceSlot }) {
         )}
 
         {image ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center gap-4">
-              <img
-                src={image.dataUrl}
-                alt=""
-                className="h-16 w-16 shrink-0 rounded-xl border border-[var(--color-border-light)] object-contain dark:border-[var(--color-border-dark)]"
-              />
+              {/* Checkerboard behind the art, so a transparent source reads as
+                  transparent rather than as whatever the card happens to be.
+                  For an icon tool that is the first thing worth seeing. */}
+              <div
+                className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]"
+                style={{ backgroundImage: CHECKERBOARD, backgroundSize: '16px 16px' }}
+              >
+                <img
+                  src={image.dataUrl}
+                  alt=""
+                  className={cn('h-full w-full', fit === 'cover' ? 'object-cover' : 'object-contain')}
+                />
+              </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
                   {image.fileName}
@@ -108,15 +126,17 @@ function Slot({ slot }: { slot: SourceSlot }) {
                   {image.width}&times;{image.height} &middot; {image.type.toUpperCase()}
                 </p>
               </div>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label={t('source.remove')}
-                title={t('source.remove')}
+              {/* A quiet text button that turns red on hover, as the retired build
+                  had it. An outlined icon button gave a destructive action the same
+                  weight as the primary one beside it. */}
+              <button
+                type="button"
                 onClick={() => setSlot(slot, null)}
+                title={t('source.remove')}
+                className="wj-focus-ring shrink-0 rounded px-2 py-1 text-xs text-[var(--color-text-muted-light)] transition-colors hover:text-[var(--color-error-500)] dark:text-[var(--color-text-muted-dark)] dark:hover:text-[var(--color-error-400)]"
               >
-                <X size={16} weight="bold" />
-              </Button>
+                {t('source.remove')}
+              </button>
             </div>
 
             {/* Only meaningful for a non-square source; square art fills either way. */}

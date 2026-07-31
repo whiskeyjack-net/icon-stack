@@ -26,6 +26,17 @@
     "themeDark": "深色",
     "themeSystem": "跟随系统",
     "language": "语言",
+    "cli": "命令行",
+    "cliIntro": "命令行工具与本页使用同一套流程，因此生成的文件与「导出」完全一致。适合放进构建脚本，或者在素材更新频繁到不想反复点击时使用。",
+    "cliExamples": {
+      "install": "查看所有选项，无需安装",
+      "generate": "从一张源图生成完整的标准套件",
+      "subset": "只生成需要的平台",
+      "background": "烘入背景并设置圆角"
+    },
+    "cliHelp": "需要 Node 18 或更高版本。加上 --json 可输出机器可读结果，加上 --quiet 则只报告错误。",
+    "cliCopy": "复制命令",
+    "cliCopied": "已复制",
     "about": "关于",
     "version": "版本",
     "aboutText": "Icon Stack 为 Web、macOS、iOS、Android、Windows 和 Linux 生成可直接用于生产的应用图标。全部在你的浏览器中完成，图片不会离开你的设备。"
@@ -128,16 +139,6 @@
     "monochromeHint": "Android 13 及以上的主题图标使用单色剪影。",
     "includeSvg": "包含 SVG favicon",
     "includeSvgHint": "现代浏览器更倾向于它；缩放时无需经过位图。",
-    "source": {
-      "main": "主图形",
-      "light": "浅色变体",
-      "dark": "深色变体",
-      "mono": "单色",
-      "maskable": "可遮罩",
-      "unplated": "无底板（任务栏）",
-      "useMain": "来源",
-      "useAlternate": "备用"
-    },
     "faviconSource": "favicon 专用源图片",
     "faviconSourceHint": "favicon 在浏览器标签页中以 16px 绘制。简化的图形还能看清，细节丰富的会糊成一团。",
     "traySource": "托盘图标专用源图片",
@@ -147,7 +148,21 @@
     "maskableBackground": "可遮罩背景",
     "unplatedBackground": "任务栏图标背景",
     "dedicatedUsingMain": "正在使用主源图片",
-    "dedicatedRemove": "移除{{label}}"
+    "dedicatedRemove": "移除{{label}}",
+    "windowsStoreHint": "这里有两种背景。磁贴颜色仅用于预览，导出的磁贴 PNG 仍是透明的，真正的底板来自应用清单中的 BackgroundColor。任务栏图标的背景则会被烘入导出的无底板 PNG。这与 Windows 的 .ico（可执行文件图标）是两回事。",
+    "legacyHint": "旧格式。需要玻璃与着色效果时请使用 Apple 平台的 .icon 套件。",
+    "appleGenerates": "生成适用于 macOS、iOS 和 watchOS 的 .icon 套件，需要 Xcode 16 或更高版本。",
+    "includeSvgRequiresSvg": "需要 SVG 源文件，位图无法生成矢量 favicon。",
+    "source": {
+      "main": "主图形",
+      "light": "浅色变体",
+      "dark": "深色变体",
+      "mono": "单色",
+      "maskable": "可遮罩",
+      "unplated": "无底板（任务栏）",
+      "useMain": "来源",
+      "useAlternate": "备用"
+    }
   },
   "actions": {
     "upload": "上传源图片",

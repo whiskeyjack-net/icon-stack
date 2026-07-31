@@ -26,6 +26,17 @@
     "themeDark": "Escuro",
     "themeSystem": "Sistema",
     "language": "Idioma",
+    "cli": "Linha de comandos",
+    "cliIntro": "A CLI corre a mesma canalização que esta página, por isso produz os mesmos ficheiros que Exportar. Usa-a num script de build ou quando a fonte muda mais vezes do que queres clicar.",
+    "cliExamples": {
+      "install": "Todas as opções, sem instalar nada",
+      "generate": "O conjunto padrão completo, a partir de uma fonte",
+      "subset": "Apenas as plataformas necessárias",
+      "background": "Fixar um fundo e arredondar os cantos"
+    },
+    "cliHelp": "Node 18 ou superior. Usa --json para saída legível por máquinas, ou --quiet para reportar só erros.",
+    "cliCopy": "Copiar comando",
+    "cliCopied": "Copiado",
     "about": "Sobre",
     "version": "Versão",
     "aboutText": "O Icon Stack gera ícones de aplicação prontos para produção para web, macOS, iOS, Android, Windows e Linux. Tudo corre no teu navegador; nenhuma imagem sai do teu dispositivo."
@@ -128,16 +139,6 @@
     "monochromeHint": "Os ícones temáticos do Android 13+ usam uma silhueta de uma só cor.",
     "includeSvg": "Incluir favicon SVG",
     "includeSvgHint": "Os navegadores modernos preferem-no; escala sem passo raster.",
-    "source": {
-      "main": "Arte principal",
-      "light": "Variante clara",
-      "dark": "Variante escura",
-      "mono": "Monocromática",
-      "maskable": "Mascarável",
-      "unplated": "Sem placa (barra de tarefas)",
-      "useMain": "Origem",
-      "useAlternate": "Alternativa"
-    },
     "faviconSource": "Origem dedicada para o favicon",
     "faviconSourceHint": "Os favicons são desenhados a 16 px no separador do navegador. Um desenho simplificado aguenta; um detalhado fica ilegível.",
     "traySource": "Origem dedicada para o ícone da bandeja",
@@ -147,7 +148,21 @@
     "maskableBackground": "Fundo mascarável",
     "unplatedBackground": "Fundo do ícone da barra de tarefas",
     "dedicatedUsingMain": "A usar a origem principal",
-    "dedicatedRemove": "Remover {{label}}"
+    "dedicatedRemove": "Remover {{label}}",
+    "windowsStoreHint": "Há dois tipos de fundo aqui. A cor do mosaico é APENAS PRÉ-VISUALIZAÇÃO: os PNG exportados continuam transparentes e a placa real vem do BackgroundColor no manifesto da app. O fundo do ícone da barra de tarefas É integrado nos PNG sem placa. Distinto do .ico do Windows, que é o ícone do executável.",
+    "legacyHint": "Formato antigo. Usa a plataforma Apple para pacotes .icon com vidro e tingimento.",
+    "appleGenerates": "Gera um pacote .icon para macOS, iOS e watchOS. Requer Xcode 16 ou superior.",
+    "includeSvgRequiresSvg": "Requer uma fonte SVG -- uma imagem rasterizada não produz um favicon vetorial.",
+    "source": {
+      "main": "Arte principal",
+      "light": "Variante clara",
+      "dark": "Variante escura",
+      "mono": "Monocromática",
+      "maskable": "Mascarável",
+      "unplated": "Sem placa (barra de tarefas)",
+      "useMain": "Origem",
+      "useAlternate": "Alternativa"
+    }
   },
   "actions": {
     "upload": "Carregar uma imagem de origem",

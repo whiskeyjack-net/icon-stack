@@ -60,8 +60,16 @@ const PIXELATED_UPTO = 32
  */
 const ANDROID_LAYERS: IconVariant[] = ['foreground', 'background']
 
-/** Platforms whose exported file already carries a drawn corner radius. */
-const BAKES_A_CORNER: Platform[] = ['windows', 'linux', 'favicon']
+/**
+ * Whether this platform's export draws the corner into the PNG.
+ *
+ * Read off the config rather than listed here. It WAS a list -- and it said
+ * windows/linux/favicon while the pipeline also rounded pwa and windowsStore, so
+ * it was wrong the day it was written. `cornerRadius` now exists only on the
+ * configs whose export rounds (`RoundedCornersConfig`), which makes the question
+ * answerable from the data instead of from a copy of it.
+ */
+const bakesCorners = (config: Record<string, unknown>) => 'cornerRadius' in config
 
 export interface SizePreviewProps {
   platform: Platform
@@ -182,9 +190,7 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
   const mask = shown ? osMaskFor(platform, shown) : { radius: null }
   const smoothing = Number(config.cornerSmoothing ?? 0)
   const bakesACorner =
-    BAKES_A_CORNER.includes(platform) &&
-    !config.bgTransparent &&
-    Number(config.cornerRadius ?? 0) > 0
+    bakesCorners(config) && !config.bgTransparent && Number(config.cornerRadius ?? 0) > 0
 
   // An Apple Watch icon is circular whatever the desktop does with the same file.
   // Otherwise: only what the OS applies. A baked corner is in the pixels already,
@@ -204,7 +210,7 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent className="p-5 pt-3">
         <h3 className="mb-4 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
           {title ?? t('preview.title')}
         </h3>

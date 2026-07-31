@@ -39,14 +39,34 @@ export interface PlatformConfig {
   bgFill: BackgroundFill
   bgTransparent: boolean
   zoom: number
+  sourceChoice: SourceChoice
+}
+
+/**
+ * A platform whose export DRAWS the corner into the PNG.
+ *
+ * Deliberately not on `PlatformConfig`. It was, and the result was that ten
+ * platforms carried these two fields while the pipeline read them on five: the app
+ * rendered a corner-radius slider for Android, Apple Touch, tray and legacy iOS
+ * that moved and changed nothing at all.
+ *
+ * The platforms left out are the ones where the OS supplies the shape. iOS and
+ * Apple Touch icons are masked by the system, so a baked corner is cut a second
+ * time and shows inside the mask; an Android adaptive icon is composited and
+ * masked by the launcher; a tray icon is a 16-22px template silhouette where a
+ * corner radius means nothing. A legacy `.icns` is the exception and keeps them,
+ * because there the artwork IS the icon's shape -- nothing masks it.
+ */
+export interface RoundedCornersConfig extends PlatformConfig {
+  /** 0-50, as a percentage of the icon's width. 0 leaves it square. */
   cornerRadius: number
   /**
    * Corner smoothing 0-100: 0 = classic circular rounded corners, higher blends
    * toward a superellipse (squircle) corner. Only meaningful when
-   * `cornerRadius > 0` on a baked-background platform.
+   * `cornerRadius > 0` and the background is not transparent -- the radius clips
+   * the baked plate, so with nothing baked there is nothing to clip.
    */
   cornerSmoothing: number
-  sourceChoice: SourceChoice
 }
 
 /** macOS and iOS support separate dark mode icon variants */
@@ -55,18 +75,30 @@ export interface DarkVariantConfig extends PlatformConfig {
   darkSourceChoice: SourceChoice
 }
 
+/**
+ * Legacy macOS: a dark variant AND baked corners.
+ *
+ * It is the one OS-shaped platform that still rounds its own artwork, because a
+ * `.icns` is not masked -- the image is the icon's silhouette. Legacy iOS shares
+ * the dark variant and not the corners, which is why these are two interfaces.
+ */
+export interface MacosConfig extends DarkVariantConfig {
+  cornerRadius: number
+  cornerSmoothing: number
+}
+
 export interface AndroidConfig extends PlatformConfig {
   useMonochrome: boolean
   monoSourceChoice: SourceChoice
 }
 
-export interface FaviconConfig extends PlatformConfig {
+export interface FaviconConfig extends RoundedCornersConfig {
   faviconSource: SourceImage | null
   includeSvg: boolean
   svgDarkMode: boolean
 }
 
-export interface PwaConfig extends PlatformConfig {
+export interface PwaConfig extends RoundedCornersConfig {
   maskableSourceChoice: SourceChoice
   maskableBgFill: BackgroundFill
   maskableZoom: number
@@ -76,7 +108,7 @@ export interface TrayIconConfig extends PlatformConfig {
   traySource: SourceImage | null
 }
 
-export interface WindowsStoreConfig extends PlatformConfig {
+export interface WindowsStoreConfig extends RoundedCornersConfig {
   /** Source for the unplated (taskbar) icons. `sourceChoice` is the tile source. */
   unplatedSourceChoice: SourceChoice
   /**
@@ -144,14 +176,14 @@ export interface PlatformSizeEntry {
 export type PlatformConfigs = {
   apple: AppleConfig
   android: AndroidConfig
-  windows: PlatformConfig
+  windows: RoundedCornersConfig
   windowsStore: WindowsStoreConfig
-  linux: PlatformConfig
+  linux: RoundedCornersConfig
   pwa: PwaConfig
   favicon: FaviconConfig
   appleTouchIcon: PlatformConfig
   trayIcon: TrayIconConfig
-  macos: DarkVariantConfig
+  macos: MacosConfig
   ios: DarkVariantConfig
 }
 

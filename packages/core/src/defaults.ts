@@ -16,10 +16,11 @@ export function createDefaultPlatforms(): PlatformConfigs {
     bgFill: WHITE_FILL,
     bgTransparent: false,
     zoom: 100,
-    cornerRadius: 0,
-    cornerSmoothing: 0,
     sourceChoice: 'main' as const,
   }
+
+  /** Only the platforms whose export draws the corner carry these. */
+  const rounded = { ...base, cornerRadius: 0, cornerSmoothing: 0 }
 
   const darkVariant = {
     ...base,
@@ -41,29 +42,29 @@ export function createDefaultPlatforms(): PlatformConfigs {
       zoom: 100,
     },
     android: { ...base, useMonochrome: false, monoSourceChoice: 'main' as const },
-    windows: { ...base, bgTransparent: true },
+    windows: { ...rounded, bgTransparent: true },
     // Store tiles are always transparent (the MSIX manifest supplies the plate
     // color). Enabled by default so a full icon set includes the Store tiles.
     // `sourceChoice` = tile source (main); `unplatedSourceChoice` = taskbar-icon
     // source (alternate). `bgFill` is a preview-only plate color.
     windowsStore: {
-      ...base,
+      ...rounded,
       bgTransparent: true,
       unplatedSourceChoice: 'alternate' as const,
       unplatedTransparent: true,
       unplatedBgFill: WHITE_FILL,
       unplatedZoom: 100,
     },
-    linux: { ...base, bgTransparent: true },
+    linux: { ...rounded, bgTransparent: true },
     pwa: {
-      ...base,
+      ...rounded,
       bgTransparent: true,
       maskableSourceChoice: 'main' as const,
       maskableBgFill: WHITE_FILL,
       maskableZoom: 100,
     },
     favicon: {
-      ...base,
+      ...rounded,
       bgTransparent: true,
       faviconSource: null,
       includeSvg: true,
@@ -71,7 +72,7 @@ export function createDefaultPlatforms(): PlatformConfigs {
     },
     appleTouchIcon: { ...base },
     trayIcon: { ...base, bgTransparent: true, traySource: null, enabled: false },
-    macos: { ...darkVariant, enabled: false },
+    macos: { ...darkVariant, cornerRadius: 0, cornerSmoothing: 0, enabled: false },
     ios: { ...darkVariant, enabled: false },
   }
 }
