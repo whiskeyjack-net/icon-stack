@@ -40,6 +40,7 @@ const fail = (msg, ...detail) => {
 
 const core = read('packages', 'core', 'package.json')
 const cli = read('packages', 'cli', 'package.json')
+const web = read('package.json')
 
 // --- 1. The two packages version together ------------------------------------
 if (core.version === cli.version) {
@@ -49,6 +50,22 @@ if (core.version === cli.version) {
     `version skew: ${core.name}@${core.version} vs ${cli.name}@${cli.version}`,
     'The CLI bundles the core, so the core inside a published CLI is whatever was',
     'built with it. Two different numbers describe one artifact.',
+  )
+}
+
+// --- 1b. The web app carries the same number ----------------------------------
+// It publishes nothing, so this is not a registry hazard. It is a truthfulness
+// one: Settings' About card shows this version, and the app is a front end for
+// the same `generateIcons` the CLI runs. The root is the workspace ROOT, so
+// changesets cannot version it (see scripts/sync-web-version.mjs) -- which is
+// how it sat at 1.0.0 through the entire rebuild.
+if (web.version === core.version) {
+  console.log(`  ok    web app is also ${web.version}`)
+} else {
+  fail(
+    `web app at ${web.version}, packages at ${core.version}`,
+    'Run `npm run changeset:version`, which syncs it, or `node scripts/sync-web-version.mjs`',
+    'if the bump was hand-edited. About would otherwise advertise the wrong build.',
   )
 }
 

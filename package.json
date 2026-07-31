@@ -1,7 +1,7 @@
 {
   "name": "icon-stack",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "npm run build:packages && vite",
@@ -14,7 +14,7 @@
     "check:release": "node scripts/check-release.mjs",
     "changeset": "changeset",
     "changeset:status": "changeset status",
-    "changeset:version": "changeset version"
+    "changeset:version": "changeset version && node scripts/sync-web-version.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
