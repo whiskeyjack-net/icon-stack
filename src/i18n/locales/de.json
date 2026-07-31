@@ -25,6 +25,10 @@
     "themeLight": "Hell",
     "themeDark": "Dunkel",
     "themeSystem": "System",
+    "extraDark": {
+      "label": "Extra dunkel",
+      "description": "Verwendet einen reinschwarzen Hintergrund mit dunkleren Karten und Rändern. Schont die Augen und spart Strom auf OLED-Bildschirmen."
+    },
     "language": "Sprache",
     "cli": "Kommandozeile",
     "cliIntro": "Die CLI nutzt dieselbe Pipeline wie diese Seite und erzeugt damit dieselben Dateien wie Exportieren. Sinnvoll in einem Build-Skript oder wenn sich die Quelle häufiger ändert, als du klicken möchtest.",
@@ -39,6 +43,8 @@
     "cliCopied": "Kopiert",
     "about": "Über",
     "version": "Version",
+    "license": "Lizenz",
+    "sourceCode": "Quellcode",
     "aboutText": "Icon Stack erzeugt produktionsreife App-Icons für Web, macOS, iOS, Android, Windows und Linux. Alles läuft in deinem Browser – kein Bild verlässt dein Gerät."
   },
   "background": {

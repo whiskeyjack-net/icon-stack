@@ -616,6 +616,16 @@ The same release added the other half of this lesson, which was also found here:
 `npm test` has to name the app's own suite, because `--workspaces` skips the root
 and an app can go green in CI without running one of its tests.
 
+**It recurred on 2026-07-31**, which is the interesting part. Adding
+`__APP_LICENSE__` and `__APP_REPOSITORY__` to the About card reproduced the
+failure exactly, in a file carrying a comment warning about it, two lines above
+the block that needed the second edit. Documentation loses to a second edit site
+every time. Both configs now import one `appDefines` block from
+`app-defines.mjs`, so there is a single edit site and the failure mode is gone
+rather than described. **The upstream template advice should be the same
+change**: scaffold the shared module, rather than a README paragraph asking
+people to remember.
+
 ### SHIPPED – `create-whiskeyjack --pwa` verifies a directory of exported icons
 
 **Landed in `create-whiskeyjack@0.4.0`** as `bin/pwa.mjs`, built to the shape
@@ -696,6 +706,40 @@ that hid the problem.
 the owner's call that the old size was wrong everywhere rather than wrong here. The
 description keeps its smaller muted treatment, so the pair still reads as
 title-then-hint.
+
+---
+
+## Post-rebuild – ongoing consumption
+
+### OPEN – uncontrolled `useTheme` persists `mode` but not `extraDark`
+
+Adding the OLED overlay (2026-07-31) exposed an asymmetry in the hook's two
+modes. Uncontrolled `useTheme` **owns** the light/dark preference: give it a
+`storageKey` and it reads, writes, and broadcasts changes to every other
+instance in the tab and to other tabs. `extraDark` beside it is a plain prop the
+app has to store, read, and sync itself.
+
+That is a defensible split for the app it was extracted from. Chip Away keeps
+the flag in a Dexie settings row and passes it in, so the hook storing it would
+have been a second source of truth. It is the wrong default for an app with no
+database, which now hand-rolls `src/lib/use-extra-dark.ts`: thirty lines
+duplicating the hook's own event-plus-`storage` sync, because Layout applies the
+class and Settings sets it and the two must agree with no shared parent.
+
+Every uncontrolled consumer will write those thirty lines. The controlled path
+already has the escape hatch it needs, since passing `extraDark` explicitly
+keeps working.
+
+**Suggested shape:** in uncontrolled mode only, persist `extraDark` under
+`` `${storageKey}-extra-dark` `` and return `setExtraDark` alongside `setMode`.
+Controlled mode (an explicit `mode` prop) keeps today's behaviour untouched, so
+Chip Away is unaffected. No changeset yet.
+
+Worth noting what was already right: the DS applies `.dark.extra-dark` from
+`utilities.css` with no app CSS at all, and this app's `index.html` pre-paint
+script already read `'oled'` from `launchMirrorKey` and painted `#000000` on
+cold launch. The overlay was fully wired end to end; the only missing pieces
+were the user-facing switch and somewhere to keep its value.
 
 ---
 

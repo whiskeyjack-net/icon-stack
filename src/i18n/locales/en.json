@@ -25,6 +25,10 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System",
+    "extraDark": {
+      "label": "Extra dark",
+      "description": "Use a pure-black background with darker cards and borders. Easier on the eyes and saves power on OLED screens."
+    },
     "language": "Language",
     "cli": "Command line",
     "cliIntro": "The CLI runs the same pipeline as this page, so it produces the same files as Export. Reach for it in a build script or when the source changes more often than you want to click.",
@@ -39,6 +43,8 @@
     "cliCopied": "Copied",
     "about": "About",
     "version": "Version",
+    "license": "License",
+    "sourceCode": "Source code",
     "aboutText": "Icon Stack generates production-ready app icons for the web, macOS, iOS, Android, Windows and Linux. Everything runs in your browser – no image ever leaves your device."
   },
   "background": {

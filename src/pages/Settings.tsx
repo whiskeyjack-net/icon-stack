@@ -1,8 +1,17 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, ToggleGroup, Select, useTheme } from '@whiskeyjack-net/design-system'
-import { Sun, Moon, Desktop, Copy, Check } from '@phosphor-icons/react'
+import { Card, CardContent, ToggleGroup, Toggle, Select, useTheme } from '@whiskeyjack-net/design-system'
+import {
+  Sun,
+  Moon,
+  Desktop,
+  Copy,
+  Check,
+  GithubLogo,
+  ArrowSquareOut,
+} from '@phosphor-icons/react'
 import { CompactIconButton } from '@/components/CompactIconButton'
+import { useExtraDark } from '@/lib/use-extra-dark'
 import { activeLanguage, SUPPORTED_LANGUAGES } from '@/i18n'
 
 // Endonyms: a language picker is read by someone who does not yet have the app
@@ -23,6 +32,7 @@ export function Settings() {
   // Uncontrolled theme (same storageKey as the Layout): mode + setter come from
   // the hook, and every instance stays in sync.
   const { mode: theme, setMode: setTheme } = useTheme({ storageKey: 'icon-stack-theme' })
+  const [extraDark, setExtraDark] = useExtraDark()
 
   const themeOptions = [
     { value: 'light' as const, label: t('settings.themeLight'), icon: <Sun size={20} /> },
@@ -44,6 +54,19 @@ export function Settings() {
             {t('settings.theme')}
           </h2>
           <ToggleGroup options={themeOptions} value={theme} onChange={setTheme} />
+          {/* Extra dark (OLED) -- offered only where a dark theme can actually
+              apply, so 'light' hides it and 'system' keeps it (it may resolve
+              dark). Same rule as Chip Away, which is where the copy comes from. */}
+          {theme !== 'light' && (
+            <div className="mt-4 border-t border-[var(--color-border-light)] pt-4 dark:border-[var(--color-border-dark)]">
+              <Toggle
+                label={t('settings.extraDark.label')}
+                description={t('settings.extraDark.description')}
+                checked={extraDark}
+                onChange={setExtraDark}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -98,11 +121,30 @@ export function Settings() {
             {t('settings.about')}
           </h2>
           <div className="space-y-2 text-sm text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
+            {/* All three come from package.json at build time, so they cannot go
+                stale the way the retired app's hardcoded 1.0.0 did. The version
+                is the same number the core and the CLI carry -- one pipeline,
+                one number (see RELEASING.md). */}
             <p className="flex justify-between gap-4">
               <span>{t('settings.version')}</span>
-              {/* Injected from package.json at build time, so it cannot go stale
-                  the way the retired app's hardcoded 1.0.0 did. */}
               <span className="font-mono tabular-nums">{__APP_VERSION__}</span>
+            </p>
+            <p className="flex justify-between gap-4">
+              <span>{t('settings.license')}</span>
+              <span className="font-mono">{__APP_LICENSE__}</span>
+            </p>
+            <p className="flex justify-between gap-4">
+              <span>{t('settings.sourceCode')}</span>
+              <a
+                href={__APP_REPOSITORY__}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="wj-focus-ring inline-flex min-w-0 items-center gap-1.5 rounded font-medium text-[var(--color-text-secondary-light)] underline underline-offset-2 transition-colors hover:text-[var(--color-text-primary-light)] dark:text-[var(--color-text-secondary-dark)] dark:hover:text-[var(--color-text-primary-dark)]"
+              >
+                <GithubLogo size={14} weight="bold" aria-hidden />
+                <span className="truncate">{REPO_LABEL}</span>
+                <ArrowSquareOut size={12} className="shrink-0" aria-hidden />
+              </a>
             </p>
             <p className="border-t border-[var(--color-border-light)] pt-2 dark:border-[var(--color-border-dark)]">
               {t('settings.aboutText')}
@@ -113,6 +155,13 @@ export function Settings() {
     </div>
   )
 }
+
+/**
+ * `whiskeyjack-net/icon-stack` rather than the full URL: it is the half anyone
+ * reads, and the row it sits in is narrow on a phone. Falls back to the whole
+ * URL if the repository ever moves off GitHub, which is the right failure.
+ */
+const REPO_LABEL = __APP_REPOSITORY__.replace(/^https?:\/\/(www\.)?github\.com\//, '')
 
 /**
  * The commands worth putting in front of someone, in the order they would meet

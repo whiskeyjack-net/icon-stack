@@ -25,6 +25,10 @@
     "themeLight": "ライト",
     "themeDark": "ダーク",
     "themeSystem": "システム",
+    "extraDark": {
+      "label": "ピュアブラック",
+      "description": "純黒の背景に、より暗いカードと境界線を使用します。目にやさしく、OLED画面では消費電力を抑えられます。"
+    },
     "language": "言語",
     "cli": "コマンドライン",
     "cliIntro": "CLI はこのページと同じパイプラインを使うので、書き出しと同じファイルができます。ビルドスクリプトに組み込むときや、素材の更新が手作業より多いときに向いています。",
@@ -39,6 +43,8 @@
     "cliCopied": "コピーしました",
     "about": "このアプリについて",
     "version": "バージョン",
+    "license": "ライセンス",
+    "sourceCode": "ソースコード",
     "aboutText": "Icon Stack は Web、macOS、iOS、Android、Windows、Linux 向けの製品版アプリアイコンを生成します。すべてブラウザー内で処理され、画像が端末から送信されることはありません。"
   },
   "background": {
