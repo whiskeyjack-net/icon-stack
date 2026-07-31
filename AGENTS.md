@@ -36,6 +36,13 @@ Every one of those builds `packages/core` first. The app consumes the core's
 `dist`, and npm does not order workspace builds topologically, so a script that
 skipped that step would compile against whatever `dist` was left over.
 
+`typecheck` was the exception until CI existed, and nobody noticed because a
+developer always has a `dist` lying around from the last build. On a clean checkout
+`tsc -b` could not resolve `@whiskeyjack-net/icon-stack-core` at all -- 16 errors,
+every one of them "cannot find module". If you add a script that compiles or runs
+the app, it builds the core first; `dist/` is gitignored, so on fresh ground it does
+not exist.
+
 `npm test` runs `vitest run` explicitly before `--workspaces`, because the app's
 vitest config lives at the repo root and `--workspaces` alone silently skipped
 it. Adding a config is not the same as running it.

@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "npm run build:packages && vitest run && npm run test --workspaces --if-present",
-    "typecheck": "tsc -b && npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run build:packages && tsc -b && npm run typecheck --workspaces --if-present",
     "build:packages": "npm run build --workspace @whiskeyjack-net/icon-stack-core",
     "check:release": "node scripts/check-release.mjs",
     "changeset": "changeset",
