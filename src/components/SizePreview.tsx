@@ -246,7 +246,7 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
                       'font-mono',
                       s === selected
                         ? 'bg-[var(--color-neutral-700)] text-white dark:bg-[var(--color-neutral-300)] dark:text-[var(--color-neutral-900)]'
-                        : 'bg-[var(--color-surface-light)] text-[var(--color-text-secondary-light)] hover:bg-[var(--color-warm-100)] dark:bg-[var(--color-surface-dark)] dark:text-[var(--color-text-secondary-dark)] dark:hover:bg-[var(--color-neutral-800)]',
+                        : 'bg-[var(--color-surface-light)] text-[var(--color-text-secondary-light)] hover:bg-[var(--color-warm-100)] dark:bg-[var(--color-surface-dark)] dark:text-[var(--color-text-secondary-dark)] dark:hover:bg-[var(--color-surface-muted-dark)]',
                     )}
                   >
                     {s}
