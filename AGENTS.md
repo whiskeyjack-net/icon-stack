@@ -1,6 +1,7 @@
 # Icon Stack
 
-A thumb-first React app built on the Whiskeyjack design system, wired for one
+A thumb-first React app that turns one source image into a complete app-icon
+set for every platform. Built on the Whiskeyjack design system, wired for one
 web codebase delivered to desktop and mobile via Tauri.
 
 > This file is the canonical set of conventions for this project, and is written
@@ -29,23 +30,22 @@ npm run check:release   # before publishing: version lockstep + a fresh CLI bund
 
 **Publishing the two packages has its own rules**, and they are not obvious: the CLI
 BUNDLES the core, so the versions move together and a `dist` built before a core
-change ships a pipeline that no longer exists. `RELEASING.md` has the runbook and
-the two traps that have already cost time.
+change ships a pipeline that no longer exists. `RELEASING.md` has the runbook.
 
-Every one of those builds `packages/core` first. The app consumes the core's
-`dist`, and npm does not order workspace builds topologically, so a script that
-skipped that step would compile against whatever `dist` was left over.
+Three shapes in those scripts are load-bearing, and each one was learned the
+expensive way:
 
-`typecheck` was the exception until CI existed, and nobody noticed because a
-developer always has a `dist` lying around from the last build. On a clean checkout
-`tsc -b` could not resolve `@whiskeyjack-net/icon-stack-core` at all -- 16 errors,
-every one of them "cannot find module". If you add a script that compiles or runs
-the app, it builds the core first; `dist/` is gitignored, so on fresh ground it does
-not exist.
-
-`npm test` runs `vitest run` explicitly before `--workspaces`, because the app's
-vitest config lives at the repo root and `--workspaces` alone silently skipped
-it. Adding a config is not the same as running it.
+- **Every script that compiles or runs the app builds `packages/core` first.**
+  The app consumes the core's `dist`, `dist/` is gitignored, and npm does not
+  order workspace builds topologically. On a clean checkout, a script that skips
+  it cannot resolve `@whiskeyjack-net/icon-stack-core` at all. A local machine
+  hides this, because there is always a `dist` lying around from last time.
+- **`npm test` names `vitest run` explicitly**, before `--workspaces`. The app's
+  vitest config lives at the repo root, and `--workspaces` alone silently skips
+  it. Adding a config is not the same as running it.
+- **A Vite `define` goes in `app-defines.mjs`**, which both `vite.config.ts` and
+  `vitest.config.ts` import. Declaring one in a single config makes every
+  component reading it throw at module scope in the other.
 
 ## Structure
 
@@ -67,8 +67,8 @@ packages/
 This is an npm workspace: the app is the root package, and the two published
 packages sit beside it. A package here **exports built output, never `src`** –
 a package whose `main` points at TypeScript compiles under the *consumer's*
-tsconfig and hands them its own type problems. That one cost three rounds of
-fixes to learn, and `FINDINGS.md` records it in full.
+tsconfig and hands them its own type problems, including dependencies they never
+imported.
 
 ## Finding a design-system component
 
