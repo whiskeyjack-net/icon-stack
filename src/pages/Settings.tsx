@@ -11,7 +11,6 @@ import {
   ArrowSquareOut,
 } from '@phosphor-icons/react'
 import { CompactIconButton } from '@/components/CompactIconButton'
-import { useExtraDark } from '@/lib/use-extra-dark'
 import { activeLanguage, SUPPORTED_LANGUAGES } from '@/i18n'
 
 // Endonyms: a language picker is read by someone who does not yet have the app
@@ -31,8 +30,11 @@ export function Settings() {
   const { t, i18n } = useTranslation()
   // Uncontrolled theme (same storageKey as the Layout): mode + setter come from
   // the hook, and every instance stays in sync.
-  const { mode: theme, setMode: setTheme } = useTheme({ storageKey: 'icon-stack-theme' })
-  const [extraDark, setExtraDark] = useExtraDark()
+  // Both halves come off the one hook as of design-system 0.14.0; this app's
+  // thirty-line use-extra-dark.ts was the finding that asked for it.
+  const { mode: theme, setMode: setTheme, extraDark, setExtraDark } = useTheme({
+    storageKey: 'icon-stack-theme',
+  })
 
   const themeOptions = [
     { value: 'light' as const, label: t('settings.themeLight'), icon: <Sun size={20} /> },

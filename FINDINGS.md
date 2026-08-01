@@ -19,33 +19,6 @@ locally, with any upstream ask stated in the entry.
 
 ## Live
 
-### OPEN – uncontrolled `useTheme` persists `mode` but not `extraDark`
-
-The hook's two modes are asymmetric. Uncontrolled `useTheme` **owns** the
-light/dark preference: give it a `storageKey` and it reads, writes, and
-broadcasts changes to every other instance in the tab and to other tabs.
-`extraDark` beside it is a plain prop the app has to store, read, and sync
-itself.
-
-That is a defensible split for the app it was extracted from. Chip Away keeps
-the flag in a Dexie settings row and passes it in, so the hook storing it would
-have been a second source of truth. It is the wrong default for an app with no
-database, which now hand-rolls `src/lib/use-extra-dark.ts`: thirty lines
-duplicating the hook's own event-plus-`storage` sync, because Layout applies the
-class and Settings sets it and the two must agree with no shared parent. Every
-uncontrolled consumer will write those thirty lines.
-
-**Suggested shape:** in uncontrolled mode only, persist `extraDark` under
-`` `${storageKey}-extra-dark` `` and return `setExtraDark` alongside `setMode`.
-Controlled mode (an explicit `mode` prop) keeps today's behaviour untouched, so
-Chip Away is unaffected. No changeset yet.
-
-Worth recording what was already right: the DS applies `.dark.extra-dark` from
-`utilities.css` with no app CSS at all, and this app's `index.html` pre-paint
-script already read `'oled'` from `launchMirrorKey` and painted `#000000` on
-cold launch. The overlay was wired end to end; only the switch and somewhere to
-keep its value were missing.
-
 ### FIXED HERE – a Vite `define` does not reach the test config
 
 This app has **two** Vite configs: `vite.config.ts` for dev and build,
@@ -84,6 +57,22 @@ straight into is evidence the warning was the wrong instrument.
 ---
 
 ## Closed
+
+**`useTheme` did not persist `extraDark` when uncontrolled** (raised 2026-07-31,
+**fixed in design-system 0.14.0**, consumed here 2026-08-01). The hook owned the
+light/dark preference in uncontrolled mode and left the OLED flag as a plain
+prop, so this app carried thirty lines re-implementing the hook's own
+event-plus-`storage` sync to keep Layout and Settings agreeing. `extraDark` now
+follows the same controlled/uncontrolled split as `mode` and resolves
+independently of it; `src/lib/use-extra-dark.ts` is deleted. Chip Away, which
+keeps the flag in a Dexie row, was unaffected -- which is the case the
+controlled path exists for.
+
+One cost worth recording: the DS derives its key from `storageKey`
+(`icon-stack-theme-extra-dark`), and the local workaround used
+`icon-stack-extra-dark`. Anyone who had switched the overlay on in the few days
+between finds it back at its default once. Not worth a migration shim for a
+setting that old.
 
 Findings were raised across six build stages and fixed upstream in
 `design-system@0.6.0`–`0.10.0` and `create-whiskeyjack@0.3.1`–`0.4.1`,
