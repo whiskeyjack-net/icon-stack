@@ -23,7 +23,6 @@ import {
 import { Stack, GearSix, List, X, Check } from '@phosphor-icons/react'
 import { GeneratorActions, GeneratorActionsMeasure } from './GeneratorActions'
 import { useGenerator } from '@/contexts/GeneratorContext'
-import { useExtraDark } from '@/lib/use-extra-dark'
 
 export function Layout({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
@@ -36,15 +35,10 @@ export function Layout({ children }: { children: ReactNode }) {
 
   // On Tauri desktop, match the OS accent + window-control layout (no-op on web).
   useSystemAccent()
-  const [extraDark] = useExtraDark()
   // Theme: uncontrolled (owns localStorage). The accent foreground is computed
   // once for the theme accent; useSystemAccent recomputes it on desktop.
   useTheme({
     storageKey: 'icon-stack-theme',
-    // The OLED overlay, stored beside the preference rather than inside it --
-    // the hook persists `mode` and takes this as a prop (see use-extra-dark).
-    // It only bites in dark mode; the hook gates that itself.
-    extraDark,
     // Mirrors the RESOLVED appearance for index.html's pre-paint script, which
     // is what keeps the cold launch from flashing the wrong background. The
     // preference (`storageKey`) can be 'system'; the script needs the answer.
