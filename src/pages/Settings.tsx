@@ -195,7 +195,7 @@ function Command({ text }: { text: string }) {
 
   return (
     <div className="flex items-start gap-2">
-      <code className="min-w-0 flex-1 break-all rounded-lg bg-[var(--color-warm-100)] px-3 py-2 font-mono text-xs text-[var(--color-text-primary-light)] dark:bg-[var(--color-neutral-800)] dark:text-[var(--color-text-primary-dark)]">
+      <code className="min-w-0 flex-1 break-all rounded-lg bg-[var(--color-surface-muted-light)] px-3 py-2 font-mono text-xs text-[var(--color-text-primary-light)] dark:bg-[var(--color-surface-muted-dark)] dark:text-[var(--color-text-primary-dark)]">
         {text}
       </code>
       <CompactIconButton
