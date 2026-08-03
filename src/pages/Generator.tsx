@@ -172,7 +172,7 @@ export function Generator() {
               <SourceSlots />
 
               <Card>
-                <CardContent className="p-5 pt-3">
+                <CardContent density="compact">
                   <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     {t('generator.platforms')}
                   </h2>
@@ -181,7 +181,7 @@ export function Generator() {
               </Card>
 
               <Card>
-                <CardContent className="p-5 pt-3">
+                <CardContent density="compact">
                   <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     {t('generator.export')}
                   </h2>

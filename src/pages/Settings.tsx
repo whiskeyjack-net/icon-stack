@@ -51,7 +51,7 @@ export function Settings() {
       </h1>
 
       <Card>
-        <CardContent className="p-5 pt-3">
+        <CardContent density="compact">
           <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('settings.theme')}
           </h2>
@@ -73,7 +73,7 @@ export function Settings() {
       </Card>
 
       <Card>
-        <CardContent className="p-5 pt-3">
+        <CardContent density="compact">
           <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('settings.language')}
           </h2>
@@ -92,7 +92,7 @@ export function Settings() {
           the reason to reach for it is a build script rather than a different
           feature set. */}
       <Card>
-        <CardContent className="p-5 pt-3">
+        <CardContent density="compact">
           <h2 className="mb-1 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('settings.cli')}
           </h2>
@@ -118,7 +118,7 @@ export function Settings() {
       </Card>
 
       <Card>
-        <CardContent className="p-5 pt-3">
+        <CardContent density="compact">
           <h2 className="mb-3 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('settings.about')}
           </h2>

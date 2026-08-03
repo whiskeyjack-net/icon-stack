@@ -33,7 +33,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
   return (
     <Card>
-      <CardContent className="space-y-6 p-5 pt-3">
+      <CardContent density="compact" className="space-y-6">
         {/* The platform's name lives here rather than on the preview card beside
             it: this is the card you act on, and the preview is the result. */}
         <h3 className="text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">

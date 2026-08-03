@@ -77,9 +77,9 @@ function Slot({ slot }: { slot: SourceSlot }) {
   // The heading earns its place only when it has something to sit beside. An
   // empty main slot is the whole of the landing page, and the EmptyState below
   // already titles it ("Drop a source image") -- so a card heading reading
-  // "Source image" directly above says the same thing twice. Dropping it takes
-  // the `pt-3` with it, since that compensation exists ONLY to balance a title,
-  // and the padding goes back to even on all four sides.
+  // "Source image" directly above says the same thing twice. Dropping the
+  // heading drops `compact` with it: that density exists ONLY to balance a
+  // title, so with no title the padding goes back to even on all four sides.
   //
   // The empty ALTERNATE slot keeps its header, because the "optional" marker
   // lives there and is the one thing the drop target does not say. The two
@@ -89,7 +89,9 @@ function Slot({ slot }: { slot: SourceSlot }) {
 
   return (
     <Card>
-      <CardContent className={cn('p-5', showHeader && 'pt-3')}>
+      {/* Without a header this wants even padding, which is neither density:
+          the `p-5` overrides compact's top inset through tailwind-merge. */}
+      <CardContent density="compact" className={cn(!showHeader && 'p-5')}>
         {showHeader && (
           /* `items-center` rather than baseline: the trailing slot holds a button
              as often as text, and a 32px control cannot sit on a text baseline. */

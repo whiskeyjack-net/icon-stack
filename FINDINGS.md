@@ -74,6 +74,29 @@ One cost worth recording: the DS derives its key from `storageKey`
 between finds it back at its default once. Not worth a migration shim for a
 setting that old.
 
+**`CardContent` had no density for a headerless card** (never raised,
+**fixed in design-system 0.16.0**, consumed here 2026-08-03). `CardContent`
+shipped `p-6 pt-0` -- no top padding, because a `CardHeader` above supplies it.
+Almost no card in this app has one; they lead with their own heading inside the
+content, so all nine wrote `className="p-5 pt-3"` by hand. Chip Away had done
+the same thing nineteen times. `density="compact"` now names it.
+
+The part worth keeping is that **this was never a finding**. It was found by
+someone reviewing Chip Away, not here. Every duplication of it was locally
+consistent -- nine call sites in this repo all agreeing with each other, and
+nineteen in Chip Away likewise -- so nothing inside either app looked wrong, and
+this file only ever records what building here made *fail*. A value copied
+correctly at twenty-eight sites produces no symptom until two of them disagree,
+by which point the disagreement is the bug and the duplication is invisible
+prior art.
+
+`SourceSlots` is the case that shows the variant was named for the right thing.
+It had already worked the rule out independently -- `cn('p-5', showHeader &&
+'pt-3')`, with a comment explaining the top inset exists *only* to balance a
+title -- and now says the same thing as `density="compact"` plus a `p-5`
+override for the headerless branch. Two apps deriving one rule separately is
+the signal the rule belonged upstream; neither of them filing it is the gap.
+
 Findings were raised across six build stages and fixed upstream in
 `design-system@0.6.0`–`0.10.0` and `create-whiskeyjack@0.3.1`–`0.4.1`,
 published, and consumed back here. One was withdrawn as incorrect and one was
@@ -92,3 +115,10 @@ this next:
   at TypeScript compiles under the consumer's tsconfig and hands them its own
   type problems, including dependencies they never imported. That one took three
   rounds of fixes and is now a standing rule in `AGENTS.md`.
+- **This file catches what breaks, not what repeats.** Every entry above began
+  as a build failure, a type error, or a missing export -- something that
+  stopped work. The `CardContent` density was none of those: it was twenty-eight
+  correct copies of two class names across two apps, which compile and render
+  perfectly right up until someone changes one of them. Consuming the packages
+  as a third party surfaces packaging gaps well and duplication badly, because
+  duplication inside one consumer looks like consistency from inside it.
