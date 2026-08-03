@@ -213,7 +213,7 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
 
   return (
     <Card>
-      <CardContent className="p-5 pt-3">
+      <CardContent density="compact">
         {title && (
           <h3 className="mb-4 text-sm font-medium text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {title}
