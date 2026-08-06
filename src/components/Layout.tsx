@@ -12,6 +12,7 @@ import {
   MobileBottomNav,
   applyAccentForeground,
   useRouteFocus,
+  useScrollReset,
   useTheme,
 } from '@whiskeyjack-net/design-system'
 import {
@@ -29,6 +30,13 @@ export function Layout({ children }: { children: ReactNode }) {
   const location = useLocation()
   const mainRef = useRef<HTMLElement>(null)
   useRouteFocus(location.pathname, mainRef)
+  // `useRouteFocus` focuses with `preventScroll`, so it deliberately leaves the
+  // scroll position where the last page left it. Without this, switching from a
+  // scrolled Generator to Settings opens Settings halfway down -- and the
+  // reflex fix, `window.scrollTo(0, 0)`, does nothing here, because
+  // `AppShell scroll="shell"` makes `AppMain` the scroller and the window has
+  // no overflow to scroll.
+  useScrollReset(location.pathname, mainRef)
 
   const { source, fileInputRef, requestFile, replacePending, confirmReplace, cancelReplace } =
     useGenerator()
