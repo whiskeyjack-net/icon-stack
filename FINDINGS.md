@@ -12,8 +12,15 @@ a minute and know what to act on. Findings are removed once their fix has
 shipped and been consumed here; `git log --follow FINDINGS.md` has the full
 record.
 
+Most entries travel outward: something broke here and was fixed upstream. The
+traffic also runs the other way, and that direction is worth recording too --
+a fix this app **receives** without ever having failed is evidence the
+arrangement paid for itself, and it is the only evidence of that kind, since
+nothing here breaks to mark the occasion. Those go under Received.
+
 Status legend: **OPEN** needs a change upstream · **FIXED HERE** handled
-locally, with any upstream ask stated in the entry.
+locally, with any upstream ask stated in the entry · **RECEIVED** found
+elsewhere, fixed upstream, arrived here for free.
 
 ---
 
@@ -40,6 +47,42 @@ gone rather than described.
 **Upstream ask, still open:** the template should scaffold that shared module in
 place of the README paragraph. A warning that a developer reads and then walks
 straight into is evidence the warning was the wrong instrument.
+
+---
+
+## Received
+
+### RECEIVED – navigation left the scroll position where the last route had it
+
+**design-system 0.17.0**, consumed here 2026-08-06. `AppShell scroll="shell"`
+makes `AppMain` the scroller, so the window has no overflow and
+`window.scrollTo(0, 0)` scrolls nothing -- silently, with no error to notice.
+Nothing reset scroll between `/` and `/settings`, and `useRouteFocus` focuses
+with `preventScroll` on purpose, so it moves focus while deliberately leaving
+the scroll position alone. Switching from a scrolled Generator opened Settings
+halfway down. Fixed by `useScrollReset`, now beside `useRouteFocus` in the
+Layout on the same key and ref.
+
+**This was never going to surface here, and that is the entry.** Two routes,
+both of which fit a screen at most window sizes, so the symptom needs a narrow
+window and a long source list to show up at all. It was found in Learn
+Whiskeyjack -- eighty-four lesson pages, so a link followed from halfway down a
+long index lands halfway down the next page every time -- and fixed in the
+design system, and this app got it without anyone here noticing anything was
+wrong.
+
+Worth stating because the rest of this file measures the arrangement in one
+direction only. Every other entry is a cost: something broke here that would not
+have broken inside the monorepo, and the file exists to make those costs visible
+enough to fix. A shared system also pays out, and the payouts are invisible by
+construction -- no build fails, no type errors, nothing to file. If the ledger
+only ever records what consuming the packages as a third party *costs*, it will
+read as an argument against doing it.
+
+The general shape, for the next one: the bug lived in a DS scroll model this app
+uses correctly, and needed a consumer with enough pages to trip it. Neither app
+could have found it alone, and the one that did had no idea the other was
+affected.
 
 ---
 
