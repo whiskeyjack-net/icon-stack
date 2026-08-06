@@ -26,27 +26,8 @@ elsewhere, fixed upstream, arrived here for free.
 
 ## Live
 
-### FIXED HERE – a Vite `define` does not reach the test config
-
-This app has **two** Vite configs: `vite.config.ts` for dev and build,
-`vitest.config.ts` for tests. `define` does not carry between them, so a
-constant declared in one makes every component reading it throw
-`ReferenceError` in the other, at module scope, which takes down whole test
-files rather than the one assertion that reads it.
-
-Written upstream in `create-whiskeyjack@0.4.1` as a template README paragraph.
-**Then it recurred here on 2026-07-31**, which is the part still worth acting
-on: adding `__APP_LICENSE__` and `__APP_REPOSITORY__` reproduced the failure
-exactly, in a file carrying a comment warning about it, two lines above the
-block that needed the second edit. Documentation loses to a second edit site.
-
-Fixed locally by having both configs import one `appDefines` block from
-`app-defines.mjs`, so there is a single place to change and the failure mode is
-gone rather than described.
-
-**Upstream ask, still open:** the template should scaffold that shared module in
-place of the README paragraph. A warning that a developer reads and then walks
-straight into is evidence the warning was the wrong instrument.
+None. Verified against the published packages on 2026-08-06, not against memory
+of having asked.
 
 ---
 
@@ -100,6 +81,38 @@ affected.
 ---
 
 ## Closed
+
+**A Vite `define` did not reach the test config** (raised 2026-07-31,
+**fixed in create-whiskeyjack@0.5.0**, verified against the published tarball
+2026-08-06). This app has two Vite configs -- `vite.config.ts` for dev and
+build, `vitest.config.ts` for tests -- and `define` does not carry between them,
+so a constant declared in one made every component reading it throw
+`ReferenceError` in the other, at module scope, taking down whole test files
+rather than the one assertion that read it.
+
+It had already been written up upstream, as a README paragraph in
+`create-whiskeyjack@0.4.1`. Then it recurred here anyway while adding
+`__APP_LICENSE__` and `__APP_REPOSITORY__`, in a file carrying a comment warning
+about it, two lines above the block that needed the second edit. The fix was to
+stop describing the failure and remove it: both configs here import one
+`appDefines` block from `app-defines.mjs`, and the template now scaffolds that
+module in place of the paragraph.
+
+**Nothing changes in this app.** The local `app-defines.mjs` written as the
+workaround is the same shape the template now ships, so this closes on new
+projects rather than on this one -- which is the correct outcome for a finding
+whose subject was a *starting point*, and worth noting because "consumed here"
+is the usual test for closing an entry and does not apply.
+
+Two things came out of fixing it that the original entry did not anticipate.
+The template had no `version` field in its `package.json`, so
+`JSON.stringify(pkg.version)` would have injected the literal `undefined` --
+the exact "reaches production undefined" failure this entry describes, shipped
+inside its own fix, caught only by scaffolding a project and building it. And
+the claim itself now has a test standing behind it: a scaffolded project, a
+`vitest.config.ts` importing the module, and an assertion on `__APP_VERSION__`
+inside a test. The README had asserted that since 0.4.1 with nothing behind it,
+which is arguably how the recurrence happened in the first place.
 
 **`useTheme` did not persist `extraDark` when uncontrolled** (raised 2026-07-31,
 **fixed in design-system 0.14.0**, consumed here 2026-08-01). The hook owned the
