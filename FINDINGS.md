@@ -26,7 +26,7 @@ elsewhere, fixed upstream, arrived here for free.
 
 ## Live
 
-None. Verified against the published packages on 2026-08-06, not against memory
+None. Verified against the published packages on 2026-08-09, not against memory
 of having asked.
 
 ---
