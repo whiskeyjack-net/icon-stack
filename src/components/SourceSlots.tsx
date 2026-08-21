@@ -202,7 +202,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
               title={t(`source.${slot}Title`)}
               subtitle={t(`source.${slot}Subtitle`)}
               action={
-                <Button variant={slot === 'main' ? 'accent' : 'outline'} onClick={openPicker}>
+                <Button variant={slot === 'main' ? 'accent' : 'secondary'} onClick={openPicker}>
                   <UploadSimple size={16} weight="bold" className="mr-1.5" />
                   {t('source.choose')}
                 </Button>

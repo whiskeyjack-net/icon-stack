@@ -103,7 +103,7 @@ export function DedicatedSource({
               </p>
             </div>
             <Button
-              variant="outline"
+              variant="secondary"
               size="icon"
               aria-label={t('platform.dedicatedRemove', { label })}
               title={t('platform.dedicatedRemove', { label })}
@@ -156,7 +156,7 @@ export function DedicatedSource({
           <p className="text-sm text-[var(--color-text-muted-light)] dark:text-[var(--color-text-muted-dark)]">
             {t('platform.dedicatedUsingMain')}
           </p>
-          <Button variant="outline" size="sm" onClick={() => input.current?.click()}>
+          <Button variant="secondary" size="sm" onClick={() => input.current?.click()}>
             <UploadSimple size={14} weight="bold" className="mr-1.5" />
             {t('source.choose')}
           </Button>
