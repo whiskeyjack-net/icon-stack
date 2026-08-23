@@ -33,6 +33,19 @@ of having asked.
 
 ## Received
 
+### RECEIVED – a nav item answered a tap and a click differently
+
+**design-system 0.25.0**, consumed here 2026-08-23. The travelling highlight
+behind `SidebarTabs` and `HeaderNav` took its fill from each item's `hover:`
+class, which a touch screen never applies -- so a tap left the item carrying
+only its bevel, an outline where a desktop click showed a filled shape, and the
+arriving highlight merged into that outline. The press now paints both, with no
+transition, because a tap can be shorter than the 150ms the item otherwise eases
+over.
+
+Never failed here: the platform sidebar is used on a desktop, where hover
+supplied the fill and hid the gap. It arrives fixed.
+
 ### RECEIVED – navigation left the scroll position where the last route had it
 
 **design-system 0.17.0**, consumed here 2026-08-06. `AppShell scroll="shell"`
