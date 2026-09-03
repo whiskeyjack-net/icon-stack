@@ -33,6 +33,21 @@ of having asked.
 
 ## Received
 
+### RECEIVED – muted text sat under the AA floor, and the nav highlight doubled up on arrival
+
+**design-system 0.26.0**, consumed here 2026-09-03. Two patches this app never
+asked for. `--color-text-muted-*` moved to values that clear 4.5:1 on the page,
+on a Card and under the OLED overlay, and the package now pins that floor in
+its own tests; the eight places here that set muted text pick it up unchanged.
+The travelling highlight behind `SidebarTabs` used to land on top of the
+selected item's own fill, both painting the same 75% colour, so the overlap
+composited darker than either and the item's bevel sat over the highlight's.
+The item's fill now fades out as the highlight crosses to it.
+
+Never failed here: muted text was a documented trade-off that reviews flagged
+and accepted, and the doubled highlight lasted the length of one transition on
+the platform sidebar. Both arrive fixed.
+
 ### RECEIVED – a nav item answered a tap and a click differently
 
 **design-system 0.25.0**, consumed here 2026-08-23. The travelling highlight
