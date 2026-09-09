@@ -2,16 +2,21 @@
 
 One source image in, a complete app-icon set out.
 
-Drop in a 1024×1024 PNG or an SVG and get every icon a project needs: macOS
-`.icns` and `.iconset`, Windows `.ico`, Windows Store MSIX tiles, Android
-adaptive layers and mipmaps, iOS, Linux, PWA icons with maskable variants,
-favicons, an Apple touch icon, and tray icons.
+Drop in a 1024×1024 PNG, JPEG or WebP, or an SVG, and get every icon a project
+needs: macOS `.icns` and `.iconset`, Windows `.ico`, Windows Store MSIX tiles
+with the full target-size set, Android adaptive layers and mipmaps, iOS, Linux
+(with the SVG passed through as the scalable icon), PWA icons with maskable
+variants, favicons, an Apple touch icon, and tray icons for macOS, Windows and
+Linux in light and dark.
 
 - **Web app** – <https://whiskeyjack.net/icon-stack/>
 - **CLI** – `npx @whiskeyjack-net/icon-stack generate --source logo.png --out ./icons`
 
-Both run the same pipeline, so the CLI and the Export button produce
-byte-identical output. Reach for the CLI when the source changes more often
+Both run the same pipeline: the same size tables, containers and compositing,
+so the CLI and the Export button produce the same files at the same
+dimensions. The one thing that differs by host is the downscaling kernel (pica
+in the browser, Skia in Node), so the pixels of a downscaled icon can differ
+slightly between the two. Reach for the CLI when the source changes more often
 than you want to click, or when a build script should own it.
 
 ## What it does

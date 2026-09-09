@@ -18,8 +18,20 @@ function fakePng(size: number, filler = 0): Uint8Array {
   return b
 }
 
+/** Straight-alpha RGBA with a recognisable gradient and a transparent first row. */
+function fakePixels(size: number) {
+  const data = new Uint8ClampedArray(size * size * 4)
+  for (let i = 0; i < size * size; i++) {
+    data[i * 4] = i & 0xff
+    data[i * 4 + 1] = (i * 3) & 0xff
+    data[i * 4 + 2] = (i * 7) & 0xff
+    data[i * 4 + 3] = i < size ? 0 : 200
+  }
+  return { width: size, height: size, data }
+}
+
 describe('decodeIco', () => {
-  it('round-trips everything the encoder writes', () => {
+  it('round-trips PNG frames byte for byte', () => {
     const sizes = [16, 24, 32, 48, 64, 128, 256]
     const ico = encodeIco(sizes.map((size) => ({ size, pngData: fakePng(size, size) })))
 
@@ -27,8 +39,34 @@ describe('decodeIco', () => {
     expect(decoded.map((i) => i.size)).toEqual(sizes)
     // Byte-for-byte, because the preview renders these directly.
     for (const [i, size] of sizes.entries()) {
-      expect(decoded[i].pngData).toEqual(fakePng(size, size))
+      const frame = decoded[i]
+      expect(frame.kind).toBe('png')
+      if (frame.kind === 'png') expect(frame.pngData).toEqual(fakePng(size, size))
     }
+  })
+
+  it('writes a DIB for a frame under 256 when it has pixels, and reads it back', () => {
+    // Microsoft: only the 256 frame should be compressed. Everything smaller is
+    // an uncompressed 32-bit DIB whenever the pixels are available.
+    const ico = encodeIco([
+      { size: 16, pngData: fakePng(16), pixels: fakePixels(16) },
+      { size: 256, pngData: fakePng(256), pixels: fakePixels(256) },
+    ])
+    const [small, large] = decodeIco(ico)
+
+    expect(small.kind).toBe('bmp')
+    if (small.kind === 'bmp') {
+      expect(small.size).toBe(16)
+      expect(small.rgba).toEqual(fakePixels(16).data)
+    }
+    expect(large.kind).toBe('png')
+  })
+
+  it('falls back to a PNG frame when no pixels are given', () => {
+    // The browser hands over no pixels when getImageData is untrustworthy, and
+    // a PNG frame is the right answer there rather than a DIB of noise.
+    const [frame] = decodeIco(encodeIco([{ size: 32, pngData: fakePng(32), pixels: null }]))
+    expect(frame.kind).toBe('png')
   })
 
   it('reads 256 from the PNG header, which the directory byte cannot hold', () => {

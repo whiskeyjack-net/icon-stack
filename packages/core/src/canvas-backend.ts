@@ -38,6 +38,7 @@ export interface IconGradient {
 
 export interface IconContext2D {
   fillStyle: string | IconGradient
+  globalCompositeOperation: string
   imageSmoothingEnabled: boolean
   imageSmoothingQuality: 'low' | 'medium' | 'high'
 

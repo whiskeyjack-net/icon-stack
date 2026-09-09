@@ -252,7 +252,7 @@ export function Generator() {
               </p>
             </div>
           )}
-          {error && <Notice tone="error">{error}</Notice>}
+          {error && <Notice tone="error">{t(error)}</Notice>}
         </div>
       </div>
 

@@ -17,7 +17,8 @@
     "exportEmpty": "Selecciona al menos una plataforma para exportar.",
     "downloadPlatform": "Descargar iconos de {{platform}}",
     "generating": "Generando",
-    "generatingProgress": "Generando iconos, {{progress}}% completado"
+    "generatingProgress": "Generando iconos, {{progress}}% completado",
+    "failed": "La generación falló."
   },
   "settings": {
     "title": "Ajustes",
@@ -83,7 +84,7 @@
     "pwaRegularTransparentCaption": "Los iconos normales se exportan sin fondo ni máscara. Cambia a Enmascarable para previsualizar la versión dedicada para pantallas de inicio de Android.",
     "pwaRegularFilledCaption": "Los iconos normales se exportan con tu color de fondo y máscara. Cambia a Enmascarable para previsualizar la versión dedicada para pantallas de inicio de Android.",
     "windowsStoreTile": "Mosaico (origen principal). Se coloca sobre la placa BackgroundColor del manifiesto en el menú Inicio.",
-    "windowsStoreUnplated": "Icono de barra de tareas sin placa (origen alternativo, recurre al principal). Se dibuja sin placa en la barra de tareas / Alt+Tab, por lo que debe leerse sobre fondos claros y oscuros.",
+    "windowsStoreUnplated": "Icono de la barra de tareas, sin placa. Las variantes oscura y clara son los archivos que Windows elige para una barra oscura o clara.",
     "canvasAriaLabel": "Vista previa del icono {{platform}} de {{size}}×{{size}}",
     "appearance": {
       "light": "Claro",
@@ -96,17 +97,23 @@
       "light": "Claro",
       "dark": "Oscuro",
       "mono": "Monocromo",
-      "unplated": "Sin placa",
       "foreground": "Primer plano",
       "background": "Fondo"
-    }
+    },
+    "tile": "Mosaico",
+    "taskbar": "Barra de tareas",
+    "surfaceLabel": "Superficie",
+    "actualPixelsSuffix": " · píxeles reales",
+    "magnifiedSuffix": " · ampliado {{factor}}×",
+    "iosDarkCaption": "El icono oscuro se exporta con fondo transparente; iOS dibuja detrás su propia placa oscura, mostrada aquí.",
+    "failed": "La vista previa falló."
   },
   "source": {
     "main": "Imagen de origen",
     "alternate": "Imagen alternativa",
     "optional": "opcional",
     "mainTitle": "Suelta una imagen",
-    "mainSubtitle": "PNG o SVG, 1024x1024 cuadrado funciona mejor.",
+    "mainSubtitle": "PNG, JPEG, WebP o SVG. Un cuadrado de 1024×1024 funciona mejor.",
     "alternateTitle": "Añade una alternativa",
     "alternateSubtitle": "Para variantes oscuras, monocromas y de barra.",
     "choose": "Elegir archivo",
@@ -115,7 +122,11 @@
     "fit": "Ajuste",
     "contain": "Contener",
     "cover": "Cubrir",
-    "clear": "Borrar"
+    "clear": "Borrar",
+    "warnNonSquare": "La imagen es de {{width}}×{{height}}. Las fuentes cuadradas funcionan mejor.",
+    "warnSmall": "La imagen es de {{width}}×{{height}}. Se recomienda 1024×1024.",
+    "errorType": "Sube un archivo PNG, JPEG, WebP o SVG.",
+    "errorDecode": "No se pudo decodificar esa imagen."
   },
   "platform": {
     "background": "Fondo",
@@ -129,7 +140,9 @@
       "favicon": "Los navegadores lo escalan a 16px: mantén la marca simple.",
       "pwa": "Las variantes maskable añaden margen de seguridad para Android.",
       "windowsStore": "Los mosaicos permanecen transparentes; el color de la placa vive en el manifiesto MSIX.",
-      "trayIcon": "Los iconos de barra de menú son imágenes de plantilla en macOS."
+      "trayIcon": "En macOS, los iconos de la barra de menús son imágenes de plantilla. Windows recibe un juego claro y otro oscuro, como .ico y como un PNG por tamaño.",
+      "linux": "Una fuente SVG también se incluye sin cambios como icono escalable.",
+      "ios": "Se exporta como AppIcon.appiconset con imágenes de 1024 px clara, oscura y tintada y su Contents.json, listo para el catálogo de recursos."
     },
     "artworkSource": "Origen del gráfico",
     "backgroundDark": "Fondo oscuro",
@@ -157,7 +170,7 @@
     "dedicatedRemove": "Quitar {{label}}",
     "windowsStoreHint": "Aquí hay dos tipos de fondo. El color del mosaico es SOLO VISTA PREVIA: los PNG exportados siguen siendo transparentes y la placa real viene de BackgroundColor en el manifiesto de tu app. El fondo del icono de la barra de tareas SÍ se integra en los PNG sin placa. Es independiente del .ico de Windows, que es el icono del ejecutable.",
     "legacyHint": "Formato antiguo. Usa la plataforma Apple para paquetes .icon con cristal y tintado.",
-    "appleGenerates": "Genera un paquete .icon para macOS, iOS y watchOS. Requiere Xcode 16 o superior.",
+    "appleGenerates": "Genera un paquete AppIcon.icon para macOS, iOS y watchOS. Añádelo al proyecto de Xcode junto al catálogo de recursos, mantén el nombre del icono en AppIcon y elimina el conjunto AppIcon antiguo: Xcode 26 genera cada tamaño y apariencia a partir de él, y un conjunto antiguo que se deje es lo que se distribuye en su lugar.",
     "includeSvgRequiresSvg": "Requiere una fuente SVG: una imagen ráster no puede producir un favicon vectorial.",
     "source": {
       "main": "Gráfico principal",
@@ -165,9 +178,10 @@
       "dark": "Variante oscura",
       "mono": "Monocromo",
       "maskable": "Maskable",
-      "unplated": "Sin placa (barra)",
+      "unplated": "Barra de tareas oscura (sin placa)",
       "useMain": "Origen",
-      "useAlternate": "Alternativa"
+      "useAlternate": "Alternativa",
+      "lightUnplated": "Barra de tareas clara (sin placa)"
     }
   },
   "actions": {

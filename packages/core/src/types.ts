@@ -1,4 +1,8 @@
 export interface SourceImage {
+  /**
+   * `png` means any raster the host can decode -- PNG, JPEG or WebP -- and the
+   * data URL carries the real MIME type. `svg` is markup, rasterized on demand.
+   */
   type: 'png' | 'svg'
   /**
    * Data URL. Stays a plain string rather than a `string | Uint8Array` union:
@@ -69,9 +73,19 @@ export interface RoundedCornersConfig extends PlatformConfig {
   cornerSmoothing: number
 }
 
-/** macOS and iOS support separate dark mode icon variants */
+/** Legacy macOS: a separate dark icon, on its own plate. */
 export interface DarkVariantConfig extends PlatformConfig {
   bgFillDark: BackgroundFill
+  darkSourceChoice: SourceChoice
+}
+
+/**
+ * Legacy iOS asset catalog. The dark variant carries no fill of its own: Xcode
+ * asks for it "with a transparent background so the system-provided background
+ * can show through", so the export is the artwork alone and the OS supplies the
+ * plate. Only the light icon bakes `bgFill`, because iOS forbids alpha there.
+ */
+export interface IosConfig extends PlatformConfig {
   darkSourceChoice: SourceChoice
 }
 
@@ -109,8 +123,18 @@ export interface TrayIconConfig extends PlatformConfig {
 }
 
 export interface WindowsStoreConfig extends RoundedCornersConfig {
-  /** Source for the unplated (taskbar) icons. `sourceChoice` is the tile source. */
+  /**
+   * Source for the unplated (dark taskbar) icons. `sourceChoice` is the tile
+   * source, and also draws the plain target-size icons Windows plates itself.
+   */
   unplatedSourceChoice: SourceChoice
+  /**
+   * Source for the `_altform-lightunplated` icons, drawn bare on a LIGHT taskbar.
+   * Microsoft requires the file even when it is the same image, so with one
+   * source this simply repeats the unplated icon; with an alternate loaded the
+   * two taskbar themes can carry different artwork.
+   */
+  lightUnplatedSourceChoice: SourceChoice
   /**
    * `bgFill` is a PREVIEW-ONLY plate color for the tiles: the exported tile
    * PNGs stay transparent (the real plate color is the MSIX manifest's
@@ -184,7 +208,7 @@ export type PlatformConfigs = {
   appleTouchIcon: PlatformConfig
   trayIcon: TrayIconConfig
   macos: MacosConfig
-  ios: DarkVariantConfig
+  ios: IosConfig
 }
 
 export interface GeneratorState {

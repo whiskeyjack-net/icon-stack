@@ -19,7 +19,7 @@ import {
   type SourceImage,
 } from '@whiskeyjack-net/icon-stack-core'
 import { unzipSync } from 'fflate'
-import { processFile } from '@/lib/process-file'
+import { processFile, SourceFileError, type SourceNotice } from '@/lib/process-file'
 
 /**
  * Platforms exposed in the UI, in the order the tabs and the grid present them.
@@ -49,8 +49,9 @@ export type SourceSlot = 'main' | 'alternate'
 interface GeneratorValue {
   source: SourceImage | null
   alternate: SourceImage | null
-  sourceWarning: string | null
-  alternateWarning: string | null
+  /** A notice about the loaded file, as a translation key the slot renders. */
+  sourceWarning: SourceNotice | null
+  alternateWarning: SourceNotice | null
   platforms: PlatformConfigs
   selected: Platform
   sourceFit: ImageFit
@@ -66,9 +67,10 @@ interface GeneratorValue {
   busy: boolean
   exporting: Platform | 'all' | null
   progress: number
+  /** A translation key, or null. The underlying error goes to the console. */
   error: string | null
 
-  setSlot: (slot: SourceSlot, source: SourceImage | null, warning?: string | null) => void
+  setSlot: (slot: SourceSlot, source: SourceImage | null, warning?: SourceNotice | null) => void
   /**
    * The single entry point for a picked or dropped File, whichever control
    * produced it. Replacing an existing MAIN source parks the file and raises
@@ -113,8 +115,8 @@ export function useGenerator(): GeneratorValue {
 export function GeneratorProvider({ children }: { children: ReactNode }) {
   const [source, setSource] = useState<SourceImage | null>(null)
   const [alternate, setAlternate] = useState<SourceImage | null>(null)
-  const [sourceWarning, setSourceWarning] = useState<string | null>(null)
-  const [alternateWarning, setAlternateWarning] = useState<string | null>(null)
+  const [sourceWarning, setSourceWarning] = useState<SourceNotice | null>(null)
+  const [alternateWarning, setAlternateWarning] = useState<SourceNotice | null>(null)
   const [platforms, setPlatforms] = useState(createDefaultPlatforms)
   const [selected, setSelected] = useState<Platform>('favicon')
   const [sourceFit, setSourceFit] = useState<ImageFit>('contain')
@@ -129,7 +131,7 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const setSlot = useCallback(
-    (slot: SourceSlot, next: SourceImage | null, warning: string | null = null) => {
+    (slot: SourceSlot, next: SourceImage | null, warning: SourceNotice | null = null) => {
       setError(null)
       if (slot === 'main') {
         setSource(next)
@@ -155,7 +157,7 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
         // A rejected file leaves the slot empty rather than half-set, and the
         // reason rides in the slot's own warning so it appears beside the card
         // that failed.
-        setSlot(slot, null, err instanceof Error ? err.message : 'Could not read that file.')
+        setSlot(slot, null, { key: err instanceof SourceFileError ? err.key : 'source.readFailed' })
       }
     },
     [setSlot],
@@ -236,14 +238,20 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
     [source, alternate, platforms, sourceFit, alternateFit, faviconFit, trayFit],
   )
 
-  const render = useCallback(
-    async (platform: Platform) => {
-      if (!source) return {}
-      const zip = await generateIcons({ ...buildOptions(platform), onProgress: () => {} })
-      return unzipSync(zip)
-    },
-    [source, buildOptions],
-  )
+  // Read through a ref so `render` keeps its identity across setting changes.
+  // It used to close over `buildOptions`, which changes whenever ANY platform's
+  // config does -- so on the Source tab every mounted preview re-ran its
+  // pipeline for a change to a platform it was not showing. A preview now
+  // decides for itself what it depends on and calls the latest options when it
+  // runs.
+  const optionsRef = useRef(buildOptions)
+  optionsRef.current = buildOptions
+  const render = useCallback(async (platform: Platform) => {
+    const options = optionsRef.current(platform)
+    if (!options.source) return {}
+    const zip = await generateIcons({ ...options, onProgress: () => {} })
+    return unzipSync(zip)
+  }, [])
 
   const generate = useCallback(
     async (which: Platform | 'all') => {
@@ -264,7 +272,8 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
         a.click()
         URL.revokeObjectURL(url)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Generation failed.')
+        console.error(err)
+        setError('generator.failed')
       } finally {
         setBusy(false)
         setExporting(null)

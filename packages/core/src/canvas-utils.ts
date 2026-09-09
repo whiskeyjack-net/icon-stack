@@ -1,4 +1,10 @@
-import { createCanvas, context2d, type IconCanvas, type IconContext2D } from './canvas-backend'
+import {
+  createCanvas,
+  context2d,
+  type IconCanvas,
+  type IconContext2D,
+  type IconImageData,
+} from './canvas-backend'
 import type { BackgroundFill } from './types'
 import { resolveGradientColors } from './color-utils'
 
@@ -168,145 +174,74 @@ export function drawWithBackground(
 }
 
 /**
- * Draws the source image with padding (as a fraction of the canvas size).
- * The image is centered and scaled to fit within the padded area.
+ * The artwork's alpha, filled with one colour.
+ *
+ * The dark tray variants. A dark taskbar or panel wants a knocked-out glyph,
+ * and a plain RGB inversion is not one: it turns a coloured mark into its
+ * complementary colours. Composited rather than read back through
+ * `getImageData`, which a browser under fingerprinting protection randomizes.
  */
-export function drawWithPadding(
-  source: IconCanvas,
-  targetWidth: number,
-  targetHeight: number,
-  paddingFraction: number,
-): IconCanvas {
-  const canvas = createCanvas(targetWidth, targetHeight)
-  const ctx = context2d(canvas)
-
-  const padX = targetWidth * paddingFraction
-  const padY = targetHeight * paddingFraction
-  const innerW = targetWidth - padX * 2
-  const innerH = targetHeight - padY * 2
-
-  ctx.drawImage(source, padX, padY, innerW, innerH)
-
-  return canvas
-}
-
-/**
- * Draws the source image onto a canvas with the given background fill
- * and padding. Combines background fill + padding in one pass.
- */
-export function drawWithBackgroundAndPadding(
-  source: IconCanvas,
-  targetWidth: number,
-  targetHeight: number,
-  bgFill: BackgroundFill,
-  paddingFraction: number,
-): IconCanvas {
-  const canvas = createCanvas(targetWidth, targetHeight)
-  const ctx = context2d(canvas)
-
-  fillBackground(ctx, canvas.width, canvas.height, bgFill)
-
-  const padX = targetWidth * paddingFraction
-  const padY = targetHeight * paddingFraction
-  const innerW = targetWidth - padX * 2
-  const innerH = targetHeight - padY * 2
-
-  ctx.drawImage(source, padX, padY, innerW, innerH)
-
-  return canvas
-}
-
-/**
- * Creates an Android adaptive icon foreground layer.
- * The source is placed within the 66dp safe zone (inner 61% of the 108dp canvas).
- * At the target pixel size, safe zone = size × (66/108).
- * zoom: 100 = standard safe zone, >100 = extend beyond safe zone.
- */
-export function drawAdaptiveForeground(
-  source: IconCanvas,
-  targetSize: number,
-  zoom: number = 100,
-): IconCanvas {
-  const canvas = createCanvas(targetSize, targetSize)
-  const ctx = context2d(canvas)
-
-  // Safe zone: 66/108 ≈ 61.1% of the canvas, scaled by zoom
-  const safeZone = targetSize * (66 / 108) * (zoom / 100)
-  const offset = (targetSize - safeZone) / 2
-
-  ctx.drawImage(source, offset, offset, safeZone, safeZone)
-
-  return canvas
-}
-
-/**
- * Centers an already-sized square logo on a transparent canvas of the given
- * dimensions, preserving the logo's aspect ratio. Used for Windows Store tiles,
- * where a square graphic floats on a (possibly wide) transparent plate whose
- * color the MSIX manifest supplies. If the logo is larger than the canvas
- * (zoom > safe area) it is clipped at the edges, matching zoom-in behavior.
- */
-export function centerLogoOnCanvas(
-  logo: IconCanvas,
-  width: number,
-  height: number,
-): IconCanvas {
-  const canvas = createCanvas(width, height)
-  const ctx = context2d(canvas)
-
-  const offsetX = Math.round((width - logo.width) / 2)
-  const offsetY = Math.round((height - logo.height) / 2)
-  ctx.drawImage(logo, offsetX, offsetY)
-
-  return canvas
-}
-
-/**
- * Inverts RGB channels of a canvas while preserving alpha.
- * Used to generate dark tray icon variants from the light source.
- */
-export function invertColors(source: IconCanvas): IconCanvas {
+export function silhouette(source: IconCanvas, color: string): IconCanvas {
   const canvas = createCanvas(source.width, source.height)
   const ctx = context2d(canvas)
 
   ctx.drawImage(source, 0, 0)
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-  const data = imageData.data
+  ctx.globalCompositeOperation = 'source-in'
+  ctx.fillStyle = color
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.globalCompositeOperation = 'source-over'
 
-  for (let i = 0; i < data.length; i += 4) {
-    data[i] = 255 - data[i]       // R
-    data[i + 1] = 255 - data[i + 1] // G
-    data[i + 2] = 255 - data[i + 2] // B
-    // Alpha unchanged
-  }
-
-  ctx.putImageData(imageData, 0, 0)
   return canvas
 }
 
 /**
- * Creates a PWA maskable icon with proper safe zone padding.
- * The safe zone is a circle with radius = 40% of icon width,
- * so critical content must fit within the inner 80% centered area.
+ * The artwork in grayscale, alpha untouched.
+ *
+ * iOS 18's tinted app icon: Xcode asks for it "as a grayscale image", and the
+ * system lays its tint over the luminance. Done in three composites rather than
+ * a pixel loop: `color` blending a neutral grey onto the artwork keeps the
+ * artwork's luminosity and drops its hue, which also paints the transparent
+ * surround grey, so `destination-in` with the original restores the alpha.
  */
-export function drawMaskableIcon(
-  source: IconCanvas,
-  targetSize: number,
-  bgFill: BackgroundFill | null,
-): IconCanvas {
-  const canvas = createCanvas(targetSize, targetSize)
+export function grayscale(source: IconCanvas): IconCanvas {
+  const canvas = createCanvas(source.width, source.height)
   const ctx = context2d(canvas)
 
-  // Fill background (skip if transparent)
-  if (bgFill) {
-    fillBackground(ctx, targetSize, targetSize, bgFill)
-  }
-
-  // Draw source within the safe zone (inner 80%)
-  const safeSize = targetSize * 0.8
-  const offset = (targetSize - safeSize) / 2
-
-  ctx.drawImage(source, offset, offset, safeSize, safeSize)
+  ctx.drawImage(source, 0, 0)
+  ctx.globalCompositeOperation = 'color'
+  ctx.fillStyle = '#808080'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.globalCompositeOperation = 'destination-in'
+  ctx.drawImage(source, 0, 0)
+  ctx.globalCompositeOperation = 'source-over'
 
   return canvas
+}
+
+/**
+ * Whether `getImageData` returns the pixels that were drawn. Firefox's
+ * fingerprinting protection answers with noise instead, silently -- the same
+ * reason the browser backend keeps a resize fallback. Probed once per session
+ * with a known colour, the way pica does.
+ */
+let pixelsReadable: boolean | null = null
+
+function probePixels(): boolean {
+  const canvas = createCanvas(1, 1)
+  const ctx = context2d(canvas)
+  ctx.fillStyle = '#0a141e'
+  ctx.fillRect(0, 0, 1, 1)
+  const d = ctx.getImageData(0, 0, 1, 1).data
+  return d[0] === 0x0a && d[1] === 0x14 && d[2] === 0x1e && d[3] === 255
+}
+
+/**
+ * A canvas's straight-alpha RGBA, or `null` where the host cannot be trusted to
+ * return it. Callers that need the pixels for an alternative encoding (the ICO
+ * encoder's DIB frames) fall back to PNG on `null` rather than encoding noise.
+ */
+export function readPixels(canvas: IconCanvas): IconImageData | null {
+  if (pixelsReadable === null) pixelsReadable = probePixels()
+  if (!pixelsReadable) return null
+  return context2d(canvas).getImageData(0, 0, canvas.width, canvas.height)
 }

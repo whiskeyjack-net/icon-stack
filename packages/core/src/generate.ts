@@ -3,6 +3,9 @@ import {
   MACOS_SIZES,
   ICNS_ENTRIES,
   IOS_SIZES,
+  IOS_APPICONSET,
+  IOS_DARK_SUFFIX,
+  IOS_TINTED_SUFFIX,
   ANDROID_ADAPTIVE_SIZE,
   ANDROID_MIPMAP_SIZES,
   ANDROID_PLAY_STORE,
@@ -10,8 +13,10 @@ import {
   WINDOWS_STORE_ASSETS,
   WINDOWS_STORE_SAFE_FRACTION,
   LINUX_SIZES,
+  LINUX_SVG_PATH,
   PWA_SIZES,
   PWA_MASKABLE_SIZES,
+  PWA_MASKABLE_SAFE_FRACTION,
   APPLE_TOUCH_ICON,
   FAVICON_ICO_SIZES,
   TRAY_MACOS_SIZES,
@@ -19,11 +24,11 @@ import {
   TRAY_WINDOWS_ICO_SIZES,
   TRAY_LINUX_SIZES,
 } from './platform-configs'
-import { loadImage, imageToCanvas, imageToSquareCanvas, resizeCanvas, canvasToPng } from './resize'
-import { drawWithBackground, drawWithBackgroundAndPadding, drawAdaptiveForeground, drawMaskableIcon, drawWithZoom, applyRoundedCorners, invertColors, fillBackground, centerLogoOnCanvas } from './canvas-utils'
+import { loadImage, imageToSquareCanvas, resizeCanvas, placeArtwork, canvasToPng } from './resize'
+import { drawWithBackground, drawWithZoom, applyRoundedCorners, silhouette, grayscale, fillBackground, readPixels } from './canvas-utils'
 import { resolveGradientColors } from './color-utils'
 import { encodeIcns } from './icns-encoder'
-import { encodeIco } from './ico-encoder'
+import { encodeIco, type IcoEntry } from './ico-encoder'
 import { buildZip } from './zip-builder'
 import { createCanvas, context2d, type IconCanvas } from './canvas-backend'
 
@@ -88,6 +93,17 @@ async function generatePngWithBg(
   return { data: await canvasToPng(withBg) }
 }
 
+/**
+ * One ICO frame: the PNG, plus the raw pixels where the host can read them, so
+ * frames under 256px are written as uncompressed DIBs (see ico-encoder.ts).
+ */
+async function icoFrame(canvas: IconCanvas, size: number): Promise<IcoEntry> {
+  return { size, pngData: await canvasToPng(canvas), pixels: readPixels(canvas) }
+}
+
+/** The white silhouette a dark taskbar or panel wants. */
+const DARK_TRAY_COLOR = '#FFFFFF'
+
 /** Converts a hex color (#RRGGBB) to Apple's sRGB string format "srgb:R,G,B,1.00000" */
 function hexToSrgb(hex: string): string {
   const h = hex.replace('#', '')
@@ -109,6 +125,9 @@ function resolveCanvas(
 ): IconCanvas {
   return (choice === 'alternate' && alt) ? alt : main
 }
+
+/** Icon Composer's per-layer fill for its Mono appearance: the system's tint. */
+const MONO_FILL = { appearance: 'tinted', value: 'automatic' }
 
 /** Builds the icon.json content for an Apple .icon bundle */
 function buildAppleIconJson(
@@ -164,22 +183,28 @@ function buildAppleIconJson(
     })
   }
 
-  // Mono group (visible in tinted mode; also visible in light when no light variant)
+  // Mono group: the tinted appearance only. `tinted` in icon.json is Icon
+  // Composer's "Mono" appearance, from which the system derives every clear and
+  // tinted variant, light and dark. Hidden in default AND dark: an earlier
+  // version left it at default opacity whenever no light variant was set, so a
+  // main-plus-mono export drew both layers on top of each other in light mode.
+  //
+  // `fill: automatic` for tinted is what Icon Composer writes for a layer in
+  // its Mono appearance: the system fills the layer's shape with its tint, so a
+  // black or coloured glyph tints the same as a white one instead of being
+  // luminance-mapped into the dark plate.
   if (hasMono) {
-    const monoOpacity: Array<Record<string, unknown>> = [
-      { appearance: 'dark', value: 0 },
-    ]
-    if (hasLight) {
-      monoOpacity.push({ value: 0 })
-      monoOpacity.push({ appearance: 'tinted', value: 1 })
-    }
-
     groups.push({
       layers: [{
+        'fill-specializations': [MONO_FILL],
         glass: false,
         'image-name': monoName,
         name: monoName!.replace('.png', ''),
-        'opacity-specializations': monoOpacity,
+        'opacity-specializations': [
+          { value: 0 },
+          { appearance: 'dark', value: 0 },
+          { appearance: 'tinted', value: 1 },
+        ],
       }],
       name: 'Group',
       shadow,
@@ -220,6 +245,10 @@ function buildAppleIconJson(
     'image-name': fgName,
     name: fgName.replace('.png', ''),
   }
+  // With no mono layer the foreground is what the tinted appearance shows, so it
+  // takes the automatic fill a mono layer would have -- Icon Composer's default
+  // for a layer left visible in Mono.
+  if (!hasMono) fgLayer['fill-specializations'] = [MONO_FILL]
   if (fgOpacitySpecs.length > 0) {
     fgLayer['opacity-specializations'] = fgOpacitySpecs
   }
@@ -249,19 +278,27 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
     ? await loadSourceCanvas(alternate, alternateFit)
     : null
 
+  // The chosen source's SVG markup, for the platforms that pass a vector
+  // through. Mirrors resolveCanvas: the alternate only counts when it exists.
+  const svgMarkupOf = (choice: SourceChoice): string | undefined => {
+    const chosen = choice === 'alternate' && alternate ? alternate : source
+    return chosen.type === 'svg' ? chosen.svgText : undefined
+  }
+  const linuxSvg = platforms.linux.enabled ? svgMarkupOf(platforms.linux.sourceChoice) : undefined
+
   // Count total steps for progress
   let totalSteps = 0
   if (platforms.apple.enabled) totalSteps += 5 // foreground + light + dark + mono + icon.json
   if (platforms.macos.enabled) totalSteps += MACOS_SIZES.length + ICNS_ENTRIES.length + 1
-  if (platforms.ios.enabled) totalSteps += IOS_SIZES.length
+  if (platforms.ios.enabled) totalSteps += IOS_SIZES.length * 3 + 1
   if (platforms.android.enabled) totalSteps += ANDROID_MIPMAP_SIZES.length + 3
   if (platforms.windows.enabled) totalSteps += WINDOWS_ICO_SIZES.length + 1
   if (platforms.windowsStore.enabled) totalSteps += WINDOWS_STORE_ASSETS.length
-  if (platforms.linux.enabled) totalSteps += LINUX_SIZES.length
+  if (platforms.linux.enabled) totalSteps += LINUX_SIZES.length + (linuxSvg ? 1 : 0)
   if (platforms.pwa.enabled) totalSteps += PWA_SIZES.length + PWA_MASKABLE_SIZES.length
   if (platforms.favicon.enabled) totalSteps += FAVICON_ICO_SIZES.length + 1
   if (platforms.appleTouchIcon.enabled) totalSteps += 1
-  if (platforms.trayIcon.enabled) totalSteps += TRAY_MACOS_SIZES.length + TRAY_MACOS_DARK_SIZES.length + TRAY_WINDOWS_ICO_SIZES.length + 1 + TRAY_LINUX_SIZES.length * 2
+  if (platforms.trayIcon.enabled) totalSteps += TRAY_MACOS_SIZES.length + TRAY_MACOS_DARK_SIZES.length + (TRAY_WINDOWS_ICO_SIZES.length + 1) * 2 + TRAY_LINUX_SIZES.length * 2
 
   let completedSteps = 0
   const step = () => {
@@ -421,23 +458,51 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       ? drawWithZoom(iosDefaultCanvas, iosDefaultCanvas.width, iosZoom)
       : iosDefaultCanvas
 
-    for (const entry of IOS_SIZES) {
-      // iOS requires opaque icons – add bg
-      const { data } = await generatePngWithBg(iosSource, entry.width, iosConfig.bgFill)
-      files.push({ path: `${entry.folder}/${entry.filename}`, data })
-      step()
-    }
-
-    // Dark variant (always exported)
     const iosDarkSource = iosZoom !== 100
       ? drawWithZoom(iosDarkCanvas, iosDarkCanvas.width, iosZoom)
       : iosDarkCanvas
 
+    const images: Array<Record<string, unknown>> = []
     for (const entry of IOS_SIZES) {
-      const darkFilename = entry.filename.replace('.png', '-Dark.png')
-      const { data } = await generatePngWithBg(iosDarkSource, entry.width, iosConfig.bgFillDark)
-      files.push({ path: `${entry.folder}/${darkFilename}`, data })
+      const light = entry.filename
+      const dark = entry.filename.replace('.png', `${IOS_DARK_SUFFIX}.png`)
+      const tinted = entry.filename.replace('.png', `${IOS_TINTED_SUFFIX}.png`)
+
+      // Light: iOS forbids alpha here, so the plate is baked in.
+      const { data: lightData } = await generatePngWithBg(iosSource, entry.width, iosConfig.bgFill)
+      files.push({ path: `${entry.folder}/${light}`, data: lightData })
+      step()
+
+      // Dark: transparent on purpose. Xcode: "Provide your dark app icon with a
+      // transparent background so the system-provided background can show
+      // through." Baking a plate here is what the export used to do, and it hid
+      // the system's dark gradient behind an opaque square.
+      const darkResized = await resizeCanvas(iosDarkSource, entry.width, entry.width)
+      files.push({ path: `${entry.folder}/${dark}`, data: await canvasToPng(darkResized) })
+      step()
+
+      // Tinted: "Provide your tinted app icon as a grayscale image." The system
+      // lays its tint over the luminance and supplies the plate, as for dark.
+      files.push({ path: `${entry.folder}/${tinted}`, data: await canvasToPng(grayscale(darkResized)) })
+      step()
+
+      const size = `${entry.width}x${entry.height}`
+      images.push({ filename: light, idiom: 'universal', platform: 'ios', size })
+      images.push({
+        appearances: [{ appearance: 'luminosity', value: 'dark' }],
+        filename: dark, idiom: 'universal', platform: 'ios', size,
+      })
+      images.push({
+        appearances: [{ appearance: 'luminosity', value: 'tinted' }],
+        filename: tinted, idiom: 'universal', platform: 'ios', size,
+      })
     }
+
+    // The asset catalog's manifest, so the folder is an appiconset Xcode reads
+    // as-is rather than three PNGs someone has to wire up by hand.
+    const contents = JSON.stringify({ images, info: { author: 'xcode', version: 1 } }, null, 2)
+    files.push({ path: `${IOS_APPICONSET}/Contents.json`, data: new TextEncoder().encode(contents) })
+    step()
   }
 
   // --- Android ---
@@ -448,8 +513,10 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
     // Resolve source for default variant
     const androidDefaultCanvas = resolveCanvas(config.sourceChoice, sourceCanvas, alternateCanvas)
 
-    // Foreground layer (432×432 with safe zone, adjusted by zoom)
-    const fgCanvas = drawAdaptiveForeground(androidDefaultCanvas, ANDROID_ADAPTIVE_SIZE, androidZoom)
+    // Foreground layer: the artwork inside the 66dp safe zone of the 108dp
+    // canvas (66/108 of the side), scaled by zoom.
+    const safeFraction = (66 / 108) * (androidZoom / 100)
+    const fgCanvas = await placeArtwork(androidDefaultCanvas, ANDROID_ADAPTIVE_SIZE, ANDROID_ADAPTIVE_SIZE, safeFraction)
     const fgData = await canvasToPng(fgCanvas)
     files.push({ path: 'android/ic_launcher_foreground.png', data: fgData })
     step()
@@ -465,24 +532,26 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
     // Monochrome layer (if enabled)
     if (config.useMonochrome) {
       const monoCanvas = resolveCanvas(config.monoSourceChoice, sourceCanvas, alternateCanvas)
-      // A canvas is already drawable, so the old dataURL round-trip
-      // (toDataURL -> loadImage) was pure overhead.
-      const monoSized = imageToCanvas(monoCanvas, ANDROID_ADAPTIVE_SIZE, ANDROID_ADAPTIVE_SIZE)
+      // Same canvas and safe zone as the foreground: a launcher masks the themed
+      // icon exactly as it masks the colour one, so a full-bleed mono layer --
+      // which is what this used to be -- was cropped by every shape.
+      const monoSized = await placeArtwork(monoCanvas, ANDROID_ADAPTIVE_SIZE, ANDROID_ADAPTIVE_SIZE, safeFraction)
       const monoData = await canvasToPng(monoSized)
       files.push({ path: 'android/ic_launcher_monochrome.png', data: monoData })
     }
 
-    // Mipmap legacy PNGs (composited: bg + fg, with zoom-adjusted padding)
-    const mipmapPadding = (18 / 108) * (100 / androidZoom)
+    // Mipmap legacy PNGs: plate plus artwork, with an 18dp margin per side at
+    // 100% zoom (the adaptive canvas's own margin), narrowing as zoom grows.
+    const mipmapFraction = Math.min(1, 1 - 2 * (18 / 108) * (100 / androidZoom))
     for (const entry of ANDROID_MIPMAP_SIZES) {
-      const composited = drawWithBackgroundAndPadding(
+      const composited = await placeArtwork(
         androidDefaultCanvas,
         entry.width,
         entry.height,
+        mipmapFraction,
         config.bgFill,
-        mipmapPadding,
       )
-      const { data } = await generatePng(composited, entry.width)
+      const data = await canvasToPng(composited)
       files.push({ path: `${entry.folder}/${entry.filename}`, data })
       step()
     }
@@ -501,7 +570,7 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       ? drawWithZoom(winDefaultCanvas, winDefaultCanvas.width, winConfig.zoom)
       : winDefaultCanvas
 
-    const icoEntries: { size: number; pngData: Uint8Array }[] = []
+    const icoEntries: IcoEntry[] = []
 
     for (const size of WINDOWS_ICO_SIZES) {
       let resized = await resizeCanvas(winSource, size, size)
@@ -509,8 +578,7 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
         resized = drawWithBackground(resized, winConfig.bgFill)
       }
       const rounded = applyRoundedCorners(resized, winConfig.cornerRadius, winConfig.cornerSmoothing)
-      const data = await canvasToPng(rounded)
-      icoEntries.push({ size, pngData: data })
+      icoEntries.push(await icoFrame(rounded, size))
       step()
     }
 
@@ -529,6 +597,7 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
     // source is the (absent) alternate.
     const tileSource = resolveCanvas(storeConfig.sourceChoice, sourceCanvas, alternateCanvas)
     const unplatedSource = resolveCanvas(storeConfig.unplatedSourceChoice, sourceCanvas, alternateCanvas)
+    const lightUnplatedSource = resolveCanvas(storeConfig.lightUnplatedSourceChoice, sourceCanvas, alternateCanvas)
 
     // Tiles and the unplated (taskbar) icons scale independently, so each has
     // its own zoom. Plated TILES float in a safe area (transparent padding) on
@@ -542,16 +611,22 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
     const unplatedFraction = storeConfig.unplatedZoom / 100
 
     for (const asset of WINDOWS_STORE_ASSETS) {
-      const src = asset.unplated ? unplatedSource : tileSource
-      const fraction = asset.unplated ? unplatedFraction : tileFraction
-      const box = Math.max(1, Math.round(Math.min(asset.width, asset.height) * fraction))
-      const logo = await resizeCanvas(src, box, box)
-      let composed = centerLogoOnCanvas(logo, asset.width, asset.height)
+      // The plain target-size icons are plated by Windows itself, so they take
+      // the tile source and the tile's safe area like any other plated asset.
+      const unplated = asset.target === 'unplated' || asset.target === 'lightunplated'
+      const src =
+        asset.target === 'unplated'
+          ? unplatedSource
+          : asset.target === 'lightunplated'
+            ? lightUnplatedSource
+            : tileSource
+      const fraction = unplated ? unplatedFraction : tileFraction
+      let composed = await placeArtwork(src, asset.width, asset.height, fraction)
       // Tiles stay transparent (manifest supplies the plate). Unplated icons are
       // transparent unless the user bakes a background in (for a "give the
       // taskbar icon a plate" look), in which case the baked plate can be
       // rounded. Tiles are never rounded -- they float square on the plate.
-      if (asset.unplated && !storeConfig.unplatedTransparent) {
+      if (unplated && !storeConfig.unplatedTransparent) {
         composed = drawWithBackground(composed, storeConfig.unplatedBgFill)
         composed = applyRoundedCorners(composed, storeConfig.cornerRadius, storeConfig.cornerSmoothing)
       }
@@ -577,6 +652,13 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       const rounded = applyRoundedCorners(resized, linuxConfig.cornerRadius, linuxConfig.cornerSmoothing)
       const data = await canvasToPng(rounded)
       files.push({ path: `${entry.folder}/${entry.filename}`, data })
+      step()
+    }
+
+    // Scalable icon, the form Flathub prefers. Passed through as-is: a vector
+    // cannot carry the baked plate, zoom or corner the PNGs do.
+    if (linuxSvg) {
+      files.push({ path: LINUX_SVG_PATH, data: new TextEncoder().encode(linuxSvg) })
       step()
     }
   }
@@ -609,7 +691,13 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       ? drawWithZoom(pwaMaskableCanvas, pwaMaskableCanvas.width, pwaMaskableZoom)
       : pwaMaskableCanvas
     for (const entry of PWA_MASKABLE_SIZES) {
-      const maskable = drawMaskableIcon(pwaMaskableSource, entry.width, pwaConfig.maskableBgFill)
+      const maskable = await placeArtwork(
+        pwaMaskableSource,
+        entry.width,
+        entry.height,
+        PWA_MASKABLE_SAFE_FRACTION,
+        pwaConfig.maskableBgFill,
+      )
       const data = await canvasToPng(maskable)
       files.push({ path: `${entry.folder}/${entry.filename}`, data })
       step()
@@ -633,7 +721,7 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       faviconCanvas = drawWithZoom(faviconCanvas, faviconCanvas.width, faviconConfig.zoom)
     }
 
-    const faviconEntries: { size: number; pngData: Uint8Array }[] = []
+    const faviconEntries: IcoEntry[] = []
 
     for (const size of FAVICON_ICO_SIZES) {
       let resized = await resizeCanvas(faviconCanvas, size, size)
@@ -641,8 +729,7 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
         resized = drawWithBackground(resized, faviconConfig.bgFill)
       }
       const rounded = applyRoundedCorners(resized, faviconConfig.cornerRadius, faviconConfig.cornerSmoothing)
-      const data = await canvasToPng(rounded)
-      faviconEntries.push({ size, pngData: data })
+      faviconEntries.push(await icoFrame(rounded, size))
       step()
     }
 
@@ -703,8 +790,8 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       step()
     }
 
-    // macOS: dark variants (color-inverted for light menu bars)
-    const trayDarkCanvas = invertColors(trayCanvas)
+    // Dark variants: the artwork's alpha as a white silhouette, for dark bars.
+    const trayDarkCanvas = silhouette(trayCanvas, DARK_TRAY_COLOR)
     for (const entry of TRAY_MACOS_DARK_SIZES) {
       const { data } = trayConfig.bgTransparent
         ? await generatePng(trayDarkCanvas, entry.width)
@@ -713,21 +800,28 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       step()
     }
 
-    // Windows: tray.ico (multi-resolution container)
-    const trayIcoEntries: { size: number; pngData: Uint8Array }[] = []
-    for (const size of TRAY_WINDOWS_ICO_SIZES) {
-      const resized = await resizeCanvas(trayCanvas, size, size)
-      let final = resized
-      if (!trayConfig.bgTransparent) {
-        final = drawWithBackground(resized, trayConfig.bgFill)
+    // Windows: a light and a dark .ico, each frame also written as its own PNG.
+    // A Tauri or Electron app sets the tray from one image, so it wants the
+    // DPI-matched PNG; a Win32 app wants the container.
+    const windowsTrays: { canvas: IconCanvas; ico: string; png: (size: number) => string }[] = [
+      { canvas: trayCanvas, ico: 'tray.ico', png: (size) => `tray-${size}.png` },
+      { canvas: trayDarkCanvas, ico: 'tray-dark.ico', png: (size) => `tray-dark-${size}.png` },
+    ]
+    for (const tray of windowsTrays) {
+      const frames: IcoEntry[] = []
+      for (const size of TRAY_WINDOWS_ICO_SIZES) {
+        let final = await resizeCanvas(tray.canvas, size, size)
+        if (!trayConfig.bgTransparent) {
+          final = drawWithBackground(final, trayConfig.bgFill)
+        }
+        const frame = await icoFrame(final, size)
+        frames.push(frame)
+        files.push({ path: `tray/windows/${tray.png(size)}`, data: frame.pngData })
+        step()
       }
-      const data = await canvasToPng(final)
-      trayIcoEntries.push({ size, pngData: data })
+      files.push({ path: `tray/windows/${tray.ico}`, data: encodeIco(frames) })
       step()
     }
-    const trayIcoData = encodeIco(trayIcoEntries)
-    files.push({ path: 'tray/windows/tray.ico', data: trayIcoData })
-    step()
 
     // Linux: individual PNGs
     for (const entry of TRAY_LINUX_SIZES) {
@@ -738,7 +832,7 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
       step()
     }
 
-    // Linux: dark variants (color-inverted)
+    // Linux: dark variants (white silhouettes)
     for (const entry of TRAY_LINUX_SIZES) {
       const darkFilename = entry.filename.replace('tray-', 'tray-dark-')
       const { data } = trayConfig.bgTransparent

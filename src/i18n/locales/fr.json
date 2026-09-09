@@ -17,7 +17,8 @@
     "exportEmpty": "Sélectionnez au moins une plateforme à exporter.",
     "downloadPlatform": "Télécharger les icônes {{platform}}",
     "generating": "Génération",
-    "generatingProgress": "Génération des icônes, {{progress}} % terminé"
+    "generatingProgress": "Génération des icônes, {{progress}} % terminé",
+    "failed": "La génération a échoué."
   },
   "settings": {
     "title": "Réglages",
@@ -83,7 +84,7 @@
     "pwaRegularTransparentCaption": "Les icônes standard sont exportées sans fond ni masque. Basculez sur Masquable pour prévisualiser la version dédiée aux écrans d'accueil Android.",
     "pwaRegularFilledCaption": "Les icônes standard sont exportées avec votre couleur de fond et un masque. Basculez sur Masquable pour prévisualiser la version dédiée aux écrans d'accueil Android.",
     "windowsStoreTile": "Tuile (source principale). Placée sur la plaque BackgroundColor du manifeste dans le menu Démarrer.",
-    "windowsStoreUnplated": "Icône de barre des tâches sans plaque (source alternative, revient à la principale). Dessinée sans plaque dans la barre des tâches / Alt+Tab, elle doit donc être lisible sur fonds clairs et sombres.",
+    "windowsStoreUnplated": "Icône de barre des tâches, sans plaque. Les variantes sombre et claire sont les fichiers que Windows choisit selon le thème de la barre.",
     "canvasAriaLabel": "Aperçu de l'icône {{platform}} en {{size}}×{{size}}",
     "appearance": {
       "light": "Clair",
@@ -96,17 +97,23 @@
       "light": "Clair",
       "dark": "Sombre",
       "mono": "Monochrome",
-      "unplated": "Sans plaque",
       "foreground": "Premier plan",
       "background": "Fond"
-    }
+    },
+    "tile": "Tuile",
+    "taskbar": "Barre des tâches",
+    "surfaceLabel": "Surface",
+    "actualPixelsSuffix": " · pixels réels",
+    "magnifiedSuffix": " · agrandi {{factor}}×",
+    "iosDarkCaption": "L'icône sombre est exportée sur fond transparent ; iOS dessine derrière sa propre plaque sombre, affichée ici.",
+    "failed": "L'aperçu a échoué."
   },
   "source": {
     "main": "Image source",
     "alternate": "Image alternative",
     "optional": "facultatif",
     "mainTitle": "Déposez une image source",
-    "mainSubtitle": "PNG ou SVG, un carré de 1024x1024 fonctionne mieux.",
+    "mainSubtitle": "PNG, JPEG, WebP ou SVG. Un carré de 1024×1024 donne le meilleur résultat.",
     "alternateTitle": "Ajouter une alternative",
     "alternateSubtitle": "Pour les variantes sombres, monochromes et de barre des tâches.",
     "choose": "Choisir un fichier",
@@ -115,7 +122,11 @@
     "fit": "Cadrage",
     "contain": "Contenir",
     "cover": "Couvrir",
-    "clear": "Effacer"
+    "clear": "Effacer",
+    "warnNonSquare": "La source fait {{width}}×{{height}}. Les sources carrées donnent le meilleur résultat.",
+    "warnSmall": "La source fait {{width}}×{{height}}. 1024×1024 est recommandé.",
+    "errorType": "Importez un fichier PNG, JPEG, WebP ou SVG.",
+    "errorDecode": "Impossible de décoder cette image."
   },
   "platform": {
     "background": "Fond",
@@ -129,7 +140,9 @@
       "favicon": "Les navigateurs la réduisent à 16 px – gardez la marque simple.",
       "pwa": "Les variantes masquables ajoutent une marge de sécurité pour Android.",
       "windowsStore": "Les tuiles du Store restent transparentes ; la couleur de plaque vit dans le manifeste MSIX.",
-      "trayIcon": "Les icônes de barre de menus sont des images template sur macOS."
+      "trayIcon": "Sur macOS, les icônes de barre de menus sont des images modèles. Windows reçoit un jeu clair et un jeu sombre, en .ico et en un PNG par taille.",
+      "linux": "Une source SVG est aussi transmise telle quelle comme icône vectorielle.",
+      "ios": "Exporté comme AppIcon.appiconset avec des images 1024 px claire, sombre et teintée et son Contents.json, prêt pour le catalogue d'assets."
     },
     "artworkSource": "Source du visuel",
     "backgroundDark": "Fond sombre",
@@ -157,7 +170,7 @@
     "dedicatedRemove": "Retirer {{label}}",
     "windowsStoreHint": "Deux types d'arrière-plan ici. La couleur de la tuile est UNIQUEMENT un aperçu : les PNG exportés restent transparents et la vraie plaque vient de BackgroundColor dans le manifeste de l'app. L'arrière-plan de l'icône de la barre des tâches EST incrusté dans les PNG sans plaque. Distinct du .ico Windows, qui est l'icône de l'exécutable.",
     "legacyHint": "Format ancien. Utilisez la plateforme Apple pour les bundles .icon avec verre et teinte.",
-    "appleGenerates": "Génère un bundle .icon pour macOS, iOS et watchOS. Nécessite Xcode 16 ou plus.",
+    "appleGenerates": "Génère un paquet AppIcon.icon pour macOS, iOS et watchOS. Ajoutez-le au projet Xcode à côté du catalogue d'assets, gardez le nom d'icône AppIcon et supprimez l'ancien jeu AppIcon : Xcode 26 en construit chaque taille et apparence, et un ancien jeu laissé en place est ce qui est livré à sa place.",
     "includeSvgRequiresSvg": "Nécessite une source SVG : une image raster ne peut pas produire un favicon vectoriel.",
     "source": {
       "main": "Visuel principal",
@@ -165,9 +178,10 @@
       "dark": "Variante sombre",
       "mono": "Monochrome",
       "maskable": "Masquable",
-      "unplated": "Sans plaque (barre des tâches)",
+      "unplated": "Barre des tâches sombre (sans plaque)",
       "useMain": "Source",
-      "useAlternate": "Alternative"
+      "useAlternate": "Alternative",
+      "lightUnplated": "Barre des tâches claire (sans plaque)"
     }
   },
   "actions": {

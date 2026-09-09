@@ -38,6 +38,14 @@ export const APPLE_APPEARANCES: AppleAppearance[] = ['light', 'dark', 'tinted']
  */
 export const TINTED_PLATE = '#333333'
 
+/**
+ * The plate iOS draws behind a dark app icon. The legacy iOS dark export is the
+ * artwork on a transparent background, as Xcode asks, so a preview of the file
+ * alone would be artwork on wallpaper; this is a stand-in for the dark gradient
+ * the system composites underneath.
+ */
+export const IOS_DARK_PLATE = 'linear-gradient(180deg, #2c2c2e 0%, #000000 100%)'
+
 export interface AppleLayer {
   /** Which exported variant to draw, given what the export actually contains. */
   variant: IconVariant

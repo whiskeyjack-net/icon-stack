@@ -109,6 +109,15 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
                 onChange={(unplatedSourceChoice) => patch({ unplatedSourceChoice } as never)}
               />
             )}
+            {has('lightUnplatedSourceChoice') && (
+              <SourcePicker
+                label={t('platform.source.lightUnplated')}
+                value={config.lightUnplatedSourceChoice as SourceChoice}
+                onChange={(lightUnplatedSourceChoice) =>
+                  patch({ lightUnplatedSourceChoice } as never)
+                }
+              />
+            )}
           </section>
         )}
 

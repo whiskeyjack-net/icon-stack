@@ -17,7 +17,8 @@
     "exportEmpty": "Wähle mindestens eine Plattform zum Exportieren aus.",
     "downloadPlatform": "{{platform}}-Icons herunterladen",
     "generating": "Wird erstellt",
-    "generatingProgress": "Icons werden erstellt, {{progress}} % fertig"
+    "generatingProgress": "Icons werden erstellt, {{progress}} % fertig",
+    "failed": "Erzeugung fehlgeschlagen."
   },
   "settings": {
     "title": "Einstellungen",
@@ -83,7 +84,7 @@
     "pwaRegularTransparentCaption": "Normale Symbole werden ohne Hintergrund oder Maskierung exportiert. Wechsle zu Maskierbar, um die spezielle Version für Android-Startbildschirme in der Vorschau zu sehen.",
     "pwaRegularFilledCaption": "Normale Symbole werden mit deiner Hintergrundfarbe und Maskierung exportiert. Wechsle zu Maskierbar, um die spezielle Version für Android-Startbildschirme in der Vorschau zu sehen.",
     "windowsStoreTile": "Kachel (Hauptquelle). Wird im Startmenü auf der BackgroundColor-Platte des Manifests platziert.",
-    "windowsStoreUnplated": "Plattenloses Taskleistensymbol (alternative Quelle, greift auf die Hauptquelle zurück). Wird ohne Platte in der Taskleiste / Alt+Tab gezeichnet und sollte daher auf hellen und dunklen Hintergründen lesbar sein.",
+    "windowsStoreUnplated": "Taskleisten-Icon, ohne Platte gezeichnet. Die dunkle und die helle Variante sind die Dateien, die Windows für eine dunkle bzw. helle Taskleiste wählt.",
     "canvasAriaLabel": "Vorschau des {{platform}}-Symbols in {{size}}×{{size}}",
     "appearance": {
       "light": "Hell",
@@ -96,17 +97,23 @@
       "light": "Hell",
       "dark": "Dunkel",
       "mono": "Monochrom",
-      "unplated": "Ohne Platte",
       "foreground": "Vordergrund",
       "background": "Hintergrund"
-    }
+    },
+    "tile": "Kachel",
+    "taskbar": "Taskleiste",
+    "surfaceLabel": "Oberfläche",
+    "actualPixelsSuffix": " · echte Pixel",
+    "magnifiedSuffix": " · {{factor}}× vergrößert",
+    "iosDarkCaption": "Das dunkle Icon wird mit transparentem Hintergrund exportiert; iOS zeichnet die eigene dunkle Platte dahinter, hier dargestellt.",
+    "failed": "Vorschau fehlgeschlagen."
   },
   "source": {
     "main": "Quellbild",
     "alternate": "Alternatives Bild",
     "optional": "optional",
     "mainTitle": "Quellbild hier ablegen",
-    "mainSubtitle": "PNG oder SVG, quadratisch mit 1024x1024 funktioniert am besten.",
+    "mainSubtitle": "PNG, JPEG, WebP oder SVG. 1024×1024 quadratisch funktioniert am besten.",
     "alternateTitle": "Alternative hinzufügen",
     "alternateSubtitle": "Für dunkle, monochrome und Taskleisten-Varianten.",
     "choose": "Datei auswählen",
@@ -115,7 +122,11 @@
     "fit": "Anpassung",
     "contain": "Einpassen",
     "cover": "Füllen",
-    "clear": "Leeren"
+    "clear": "Leeren",
+    "warnNonSquare": "Quelle ist {{width}}×{{height}}. Quadratische Quellen funktionieren am besten.",
+    "warnSmall": "Quelle ist {{width}}×{{height}}. 1024×1024 wird empfohlen.",
+    "errorType": "Lade eine PNG-, JPEG-, WebP- oder SVG-Datei hoch.",
+    "errorDecode": "Dieses Bild konnte nicht dekodiert werden."
   },
   "platform": {
     "background": "Hintergrund",
@@ -129,7 +140,9 @@
       "favicon": "Browser skalieren das auf 16 px – halte die Marke einfach.",
       "pwa": "Maskierbare Varianten fügen für Android einen Sicherheitsrand hinzu.",
       "windowsStore": "Store-Kacheln bleiben transparent; die Plattenfarbe steht im MSIX-Manifest.",
-      "trayIcon": "Menüleisten-Icons sind unter macOS Template-Bilder."
+      "trayIcon": "Menüleisten-Icons sind auf macOS Template-Bilder. Windows erhält einen hellen und einen dunklen Satz, als .ico und als je ein PNG pro Größe.",
+      "linux": "Eine SVG-Quelle wird zusätzlich unverändert als skalierbares Icon durchgereicht.",
+      "ios": "Wird als AppIcon.appiconset mit hellem, dunklem und getöntem 1024-px-Bild samt Contents.json ausgeliefert, bereit für den Asset-Katalog."
     },
     "artworkSource": "Grafikquelle",
     "backgroundDark": "Dunkler Hintergrund",
@@ -157,7 +170,7 @@
     "dedicatedRemove": "{{label}} entfernen",
     "windowsStoreHint": "Zwei Arten von Hintergrund. Die Kachelfarbe ist NUR VORSCHAU -- die exportierten Kachel-PNGs bleiben transparent, die echte Platte kommt aus BackgroundColor im App-Manifest. Der Hintergrund des Taskleisten-Icons WIRD in die ungeplatteten PNGs eingebacken. Getrennt von der Windows-.ico, dem EXE-Icon.",
     "legacyHint": "Altes Format. Nutze die Apple-Plattform für .icon-Bundles mit Glas und Tönung.",
-    "appleGenerates": "Erzeugt ein .icon-Bundle für macOS, iOS und watchOS. Benötigt Xcode 16 oder neuer.",
+    "appleGenerates": "Erzeugt ein AppIcon.icon-Bundle für macOS, iOS und watchOS. Füge es im Xcode-Projekt neben dem Asset-Katalog hinzu, belasse den App-Icon-Namen bei AppIcon und entferne das alte AppIcon-Set – Xcode 26 baut daraus jede Größe und jedes Erscheinungsbild, und ein verbliebenes altes Set wird stattdessen ausgeliefert.",
     "includeSvgRequiresSvg": "Benötigt eine SVG-Quelle -- ein Rasterbild kann kein Vektor-Favicon erzeugen.",
     "source": {
       "main": "Hauptgrafik",
@@ -165,9 +178,10 @@
       "dark": "Dunkle Variante",
       "mono": "Monochrom",
       "maskable": "Maskierbar",
-      "unplated": "Ohne Platte (Taskleiste)",
+      "unplated": "Dunkle Taskleiste (ohne Platte)",
       "useMain": "Quelle",
-      "useAlternate": "Alternative"
+      "useAlternate": "Alternative",
+      "lightUnplated": "Helle Taskleiste (ohne Platte)"
     }
   },
   "actions": {
