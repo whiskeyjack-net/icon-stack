@@ -36,6 +36,7 @@ export {
   imageToCanvas,
   imageToSquareCanvas,
   resizeCanvas,
+  placeArtwork,
   canvasToPng,
 } from './resize'
 export * from './canvas-utils'

@@ -6,7 +6,7 @@ Generate a complete app-icon set for every platform from one source image.
 npx @whiskeyjack-net/icon-stack generate --source logo.png --out ./assets/icons
 ```
 
-One 1024×1024 PNG (or an SVG) in; macOS `.icns` and `.iconset`, Windows `.ico`,
+One 1024×1024 PNG, JPEG, WebP or SVG in; macOS `.icns` and `.iconset`, Windows `.ico`,
 Windows Store MSIX tiles, Android adaptive layers and mipmaps, iOS, Linux, PWA
 icons with maskable variants, favicons, an Apple touch icon, and tray icons out.
 

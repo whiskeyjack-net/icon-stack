@@ -11,6 +11,7 @@ import {
 } from '@whiskeyjack-net/design-system'
 import { UploadSimple, Image as ImageIcon, X, ArrowsOut, ArrowsIn } from '@phosphor-icons/react'
 import type { ImageFit } from '@whiskeyjack-net/icon-stack-core'
+import { SOURCE_ACCEPT, sourceFormat } from '@/lib/process-file'
 import { CompactIconButton } from './CompactIconButton'
 import { useGenerator, type SourceSlot } from '@/contexts/GeneratorContext'
 
@@ -46,8 +47,12 @@ export function SourceSlots() {
       {source ? <Slot slot="alternate" /> : null}
       {(sourceWarning || alternateWarning) && (
         <div className="md:col-span-2 space-y-2">
-          {sourceWarning && <Notice tone="warning">{sourceWarning}</Notice>}
-          {alternateWarning && <Notice tone="warning">{alternateWarning}</Notice>}
+          {sourceWarning && (
+            <Notice tone="warning">{t(sourceWarning.key, sourceWarning.params)}</Notice>
+          )}
+          {alternateWarning && (
+            <Notice tone="warning">{t(alternateWarning.key, alternateWarning.params)}</Notice>
+          )}
         </div>
       )}
       {!alternate && source && (
@@ -122,7 +127,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
           <input
             ref={input}
             type="file"
-            accept="image/png,image/svg+xml,.svg"
+            accept={SOURCE_ACCEPT}
             className="sr-only"
             aria-label={t('source.choose')}
             onChange={(e) => {
@@ -154,7 +159,7 @@ function Slot({ slot }: { slot: SourceSlot }) {
                   {image.fileName}
                 </p>
                 <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                  {image.width}&times;{image.height} &middot; {image.type.toUpperCase()}
+                  {image.width}&times;{image.height} &middot; {sourceFormat(image)}
                 </p>
               </div>
             </div>

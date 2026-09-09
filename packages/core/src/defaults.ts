@@ -41,7 +41,10 @@ export function createDefaultPlatforms(): PlatformConfigs {
       translucency: { enabled: true, value: 0.5 },
       zoom: 100,
     },
-    android: { ...base, useMonochrome: false, monoSourceChoice: 'main' as const },
+    // Monochrome on by default: since Android 16 QPR2 the OS themes an icon that
+    // ships no monochrome layer by itself, so shipping one is how an app keeps
+    // control of what the themed icon looks like.
+    android: { ...base, useMonochrome: true, monoSourceChoice: 'main' as const },
     windows: { ...rounded, bgTransparent: true },
     // Store tiles are always transparent (the MSIX manifest supplies the plate
     // color). Enabled by default so a full icon set includes the Store tiles.
@@ -51,6 +54,7 @@ export function createDefaultPlatforms(): PlatformConfigs {
       ...rounded,
       bgTransparent: true,
       unplatedSourceChoice: 'alternate' as const,
+      lightUnplatedSourceChoice: 'main' as const,
       unplatedTransparent: true,
       unplatedBgFill: WHITE_FILL,
       unplatedZoom: 100,
@@ -73,7 +77,7 @@ export function createDefaultPlatforms(): PlatformConfigs {
     appleTouchIcon: { ...base },
     trayIcon: { ...base, bgTransparent: true, traySource: null, enabled: false },
     macos: { ...darkVariant, cornerRadius: 0, cornerSmoothing: 0, enabled: false },
-    ios: { ...darkVariant, enabled: false },
+    ios: { ...base, darkSourceChoice: 'main' as const, enabled: false },
   }
 }
 

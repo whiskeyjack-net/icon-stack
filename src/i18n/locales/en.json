@@ -17,7 +17,8 @@
     "exportEmpty": "Select at least one platform to export.",
     "downloadPlatform": "Download {{platform}} icons",
     "generating": "Generating",
-    "generatingProgress": "Generating icons, {{progress}}% done"
+    "generatingProgress": "Generating icons, {{progress}}% done",
+    "failed": "Generation failed."
   },
   "settings": {
     "title": "Settings",
@@ -83,7 +84,7 @@
     "pwaRegularTransparentCaption": "Regular icons are exported without background or masking. Toggle to Maskable to preview the dedicated version for Android homescreens.",
     "pwaRegularFilledCaption": "Regular icons are exported with your background color and masking. Toggle to Maskable to preview the dedicated version for Android homescreens.",
     "windowsStoreTile": "Tile (main source). Placed on the manifest BackgroundColor plate in the Start menu.",
-    "windowsStoreUnplated": "Unplated taskbar icon (alternate source, falls back to main). Drawn with no plate on the taskbar / Alt+Tab, so it should read on light and dark backgrounds.",
+    "windowsStoreUnplated": "Taskbar icon, drawn with no plate. The dark and light variants are the files Windows picks for a dark or light taskbar.",
     "canvasAriaLabel": "{{size}}×{{size}} {{platform}} icon preview",
     "appearance": {
       "light": "Light",
@@ -96,17 +97,23 @@
       "light": "Light",
       "dark": "Dark",
       "mono": "Monochrome",
-      "unplated": "Unplated",
       "foreground": "Foreground",
       "background": "Background"
-    }
+    },
+    "tile": "Tile",
+    "taskbar": "Taskbar",
+    "surfaceLabel": "Surface",
+    "actualPixelsSuffix": " · actual pixels",
+    "magnifiedSuffix": " · {{factor}}× magnified",
+    "iosDarkCaption": "The dark icon is exported with a transparent background; iOS draws its own dark plate behind it, shown here.",
+    "failed": "Preview failed."
   },
   "source": {
     "main": "Source image",
     "alternate": "Alternate image",
     "optional": "optional",
     "mainTitle": "Drop a source image",
-    "mainSubtitle": "PNG or SVG, 1024x1024 square works best.",
+    "mainSubtitle": "PNG, JPEG, WebP or SVG. A 1024×1024 square works best.",
     "alternateTitle": "Add an alternate",
     "alternateSubtitle": "For dark, monochrome and taskbar variants.",
     "choose": "Choose a file",
@@ -115,7 +122,11 @@
     "fit": "Fit",
     "contain": "Contain",
     "cover": "Cover",
-    "clear": "Clear"
+    "clear": "Clear",
+    "warnNonSquare": "Source is {{width}}×{{height}}. Square sources work best.",
+    "warnSmall": "Source is {{width}}×{{height}}. 1024×1024 is recommended.",
+    "errorType": "Upload a PNG, JPEG, WebP or SVG file.",
+    "errorDecode": "Could not decode that image."
   },
   "platform": {
     "background": "Background",
@@ -129,7 +140,9 @@
       "favicon": "Browsers scale this to 16px – keep the mark simple.",
       "pwa": "Maskable variants add safe-area padding for Android.",
       "windowsStore": "Store tiles stay transparent; the plate color lives in the MSIX manifest.",
-      "trayIcon": "Menu-bar icons are template images on macOS."
+      "trayIcon": "Menu-bar icons are template images on macOS. Windows gets a light and a dark set, as an .ico and as one PNG per size.",
+      "linux": "An SVG source is also passed through as a scalable icon, unmodified.",
+      "ios": "Ships as an AppIcon.appiconset with light, dark and tinted 1024px images and its Contents.json, ready to drop into an asset catalog."
     },
     "artworkSource": "Artwork source",
     "backgroundDark": "Dark background",
@@ -157,7 +170,7 @@
     "dedicatedRemove": "Remove the {{label}}",
     "windowsStoreHint": "Two kinds of background here. The tile colour is PREVIEW ONLY -- the exported tile PNGs stay transparent and the real plate comes from BackgroundColor in your app manifest. The taskbar icon background IS baked into the exported unplated PNGs. Separate from the Windows .ico, which is the exe icon.",
     "legacyHint": "Legacy format. Use the Apple platform for .icon bundles with glass and tinting.",
-    "appleGenerates": "Generates an .icon bundle for macOS, iOS and watchOS. Needs Xcode 16 or newer.",
+    "appleGenerates": "Generates an AppIcon.icon bundle for macOS, iOS and watchOS. Add it to the Xcode project beside the asset catalog, keep the app icon name at AppIcon, and remove the legacy AppIcon set – Xcode 26 builds every size and appearance from it, and a legacy set left in place is what ships instead.",
     "includeSvgRequiresSvg": "Needs an SVG source -- a raster image cannot produce a vector favicon.",
     "source": {
       "main": "Main artwork",
@@ -165,9 +178,10 @@
       "dark": "Dark variant",
       "mono": "Monochrome",
       "maskable": "Maskable",
-      "unplated": "Unplated (taskbar)",
+      "unplated": "Dark taskbar (unplated)",
       "useMain": "Source",
-      "useAlternate": "Alternate"
+      "useAlternate": "Alternate",
+      "lightUnplated": "Light taskbar (unplated)"
     }
   },
   "actions": {

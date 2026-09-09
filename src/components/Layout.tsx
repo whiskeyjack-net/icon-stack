@@ -24,6 +24,7 @@ import {
 import { Stack, GearSix, List, X, Check } from '@phosphor-icons/react'
 import { GeneratorActions, GeneratorActionsMeasure } from './GeneratorActions'
 import { useGenerator } from '@/contexts/GeneratorContext'
+import { SOURCE_ACCEPT } from '@/lib/process-file'
 
 export function Layout({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
@@ -89,7 +90,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/png,image/svg+xml,.svg"
+        accept={SOURCE_ACCEPT}
         className="sr-only"
         aria-label={t('source.choose')}
         onChange={(e) => {

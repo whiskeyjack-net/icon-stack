@@ -101,12 +101,17 @@ function parsePlatforms(value: string): Platform[] {
   return names as Platform[]
 }
 
-function mimeFor(path: string): string {
-  return extname(path).toLowerCase() === '.svg' ? 'image/svg+xml' : 'image/png'
+/** The sources accepted, by extension. The core treats every raster as `png`. */
+const SOURCE_MIME: Record<string, string> = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
 }
 
 /** Build the SourceImage the core wants from a file on disk. */
-function readSource(path: string): SourceImage {
+async function readSource(path: string): Promise<SourceImage> {
   const abs = resolve(path)
   let bytes: Buffer
   try {
@@ -115,10 +120,15 @@ function readSource(path: string): SourceImage {
     throw new Error(`Cannot read source image: ${abs}`)
   }
 
-  const mime = mimeFor(abs)
+  const mime = SOURCE_MIME[extname(abs).toLowerCase()]
+  if (!mime) throw new Error(`Source must be a PNG, JPEG, WebP or SVG file: ${abs}`)
   const isSvg = mime === 'image/svg+xml'
   const svgText = isSvg ? bytes.toString('utf8') : undefined
-  const { width, height } = isSvg ? svgSize(svgText!) : pngSize(bytes)
+  const { width, height } = isSvg
+    ? svgSize(svgText!)
+    : mime === 'image/png'
+      ? pngSize(bytes)
+      : await rasterSize(bytes)
 
   return {
     type: isSvg ? 'svg' : 'png',
@@ -130,10 +140,17 @@ function readSource(path: string): SourceImage {
   }
 }
 
+/** JPEG and WebP carry their size in formats not worth parsing by hand; Skia decodes them anyway. */
+async function rasterSize(bytes: Buffer): Promise<{ width: number; height: number }> {
+  const { loadImage } = await import('@napi-rs/canvas')
+  const img = await loadImage(bytes)
+  return { width: img.width, height: img.height }
+}
+
 /** PNG dimensions live in the IHDR chunk, always at a fixed offset. */
 function pngSize(bytes: Buffer): { width: number; height: number } {
   const isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47
-  if (!isPng) throw new Error('Source must be a PNG or SVG file.')
+  if (!isPng) throw new Error('Source has a .png extension but is not a PNG.')
   return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) }
 }
 
@@ -202,7 +219,7 @@ Usage
   icon-stack inspect --source <file>
 
 Options
-  -s, --source <file>       Source PNG or SVG. 1024x1024 square recommended.
+  -s, --source <file>       Source PNG, JPEG, WebP or SVG. 1024x1024 square recommended.
   -o, --out <dir>           Output directory (default: icons)
   -p, --platforms <list>    Comma-separated subset (default: the standard set)
       --fit <contain|cover> How a non-square source fills the square (default: contain)
@@ -228,7 +245,7 @@ async function commandGenerate(args: Args): Promise<number> {
 
   setCanvasBackend(await nodeCanvasBackend())
 
-  const source = readSource(args.source)
+  const source = await readSource(args.source)
   const warnings = sourceWarnings(source)
   const platforms = buildPlatforms(args)
   const enabled = ALL_PLATFORMS.filter((p) => platforms[p].enabled)
@@ -303,9 +320,9 @@ function commandPlatforms(args: Args): number {
   return 0
 }
 
-function commandInspect(args: Args): number {
+async function commandInspect(args: Args): Promise<number> {
   if (!args.source) throw new Error('--source is required.')
-  const source = readSource(args.source)
+  const source = await readSource(args.source)
   const warnings = sourceWarnings(source)
 
   if (args.json) {

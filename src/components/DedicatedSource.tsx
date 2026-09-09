@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Notice, SegmentedControl, cn } from '@whiskeyjack-net/design-system'
 import { UploadSimple, X, ArrowsIn, ArrowsOut } from '@phosphor-icons/react'
 import type { ImageFit, SourceImage } from '@whiskeyjack-net/icon-stack-core'
-import { processFile } from '@/lib/process-file'
+import { SOURCE_ACCEPT, SourceFileError, processFile, sourceFormat } from '@/lib/process-file'
 
 export interface DedicatedSourceProps {
   /** Section heading, already translated. */
@@ -56,7 +56,7 @@ export function DedicatedSource({
     } catch (err) {
       // Surfaced beside this control rather than in the page-level error slot,
       // which belongs to generation failures.
-      setError(err instanceof Error ? err.message : t('source.readFailed'))
+      setError(t(err instanceof SourceFileError ? err.key : 'source.readFailed'))
     }
   }
 
@@ -74,7 +74,7 @@ export function DedicatedSource({
       <input
         ref={input}
         type="file"
-        accept="image/png,image/svg+xml,.svg"
+        accept={SOURCE_ACCEPT}
         className="sr-only"
         aria-label={label}
         onChange={(e) => {
@@ -99,7 +99,7 @@ export function DedicatedSource({
                 {value.fileName}
               </p>
               <p className="text-xs text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
-                {value.width}&times;{value.height} &middot; {value.type.toUpperCase()}
+                {value.width}&times;{value.height} &middot; {sourceFormat(value)}
               </p>
             </div>
             <Button

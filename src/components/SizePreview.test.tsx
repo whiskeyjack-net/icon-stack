@@ -59,6 +59,17 @@ const files: Record<string, Record<string, Uint8Array>> = {
   apple: {
     'apple/AppIcon.icon/Assets/foreground.png': fakePng(1024),
   },
+  // Tiles at every scale, the wide tile, and the three target-size sets.
+  windowsStore: {
+    'windows-store/Assets/Square44x44Logo.scale-100.png': fakePng(44),
+    'windows-store/Assets/Square44x44Logo.scale-200.png': fakePng(88),
+    'windows-store/Assets/Square150x150Logo.scale-100.png': fakePng(150),
+    'windows-store/Assets/Square44x44Logo.targetsize-16.png': fakePng(16),
+    'windows-store/Assets/Square44x44Logo.targetsize-16_altform-unplated.png': fakePng(16),
+    'windows-store/Assets/Square44x44Logo.targetsize-16_altform-lightunplated.png': fakePng(16),
+    'windows-store/Assets/Square44x44Logo.targetsize-48_altform-unplated.png': fakePng(48),
+    'windows-store/Assets/Square44x44Logo.targetsize-48_altform-lightunplated.png': fakePng(48),
+  },
   // The finalized icon, plus the adaptive layers a launcher composites and the
   // monochrome layer Android 13+ can request.
   android: {
@@ -223,6 +234,47 @@ describe('SizePreview', () => {
     // Height comes from the shared recipe rather than three local guesses, so a
     // future control matches by construction.
     expect(compactControlClass()).toContain(COMPACT_CONTROL_HEIGHT)
+  })
+
+  it('previews Windows Store tiles by family, and the taskbar icons behind a toggle', async () => {
+    const user = userEvent.setup()
+    render(<SizePreview platform="windowsStore" />)
+
+    // One chip per tile family at its 100% size; the 200% duplicate is not offered.
+    await icon(150, 'Windows Store')
+    expect(screen.getByRole('button', { name: '44' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '88' })).toBeNull()
+    // The taskbar files are not mixed into the tile sizes, and the appearance
+    // strip means nothing until Taskbar is chosen.
+    expect(screen.queryByRole('button', { name: '16' })).toBeNull()
+    expect(screen.queryByRole('radio', { name: 'Dark' })).toBeNull()
+
+    await user.click(screen.getByRole('radio', { name: /taskbar/i }))
+    await icon(48, 'Windows Store')
+    expect(screen.getByRole('button', { name: '16' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '150' })).toBeNull()
+    // Light taskbar by default; the moon switches to the dark-taskbar file.
+    expect(screen.getByText(/\(light\)/)).toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: 'Dark' }))
+    await waitFor(() => expect(screen.getByText(/\(dark\)/)).toBeInTheDocument())
+  })
+
+  it('shows small sizes magnified and larger ones at device pixels, and says which', async () => {
+    const user = userEvent.setup()
+    render(<SizePreview platform="macos" />)
+
+    // jsdom reports a device pixel ratio of 1, so 128px is drawn at 128 CSS px.
+    const large = await icon(128, 'macOS (Legacy)').catch(async () => {
+      await user.click(screen.getByRole('button', { name: '128' }))
+      return icon(128, 'macOS (Legacy)')
+    })
+    expect(large).toHaveStyle({ width: '128px', height: '128px' })
+    expect(screen.getByText(/actual pixels/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '16' }))
+    const small = await icon(16, 'macOS (Legacy)')
+    expect(small).toHaveStyle({ width: '32px', height: '32px', imageRendering: 'pixelated' })
+    expect(screen.getByText(/2× magnified/)).toBeInTheDocument()
   })
 
   it('opens favicon.ico too', async () => {

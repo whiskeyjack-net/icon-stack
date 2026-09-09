@@ -17,7 +17,8 @@
     "exportEmpty": "エクスポートするプラットフォームを 1 つ以上選択してください。",
     "downloadPlatform": "{{platform}} のアイコンをダウンロード",
     "generating": "生成中",
-    "generatingProgress": "アイコンを生成中、{{progress}}% 完了"
+    "generatingProgress": "アイコンを生成中、{{progress}}% 完了",
+    "failed": "生成に失敗しました。"
   },
   "settings": {
     "title": "設定",
@@ -83,7 +84,7 @@
     "pwaRegularTransparentCaption": "通常アイコンは背景やマスクなしで書き出されます。「マスカブル」に切り替えると、Android のホーム画面向け専用バージョンをプレビューできます。",
     "pwaRegularFilledCaption": "通常アイコンは、あなたの背景色とマスク付きで書き出されます。「マスカブル」に切り替えると、Android のホーム画面向け専用バージョンをプレビューできます。",
     "windowsStoreTile": "タイル（メインソース）。スタートメニューでマニフェストの BackgroundColor プレート上に配置されます。",
-    "windowsStoreUnplated": "プレートなしのタスクバーアイコン（代替ソース、なければメインに戻る）。タスクバー / Alt+Tab ではプレートなしで描画されるため、ライトとダークのどちらの背景でも見やすくする必要があります。",
+    "windowsStoreUnplated": "プレートなしで描かれるタスクバーアイコン。ダークとライトは、タスクバーのテーマに応じて Windows が選ぶファイルです。",
     "canvasAriaLabel": "{{size}}×{{size}} の {{platform}} アイコンプレビュー",
     "appearance": {
       "light": "ライト",
@@ -96,17 +97,23 @@
       "light": "ライト",
       "dark": "ダーク",
       "mono": "モノクロ",
-      "unplated": "プレートなし",
       "foreground": "前景",
       "background": "背景"
-    }
+    },
+    "tile": "タイル",
+    "taskbar": "タスクバー",
+    "surfaceLabel": "表示先",
+    "actualPixelsSuffix": " · 実際のピクセル",
+    "magnifiedSuffix": " · {{factor}}倍に拡大",
+    "iosDarkCaption": "ダークアイコンは透明背景で書き出されます。iOS が背後に描く独自のダークプレートをここで表示しています。",
+    "failed": "プレビューに失敗しました。"
   },
   "source": {
     "main": "ソース画像",
     "alternate": "代替画像",
     "optional": "任意",
     "mainTitle": "ソース画像をドロップ",
-    "mainSubtitle": "PNG または SVG。1024x1024 の正方形が最適です。",
+    "mainSubtitle": "PNG、JPEG、WebP、SVG。1024×1024 の正方形が最適です。",
     "alternateTitle": "代替画像を追加",
     "alternateSubtitle": "ダーク・モノクロ・タスクバー用のバリアントに使います。",
     "choose": "ファイルを選択",
@@ -115,7 +122,11 @@
     "fit": "フィット",
     "contain": "収める",
     "cover": "覆う",
-    "clear": "クリア"
+    "clear": "クリア",
+    "warnNonSquare": "ソースは {{width}}×{{height}} です。正方形のソースが最適です。",
+    "warnSmall": "ソースは {{width}}×{{height}} です。1024×1024 を推奨します。",
+    "errorType": "PNG、JPEG、WebP、SVG ファイルをアップロードしてください。",
+    "errorDecode": "この画像をデコードできませんでした。"
   },
   "platform": {
     "background": "背景",
@@ -129,7 +140,9 @@
       "favicon": "ブラウザーは 16px まで縮小します。マークはシンプルに。",
       "pwa": "マスカブルのバリアントは Android 用にセーフエリアの余白を追加します。",
       "windowsStore": "ストアのタイルは透明のままです。プレートの色は MSIX マニフェストで指定します。",
-      "trayIcon": "メニューバーのアイコンは macOS ではテンプレート画像です。"
+      "trayIcon": "macOS のメニューバーアイコンはテンプレート画像です。Windows にはライトとダークのセットを .ico とサイズ別 PNG で出力します。",
+      "linux": "SVG ソースはスケーラブルアイコンとしてそのまま同梱されます。",
+      "ios": "ライト、ダーク、ティント付きの 1024px 画像と Contents.json を含む AppIcon.appiconset として書き出され、そのままアセットカタログに配置できます。"
     },
     "artworkSource": "アートワークのソース",
     "backgroundDark": "ダーク時の背景",
@@ -157,7 +170,7 @@
     "dedicatedRemove": "{{label}}を削除",
     "windowsStoreHint": "背景は 2 種類あります。タイルの色はプレビュー専用で、書き出したタイル PNG は透過のまま、実際のプレートはアプリマニフェストの BackgroundColor から来ます。タスクバーアイコンの背景は、プレートなし PNG に焼き込まれます。実行ファイル用の Windows .ico とは別物です。",
     "legacyHint": "旧形式です。ガラスとティントを使うなら Apple プラットフォームの .icon バンドルを使ってください。",
-    "appleGenerates": "macOS・iOS・watchOS 向けの .icon バンドルを生成します。Xcode 16 以降が必要です。",
+    "appleGenerates": "macOS、iOS、watchOS 向けの AppIcon.icon バンドルを生成します。Xcode プロジェクトのアセットカタログの隣に追加し、アプリアイコン名を AppIcon のままにして、旧来の AppIcon セットを削除してください。Xcode 26 がすべてのサイズと外観を生成します。旧セットが残っていると、そちらが出荷されます。",
     "includeSvgRequiresSvg": "SVG のソースが必要です。ラスター画像からベクター favicon は作れません。",
     "source": {
       "main": "メインのアートワーク",
@@ -165,9 +178,10 @@
       "dark": "ダーク用バリアント",
       "mono": "モノクロ",
       "maskable": "マスカブル",
-      "unplated": "プレートなし（タスクバー）",
+      "unplated": "ダークなタスクバー（プレートなし）",
       "useMain": "ソース",
-      "useAlternate": "代替"
+      "useAlternate": "代替",
+      "lightUnplated": "ライトなタスクバー（プレートなし）"
     }
   },
   "actions": {

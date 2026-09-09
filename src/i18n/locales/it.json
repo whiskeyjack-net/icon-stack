@@ -17,7 +17,8 @@
     "exportEmpty": "Seleziona almeno una piattaforma da esportare.",
     "downloadPlatform": "Scarica le icone {{platform}}",
     "generating": "Generazione",
-    "generatingProgress": "Generazione delle icone, {{progress}} % completato"
+    "generatingProgress": "Generazione delle icone, {{progress}} % completato",
+    "failed": "Generazione non riuscita."
   },
   "settings": {
     "title": "Impostazioni",
@@ -83,7 +84,7 @@
     "pwaRegularTransparentCaption": "Le icone normali vengono esportate senza sfondo né maschera. Passa a Mascherabile per l'anteprima della versione dedicata alle schermate Home di Android.",
     "pwaRegularFilledCaption": "Le icone normali vengono esportate con il tuo colore di sfondo e la maschera. Passa a Mascherabile per l'anteprima della versione dedicata alle schermate Home di Android.",
     "windowsStoreTile": "Riquadro (origine principale). Posizionato sulla piastra BackgroundColor del manifest nel menu Start.",
-    "windowsStoreUnplated": "Icona della barra delle applicazioni senza piastra (origine alternativa, ricade sulla principale). Disegnata senza piastra nella barra delle applicazioni / Alt+Tab, quindi deve essere leggibile su sfondi chiari e scuri.",
+    "windowsStoreUnplated": "Icona della barra delle applicazioni, senza piastra. Le varianti scura e chiara sono i file che Windows sceglie per una barra scura o chiara.",
     "canvasAriaLabel": "Anteprima dell'icona {{platform}} in {{size}}×{{size}}",
     "appearance": {
       "light": "Chiaro",
@@ -96,17 +97,23 @@
       "light": "Chiaro",
       "dark": "Scuro",
       "mono": "Monocromatica",
-      "unplated": "Senza piastra",
       "foreground": "Primo piano",
       "background": "Sfondo"
-    }
+    },
+    "tile": "Riquadro",
+    "taskbar": "Barra delle applicazioni",
+    "surfaceLabel": "Superficie",
+    "actualPixelsSuffix": " · pixel reali",
+    "magnifiedSuffix": " · ingrandito {{factor}}×",
+    "iosDarkCaption": "L'icona scura viene esportata con sfondo trasparente; iOS disegna dietro la propria piastra scura, mostrata qui.",
+    "failed": "Anteprima non riuscita."
   },
   "source": {
     "main": "Immagine di origine",
     "alternate": "Immagine alternativa",
     "optional": "facoltativa",
     "mainTitle": "Trascina qui un'immagine di origine",
-    "mainSubtitle": "PNG o SVG, un quadrato 1024x1024 funziona meglio.",
+    "mainSubtitle": "PNG, JPEG, WebP o SVG. Un quadrato 1024×1024 funziona meglio.",
     "alternateTitle": "Aggiungi un'alternativa",
     "alternateSubtitle": "Per varianti scure, monocromatiche e da barra delle applicazioni.",
     "choose": "Scegli un file",
@@ -115,7 +122,11 @@
     "fit": "Adattamento",
     "contain": "Adatta",
     "cover": "Riempi",
-    "clear": "Cancella"
+    "clear": "Cancella",
+    "warnNonSquare": "La sorgente è {{width}}×{{height}}. Le sorgenti quadrate funzionano meglio.",
+    "warnSmall": "La sorgente è {{width}}×{{height}}. Si consiglia 1024×1024.",
+    "errorType": "Carica un file PNG, JPEG, WebP o SVG.",
+    "errorDecode": "Impossibile decodificare l'immagine."
   },
   "platform": {
     "background": "Sfondo",
@@ -129,7 +140,9 @@
       "favicon": "I browser la riducono a 16 px – mantieni il marchio semplice.",
       "pwa": "Le varianti mascherabili aggiungono un margine di sicurezza per Android.",
       "windowsStore": "Le tile dello Store restano trasparenti; il colore della piastra sta nel manifest MSIX.",
-      "trayIcon": "Le icone della barra dei menu su macOS sono immagini template."
+      "trayIcon": "Su macOS le icone della barra dei menu sono immagini template. Windows riceve un set chiaro e uno scuro, come .ico e come un PNG per dimensione.",
+      "linux": "Una sorgente SVG viene inclusa anche, senza modifiche, come icona scalabile.",
+      "ios": "Esportato come AppIcon.appiconset con immagini 1024 px chiara, scura e tinta e il relativo Contents.json, pronto per il catalogo asset."
     },
     "artworkSource": "Origine della grafica",
     "backgroundDark": "Sfondo scuro",
@@ -157,7 +170,7 @@
     "dedicatedRemove": "Rimuovi {{label}}",
     "windowsStoreHint": "Qui ci sono due tipi di sfondo. Il colore della piastrella è SOLO ANTEPRIMA: i PNG esportati restano trasparenti e la piastra reale viene da BackgroundColor nel manifest dell'app. Lo sfondo dell'icona della barra delle applicazioni VIENE incorporato nei PNG senza piastra. Separato dal .ico di Windows, che è l'icona dell'eseguibile.",
     "legacyHint": "Formato legacy. Usa la piattaforma Apple per i bundle .icon con vetro e tinta.",
-    "appleGenerates": "Genera un bundle .icon per macOS, iOS e watchOS. Richiede Xcode 16 o successivo.",
+    "appleGenerates": "Genera un bundle AppIcon.icon per macOS, iOS e watchOS. Aggiungilo al progetto Xcode accanto al catalogo asset, mantieni il nome dell'icona AppIcon e rimuovi il vecchio set AppIcon: Xcode 26 ne ricava ogni dimensione e aspetto, e un vecchio set lasciato al suo posto è ciò che viene distribuito.",
     "includeSvgRequiresSvg": "Richiede una sorgente SVG: un'immagine raster non può produrre una favicon vettoriale.",
     "source": {
       "main": "Grafica principale",
@@ -165,9 +178,10 @@
       "dark": "Variante scura",
       "mono": "Monocromatica",
       "maskable": "Mascherabile",
-      "unplated": "Senza piastra (barra delle applicazioni)",
+      "unplated": "Barra delle applicazioni scura (senza piastra)",
       "useMain": "Origine",
-      "useAlternate": "Alternativa"
+      "useAlternate": "Alternativa",
+      "lightUnplated": "Barra delle applicazioni chiara (senza piastra)"
     }
   },
   "actions": {
