@@ -7,7 +7,37 @@
 import Pica from 'pica'
 import type { CanvasBackend, IconCanvas, IconDrawable } from '../canvas-backend'
 
-const pica = new Pica()
+/**
+ * Every canvas this backend makes asks for a CPU-backed context, and this is
+ * the single most important line in the file.
+ *
+ * Chrome's default 2D context is GPU-accelerated, and its GPU path rasterizes
+ * shapes with 4-sample multisampling: a path fill, a rounded-corner clip or an
+ * SVG image drawn to the canvas gets FIVE coverage levels on its edges instead
+ * of 256. Measured on a real logo: 5 distinct alpha values along the edges on a
+ * default context, 242 on a `willReadFrequently` one. Every SVG source and
+ * every baked corner exported from the web app came out with staircase edges,
+ * and the pixels looked worse than the same pipeline in Node -- a difference
+ * that had nothing to do with the code, only with which rasterizer Chrome
+ * handed it.
+ *
+ * `willReadFrequently: true` moves the canvas to the CPU, where Skia's analytic
+ * antialiasing applies. It is also the honest hint: pica reads back every canvas
+ * with getImageData, which is exactly what the flag is for. A context's
+ * attributes are fixed by the FIRST getContext call, so this has to happen at
+ * creation, before the core's own `getContext('2d')`.
+ */
+const CPU_CONTEXT: CanvasRenderingContext2DSettings = { willReadFrequently: true }
+
+function cpuCanvas(width: number, height: number): HTMLCanvasElement {
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  canvas.getContext('2d', CPU_CONTEXT)
+  return canvas
+}
+
+const pica = new Pica({ createCanvas: cpuCanvas })
 
 /**
  * Logged once per page load so a dev sees why pica isn't being used, without
@@ -28,9 +58,7 @@ async function resizeFallback(
         'Falling back to native createImageBitmap resize.',
     )
   }
-  const target = document.createElement('canvas')
-  target.width = targetWidth
-  target.height = targetHeight
+  const target = cpuCanvas(targetWidth, targetHeight)
   const ctx = target.getContext('2d')!
   if (typeof createImageBitmap === 'function') {
     try {
@@ -68,10 +96,7 @@ function decode(url: string): Promise<HTMLImageElement> {
 
 export const browserCanvasBackend: CanvasBackend = {
   createCanvas(width, height) {
-    const canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = height
-    return canvas as unknown as IconCanvas
+    return cpuCanvas(width, height) as unknown as IconCanvas
   },
 
   /**
@@ -96,9 +121,10 @@ export const browserCanvasBackend: CanvasBackend = {
     const naturalW = img.naturalWidth || size.width
     const naturalH = img.naturalHeight || size.height
     const scale = Math.min(size.width / naturalW, size.height / naturalH)
-    const canvas = document.createElement('canvas')
-    canvas.width = Math.max(1, Math.round(naturalW * scale))
-    canvas.height = Math.max(1, Math.round(naturalH * scale))
+    const canvas = cpuCanvas(
+      Math.max(1, Math.round(naturalW * scale)),
+      Math.max(1, Math.round(naturalH * scale)),
+    )
     canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
     return canvas as unknown as IconDrawable
   },
@@ -118,9 +144,7 @@ export const browserCanvasBackend: CanvasBackend = {
    */
   async resize(source, targetWidth, targetHeight) {
     const src = source as unknown as HTMLCanvasElement
-    const target = document.createElement('canvas')
-    target.width = targetWidth
-    target.height = targetHeight
+    const target = cpuCanvas(targetWidth, targetHeight)
     try {
       await pica.resize(src, target)
       return target as unknown as IconCanvas

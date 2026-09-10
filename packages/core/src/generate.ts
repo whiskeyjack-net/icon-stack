@@ -28,6 +28,7 @@ import { loadImage, imageToSquareCanvas, resizeCanvas, placeArtwork, canvasToPng
 import { drawWithBackground, drawWithZoom, applyRoundedCorners, silhouette, grayscale, fillBackground, readPixels } from './canvas-utils'
 import { resolveGradientColors } from './color-utils'
 import { encodeIcns } from './icns-encoder'
+import { composeSvgFavicon } from './svg-favicon'
 import { encodeIco, type IcoEntry } from './ico-encoder'
 import { buildZip } from './zip-builder'
 import { createCanvas, context2d, type IconCanvas } from './canvas-backend'
@@ -737,12 +738,30 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
     files.push({ path: 'favicon.ico', data: icoData })
     step()
 
-    // SVG passthrough – prefer dedicated favicon source if it's SVG
-    const svgMarkup = faviconConfig.faviconSource?.type === 'svg'
-      ? faviconConfig.faviconSource.svgText
-      : source.type === 'svg' ? source.svgText : undefined
-    if (faviconConfig.includeSvg && svgMarkup) {
-      files.push({ path: 'favicon.svg', data: new TextEncoder().encode(svgMarkup) })
+    // The SVG favicon: the dedicated favicon source when it is an SVG, else the
+    // chosen main/alternate source when that is. Composed with the same plate,
+    // corner and zoom the .ico bakes, rather than passed through -- see
+    // svg-favicon.ts for why the passthrough was wrong.
+    const svgSource = faviconConfig.faviconSource?.type === 'svg'
+      ? faviconConfig.faviconSource
+      : faviconConfig.faviconSource
+        ? null
+        : faviconConfig.sourceChoice === 'alternate' && alternate
+          ? alternate
+          : source
+    if (faviconConfig.includeSvg && svgSource?.type === 'svg' && svgSource.svgText) {
+      const composed = composeSvgFavicon({
+        markup: svgSource.svgText,
+        fallback: { width: svgSource.width, height: svgSource.height },
+        fit: faviconConfig.faviconSource ? faviconFit : svgSource === alternate ? alternateFit : sourceFit,
+        zoom: faviconConfig.zoom,
+        bgFill: faviconConfig.bgFill,
+        bgTransparent: faviconConfig.bgTransparent,
+        cornerRadius: faviconConfig.cornerRadius,
+        cornerSmoothing: faviconConfig.cornerSmoothing,
+        darkMode: faviconConfig.svgDarkMode,
+      })
+      if (composed) files.push({ path: 'favicon.svg', data: new TextEncoder().encode(composed) })
     }
   }
 

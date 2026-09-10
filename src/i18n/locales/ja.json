@@ -157,7 +157,7 @@
     "monochrome": "モノクロレイヤー",
     "monochromeHint": "Android 13 以降のテーマアイコンは単色のシルエットを使います。",
     "includeSvg": "SVG favicon を含める",
-    "includeSvgHint": "モダンなブラウザーはこちらを優先します。ラスター化せずに拡大縮小できます。",
+    "includeSvgHint": "モダンブラウザはこれを優先します。ラスタ化なしで拡縮でき、.ico と同じプレート、角、ズームを持ちます。",
     "faviconSource": "favicon 専用のソース",
     "faviconSourceHint": "favicon はブラウザーのタブで 16px で描かれます。簡略化した図案なら耐えますが、描き込んだものは潰れます。",
     "traySource": "トレイアイコン専用のソース",

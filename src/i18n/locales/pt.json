@@ -157,7 +157,7 @@
     "monochrome": "Camada monocromática",
     "monochromeHint": "Os ícones temáticos do Android 13+ usam uma silhueta de uma só cor.",
     "includeSvg": "Incluir favicon SVG",
-    "includeSvgHint": "Os navegadores modernos preferem-no; escala sem passo raster.",
+    "includeSvgHint": "Os navegadores modernos preferem-no; escala sem rasterização e leva a mesma placa, cantos e zoom que o .ico.",
     "faviconSource": "Origem dedicada para o favicon",
     "faviconSourceHint": "Os favicons são desenhados a 16 px no separador do navegador. Um desenho simplificado aguenta; um detalhado fica ilegível.",
     "traySource": "Origem dedicada para o ícone da bandeja",
