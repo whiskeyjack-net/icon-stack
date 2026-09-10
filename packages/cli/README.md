@@ -6,9 +6,11 @@ Generate a complete app-icon set for every platform from one source image.
 npx @whiskeyjack-net/icon-stack generate --source logo.png --out ./assets/icons
 ```
 
-One 1024×1024 PNG, JPEG, WebP or SVG in; macOS `.icns` and `.iconset`, Windows `.ico`,
-Windows Store MSIX tiles, Android adaptive layers and mipmaps, iOS, Linux, PWA
-icons with maskable variants, favicons, an Apple touch icon, and tray icons out.
+One 1024×1024 PNG, JPEG, WebP or SVG in; an Apple `.icon` bundle, macOS `.icns`
+and `.iconset`, an iOS `.appiconset`, Windows `.ico`, Windows Store MSIX tiles
+with target-size variants, Android adaptive layers and mipmaps, Linux, PWA icons
+with maskable variants, favicons, an Apple touch icon, and light and dark tray
+icons (Windows as `.ico` and per-size PNGs) out.
 
 ## Usage
 
@@ -20,7 +22,7 @@ icon-stack inspect --source <file>
 
 | Option | Description |
 |---|---|
-| `-s, --source <file>` | Source PNG or SVG. 1024×1024 square recommended. |
+| `-s, --source <file>` | Source PNG, JPEG, WebP or SVG. 1024×1024 square recommended. |
 | `-o, --out <dir>` | Output directory (default: `icons`) |
 | `-p, --platforms <list>` | Comma-separated subset, e.g. `favicon,pwa` |
 | `--fit <contain\|cover>` | How a non-square source fills the square (default: `contain`) |

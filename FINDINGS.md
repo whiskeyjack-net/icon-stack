@@ -1,8 +1,9 @@
 # Findings: building on the published packages
 
 Icon Stack is built **outside** the Whiskeyjack monorepo, consuming
-`@whiskeyjack-net/design-system`, `@whiskeyjack-net/i18n` and the
-`create-whiskeyjack` starter exactly as any third party would. Chip Away stays
+`@whiskeyjack-net/design-system`, `@whiskeyjack-net/i18n`,
+`@whiskeyjack-net/tauri` and the `create-whiskeyjack` starter exactly as any
+third party would. Chip Away stays
 inside the monorepo on workspace source. The two together are a control and an
 experiment: anything that works in one and not the other is a packaging or
 documentation gap, and it lands here.

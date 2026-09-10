@@ -6,7 +6,7 @@ Build and verify the app.
    (Phosphor-only icons, token colors rather than raw Tailwind palette hues or
    hardcoded hex, en dashes, React hook rules). Fix what it reports; reach for
    `eslint-disable` only when you can say why the rule is wrong in that spot.
-2. Run `npm run build` from the project root – it runs `tsc` (type-check) then `vite build`.
+2. Run `npm run build` from the project root – it builds `packages/core`, then runs `tsc -b` and `vite build`.
 3. Report any lint, type, or build errors, with the `file:line`.
 4. If it succeeds, note the output bundle summary.
 

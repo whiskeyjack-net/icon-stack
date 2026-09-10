@@ -13,7 +13,7 @@ sat at 1.0.0 through the whole rebuild while the packages reached 0.2.0.
 `changeset:version` now runs `scripts/sync-web-version.mjs` on its tail to carry
 the number across, and `check:release` asserts the three agree.
 
-Both prior releases were hand-rolled version-bump commits, and both went wrong in a
+The two releases before 0.3.0 were hand-rolled version-bump commits, and both went wrong in a
 way worth naming, because the guardrails below exist for exactly these:
 
 - **0.2.0 reached npm while `main` still said 0.1.1.** The bump lived on a branch
@@ -39,7 +39,7 @@ inlines the core into it. Consequences:
 
 **`npx` prefers the workspace.** Running
 `npx @whiskeyjack-net/icon-stack@0.2.0 …` from inside this repo resolves to the
-local copy, not the registry. Any "does the published CLI do X?" check must run
+workspace's local copy. Any "does the published CLI do X?" check must run
 from a neutral directory, or it tests your own build against itself. That mistake
 produced a confident wrong answer once already.
 

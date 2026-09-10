@@ -2,7 +2,7 @@
 
 The icon-generation pipeline behind [Icon Stack](https://whiskeyjack.net/icon-stack/):
 platform size tables, `.ico` and `.icns` encoders, compositing, and the
-generator — with the rasterizer injected, so the same code runs in a browser and
+generator – with the rasterizer injected, so the same code runs in a browser and
 in Node.
 
 Most people want the CLI instead:
@@ -71,7 +71,7 @@ layers + mipmaps + Play Store), `windows` (`.ico`), `windowsStore` (MSIX tiles),
 `linux`, `pwa` (+ maskable), `favicon`, `appleTouchIcon`, `trayIcon`.
 
 `createDefaultPlatforms()` returns a sensible full set. `updatePlatform(configs,
-platform, patch)` edits one — it is generic over the platform key, because
+platform, patch)` edits one – it is generic over the platform key, because
 writing `configs[key] = {…}` with a union key demands the intersection of every
 config shape.
 
@@ -84,9 +84,9 @@ with Skia via `@napi-rs/canvas`. Only the downscaling kernel genuinely differs,
 which is why `resize` is part of the backend rather than something the core
 implements.
 
-**SVG goes through resvg in Node, not Skia.** Skia's SVG renderer ignores
+**SVG goes through resvg in Node.** Skia's SVG renderer ignores
 `<style>` blocks, so an icon that styles its shapes with CSS classes rather than
-inline `fill` attributes rasterizes as a solid black square — while still
+inline `fill` attributes rasterizes as a solid black square – while still
 producing a perfectly valid PNG.
 
 ## License
