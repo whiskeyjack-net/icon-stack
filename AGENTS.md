@@ -55,7 +55,9 @@ src/
   App.tsx           # routes
   index.css         # DS token + utility CSS, Tauri chrome CSS, Tailwind
   i18n/             # createI18n(locales) + locale JSON
-  lib/              # icon-variants (preview grouping), platform-icons, process-file
+  lib/              # icon-variants (preview grouping), platform-icons, process-file,
+                    # os-mask + apple-appearance + backdrop (preview rendering)
+  contexts/         # GeneratorContext – source, platform and export state
   components/
     Layout.tsx      # the app shell (AppShell + AppPanes + header + nav + theme)
   pages/            # Generator, Settings

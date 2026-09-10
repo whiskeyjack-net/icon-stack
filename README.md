@@ -3,11 +3,15 @@
 One source image in, a complete app-icon set out.
 
 Drop in a 1024×1024 PNG, JPEG or WebP, or an SVG, and get every icon a project
-needs: macOS `.icns` and `.iconset`, Windows `.ico`, Windows Store MSIX tiles
-with the full target-size set, Android adaptive layers and mipmaps, iOS, Linux
-(with the SVG passed through as the scalable icon), PWA icons with maskable
-variants, favicons, an Apple touch icon, and tray icons for macOS, Windows and
-Linux in light and dark.
+needs: an Apple `.icon` bundle for Xcode 26 (light, dark and mono layers),
+macOS `.icns` and `.iconset` in light and dark, an iOS `.appiconset` with light,
+dark and tinted appearances, Windows `.ico`, Windows Store MSIX tiles with the
+full target-size set in plated, unplated and light-unplated variants, Android
+adaptive layers (plus a monochrome layer) and mipmaps, Linux (with the SVG
+passed through as the scalable icon), PWA icons with maskable variants, a
+favicon as `.ico` and SVG, an Apple touch icon, and tray icons for macOS,
+Windows and Linux in light and dark – Windows as `tray.ico` and `tray-dark.ico`
+plus one PNG per size.
 
 - **Web app** – <https://whiskeyjack.net/icon-stack/>
 - **CLI** – `npx @whiskeyjack-net/icon-stack generate --source logo.png --out ./icons`
