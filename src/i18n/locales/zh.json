@@ -157,7 +157,7 @@
     "monochrome": "单色图层",
     "monochromeHint": "Android 13 及以上的主题图标使用单色剪影。",
     "includeSvg": "包含 SVG favicon",
-    "includeSvgHint": "现代浏览器更倾向于它；缩放时无需经过位图。",
+    "includeSvgHint": "现代浏览器优先使用它；无需栅格化即可缩放，并带有与 .ico 相同的底板、圆角和缩放。",
     "faviconSource": "favicon 专用源图片",
     "faviconSourceHint": "favicon 在浏览器标签页中以 16px 绘制。简化的图形还能看清，细节丰富的会糊成一团。",
     "traySource": "托盘图标专用源图片",

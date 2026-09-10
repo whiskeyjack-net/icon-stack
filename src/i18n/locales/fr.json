@@ -157,7 +157,7 @@
     "monochrome": "Couche monochrome",
     "monochromeHint": "Les icônes thématiques d'Android 13+ utilisent une silhouette d'une seule couleur.",
     "includeSvg": "Inclure un favicon SVG",
-    "includeSvgHint": "Les navigateurs modernes le préfèrent ; il s'adapte sans passer par un raster.",
+    "includeSvgHint": "Les navigateurs modernes le préfèrent ; il s'adapte sans rastérisation et porte la même plaque, les mêmes coins et le même zoom que le .ico.",
     "faviconSource": "Source dédiée pour le favicon",
     "faviconSourceHint": "Les favicons sont dessinés à 16 px dans un onglet. Un dessin simplifié y survit ; un dessin détaillé devient illisible.",
     "traySource": "Source dédiée pour l'icône de barre",

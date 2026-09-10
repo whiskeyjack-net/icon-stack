@@ -16,7 +16,9 @@ declare module 'pica' {
     unsharpThreshold?: number
   }
   export default class Pica {
-    constructor(options?: { features?: string[] })
+    constructor(options?: { features?: string[]
+    /** Canvas factory for pica's own tiles and stages; defaults to document.createElement. */
+    createCanvas?: (width: number, height: number) => HTMLCanvasElement })
     resize(
       from: HTMLCanvasElement | HTMLImageElement,
       to: HTMLCanvasElement,

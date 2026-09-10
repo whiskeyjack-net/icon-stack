@@ -157,7 +157,7 @@
     "monochrome": "Monochrome layer",
     "monochromeHint": "Android 13+ themed icons use a single-color silhouette.",
     "includeSvg": "Include SVG favicon",
-    "includeSvgHint": "Modern browsers prefer it; it scales without a raster step.",
+    "includeSvgHint": "Modern browsers prefer it; it scales without a raster step and carries the same plate, corners and zoom as the .ico.",
     "faviconSource": "Dedicated favicon source",
     "faviconSourceHint": "Favicons render at 16px in a browser tab. A simplified drawing survives that; a detailed one turns to mud.",
     "traySource": "Dedicated tray icon source",
