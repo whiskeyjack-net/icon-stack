@@ -196,11 +196,12 @@ describe('legacy iOS', () => {
 })
 
 describe('Apple .icon appearances', () => {
-  const layers = (files: Record<string, Uint8Array>) => {
+  type Layer = Record<string, unknown>
+  const layers = (files: Record<string, Uint8Array>): Layer[] => {
     const json = JSON.parse(new TextDecoder().decode(files['apple/AppIcon.icon/icon.json']))
-    return json.groups.flatMap((g: { layers: Record<string, unknown>[] }) => g.layers)
+    return json.groups.flatMap((g: { layers: Layer[] }) => g.layers)
   }
-  const opacity = (layer: Record<string, unknown>, appearance?: string) => {
+  const opacity = (layer: Layer, appearance?: string): number => {
     const specs = (layer['opacity-specializations'] as { appearance?: string; value: number }[]) ?? []
     return specs.find((s) => s.appearance === appearance)?.value ?? (appearance ? opacity(layer) : 1)
   }
