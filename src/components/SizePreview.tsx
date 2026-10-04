@@ -65,9 +65,8 @@ const MAGNIFY = 2
  * Android shows, and that is what this previews.
  *
  * The platform qualifier is load-bearing. `foreground` is a layer on Android and
- * the ARTWORK on Apple -- `AppIcon.icon/Assets/foreground.png` is the only raster
- * an Apple export contains, with the plate declared in `icon.json` beside it.
- * Filtering the variant name globally left Apple with nothing to preview at all.
+ * the ARTWORK on Apple. `variantOf` now reads Apple's `foreground.png` as
+ * `regular`, but filtering per platform keeps the two meanings apart.
  */
 const HIDDEN: Partial<Record<Platform, IconVariant[]>> = {
   android: ['foreground', 'background'],
@@ -219,8 +218,11 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
   // --- Shape -----------------------------------------------------------------
   const mask = shown ? osMaskFor(platform, shown) : { radius: null }
   const smoothing = Number(config.cornerSmoothing ?? 0)
+  // Windows Store bakes its corner into the taskbar icons alone, gated on their
+  // own transparency; its tiles are never rounded.
+  const plateBaked = isStore ? taskbar && !config.unplatedTransparent : !config.bgTransparent
   const bakesACorner =
-    bakesCorners(config) && !config.bgTransparent && Number(config.cornerRadius ?? 0) > 0
+    bakesCorners(config) && plateBaked && Number(config.cornerRadius ?? 0) > 0
 
   // An Apple Watch icon is circular whatever the desktop does with the same file.
   // Otherwise: only what the OS applies. A baked corner is in the pixels already,
@@ -228,10 +230,12 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
   // express -- rounding on top of either clips the shape the pipeline just drew.
   const radius = isApple && watch ? '50%' : bakesACorner && smoothing > 0 ? null : mask.radius
 
-  // Two exports ship a transparent file the OS puts its own plate behind: Apple's
-  // layered icon declares one in icon.json, and a legacy iOS dark icon gets the
-  // system's dark gradient. Both are supplied here, since the file alone is
-  // artwork on nothing.
+  // Three exports ship a transparent file the OS puts its own plate behind:
+  // Apple's layered icon declares one in icon.json, a legacy iOS dark icon gets
+  // the system's dark gradient, and a Windows Store tile sits on the manifest's
+  // BackgroundColor. All are supplied here, since the file alone is artwork on
+  // nothing. The Store tile colour exists for this preview only, and had no
+  // effect anywhere while the preview left it out.
   const iosDark = platform === 'ios' && (shown === 'dark' || shown === 'mono')
   const plate = isApple
     ? appearance === 'tinted'
@@ -239,7 +243,9 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
       : fillToCss((appearance === 'dark' ? config.bgFillDark : config.bgFill) as BackgroundFill)
     : iosDark
       ? IOS_DARK_PLATE
-      : null
+      : isStore && !taskbar
+        ? fillToCss(config.bgFill as BackgroundFill)
+        : null
 
   // Small sizes magnified in device pixels; everything else one file pixel per
   // device pixel, so the browser never resamples what the pipeline produced.
@@ -445,7 +451,8 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
                 t(watch ? 'preview.appleModeWatchSuffix' : 'preview.appleModeSuffix', {
                   mode: t(`preview.appearance.${appearance}`).toLowerCase(),
                 })}
-              {hasDark && t(dark ? 'preview.darkSuffix' : 'preview.lightSuffix')}
+              {/* Apple names its appearance above, so a second suffix would repeat it. */}
+              {!isApple && hasDark && t(dark ? 'preview.darkSuffix' : 'preview.lightSuffix')}
               {hasMono && mono && t('preview.monochromeSuffix')}
               {hasMaskable && t(maskable ? 'preview.maskableSuffix' : 'preview.regularSuffix')}
               {/* Boolean() because the config is read as `unknown` per field, and

@@ -45,7 +45,10 @@ describe('variantOf', () => {
     ['ios/AppIcon.appiconset/AppIcon-1024x1024.png', 'regular'],
     ['ios/AppIcon.appiconset/AppIcon-1024x1024-Dark.png', 'dark'],
     ['ios/AppIcon.appiconset/AppIcon-1024x1024-Tinted.png', 'mono'],
-    ['apple/AppIcon.icon/Assets/foreground.png', 'foreground'],
+    // Apple's `foreground.png` is the icon itself, not an Android-style layer.
+    ['apple/AppIcon.icon/Assets/foreground.png', 'regular'],
+    ['apple/AppIcon.icon/Assets/foreground-light.png', 'light'],
+    ['apple/AppIcon.icon/Assets/foreground-dark.png', 'dark'],
     ['apple/AppIcon.icon/Assets/mono.png', 'mono'],
     ['windows-store/Assets/Square44x44Logo.scale-200.png', 'regular'],
     // The three target-size files are the taskbar's dark and light icons, and the

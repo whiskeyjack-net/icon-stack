@@ -166,6 +166,7 @@
     "svgDarkModeHint": "prefers-color-scheme ルールを埋め込み、暗いブラウザー UI で SVG favicon が反転するようにします。",
     "maskableBackground": "マスカブルの背景",
     "unplatedBackground": "タスクバーアイコンの背景",
+    "tileBackground": "タイルの色（プレビューのみ）",
     "dedicatedUsingMain": "メインのソースを使用中",
     "dedicatedRemove": "{{label}}を削除",
     "windowsStoreHint": "背景は 2 種類あります。タイルの色はプレビュー専用で、書き出したタイル PNG は透過のまま、実際のプレートはアプリマニフェストの BackgroundColor から来ます。タスクバーアイコンの背景は、プレートなし PNG に焼き込まれます。実行ファイル用の Windows .ico とは別物です。",
