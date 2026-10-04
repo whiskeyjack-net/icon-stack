@@ -13,6 +13,15 @@ import { DedicatedSource } from './DedicatedSource'
 import { useGenerator } from '@/contexts/GeneratorContext'
 
 /**
+ * Platforms whose export bakes `bgFill` whatever `bgTransparent` says, so a
+ * Transparent toggle there would move and change nothing. iOS forbids alpha in
+ * the light icon, an Android adaptive icon always has a background layer, an
+ * Apple Touch icon is drawn on its plate, and a Windows Store tile is always
+ * transparent (its `bgFill` is the preview-only manifest colour).
+ */
+const PLATE_IGNORES_TRANSPARENT: Platform[] = ['ios', 'android', 'appleTouchIcon', 'windowsStore']
+
+/**
  * Per-platform controls.
  *
  * Every control is gated on the field existing rather than cast into place:
@@ -30,6 +39,15 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
 
   const has = (key: string) => key in config
   const patch = (p: Partial<PlatformConfigs[Platform]>) => patchPlatform(platform, p)
+
+  const offersTransparent = has('bgTransparent') && !PLATE_IGNORES_TRANSPARENT.includes(platform)
+  // A dedicated favicon or tray image replaces the main/alternate choice, so the
+  // picker for it would select an image the export no longer reads.
+  const dedicated = Boolean(config.faviconSource || config.traySource)
+  // Windows Store rounds only its taskbar icons, so their transparency is the
+  // gate; everywhere else it is the platform's own.
+  const plateBaked =
+    platform === 'windowsStore' ? !config.unplatedTransparent : !config.bgTransparent
 
   return (
     <Card>
@@ -67,7 +85,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
           <section className="space-y-4">
             <SectionTitle>{t('platform.artworkSource')}</SectionTitle>
 
-            {has('sourceChoice') && (
+            {has('sourceChoice') && !dedicated && (
               <SourcePicker
                 label={t('platform.source.main')}
                 value={config.sourceChoice as SourceChoice}
@@ -88,7 +106,8 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
                 onChange={(darkSourceChoice) => patch({ darkSourceChoice } as never)}
               />
             )}
-            {has('monoSourceChoice') && (
+            {/* Android writes no monochrome layer with the toggle off. */}
+            {has('monoSourceChoice') && config.useMonochrome !== false && (
               <SourcePicker
                 label={t('platform.source.mono')}
                 value={config.monoSourceChoice as SourceChoice}
@@ -124,12 +143,12 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
         {/* --- Background -------------------------------------------------- */}
         <section>
           <BackgroundField
-            label={t('platform.background')}
+            label={t(platform === 'windowsStore' ? 'platform.tileBackground' : 'platform.background')}
             fill={config.bgFill as BackgroundFill}
             onFillChange={(bgFill: BackgroundFill) => patch({ bgFill } as never)}
-            transparent={has('bgTransparent') ? (config.bgTransparent as boolean) : undefined}
+            transparent={offersTransparent ? (config.bgTransparent as boolean) : undefined}
             onTransparentChange={
-              has('bgTransparent')
+              offersTransparent
                 ? (bgTransparent) => patch({ bgTransparent } as never)
                 : undefined
             }
@@ -225,7 +244,7 @@ export function PlatformSettings({ platform }: { platform: Platform }) {
               exported PNG's background, so with a transparent export it changes
               nothing -- the retired build gated on this and the rebuild did not,
               leaving two sliders that moved and did nothing. */}
-          {has('cornerRadius') && !config.bgTransparent && (
+          {has('cornerRadius') && plateBaked && (
             <>
               <Slider
                 label={t('platform.cornerRadius')}

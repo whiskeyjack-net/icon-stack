@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { appleLayerFor, APPLE_APPEARANCES, TINTED_PLATE } from './apple-appearance'
 import { DEFAULT_BACKDROP, backdropStyle, randomBackdrop } from './backdrop'
+import { variantOf } from './icon-variants'
 
 describe('appleLayerFor', () => {
   // The common case by far: light/dark/mono layers are only exported when that
@@ -34,6 +35,23 @@ describe('appleLayerFor', () => {
     const available = ['regular', 'dark'] as const
     expect(appleLayerFor('light', [...available]).variant).toBe('regular')
     expect(appleLayerFor('dark', [...available]).variant).toBe('dark')
+  })
+
+  it('never shows one appearance the artwork chosen for another', () => {
+    // The reported bug: light artwork set to the alternate, dark left on the
+    // main source, and the preview showed the alternate in both. The real
+    // export paths are used so the classification is exercised too.
+    const exported = (...names: string[]) =>
+      [...new Set(names.map((n) => variantOf(`apple/AppIcon.icon/Assets/${n}`)))]
+
+    const lightOnly = exported('foreground.png', 'foreground-light.png')
+    expect(appleLayerFor('light', lightOnly).variant).toBe('light')
+    expect(appleLayerFor('dark', lightOnly).variant).toBe('regular')
+    expect(appleLayerFor('tinted', lightOnly).variant).toBe('regular')
+
+    const darkOnly = exported('foreground.png', 'foreground-dark.png')
+    expect(appleLayerFor('light', darkOnly).variant).toBe('regular')
+    expect(appleLayerFor('dark', darkOnly).variant).toBe('dark')
   })
 
   it('survives an export with no regular layer at all', () => {

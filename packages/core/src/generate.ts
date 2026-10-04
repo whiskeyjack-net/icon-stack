@@ -167,6 +167,13 @@ function buildAppleIconJson(
   // --- groups (order: mono → dark → main foreground) ---
   const groups: Array<Record<string, unknown>> = []
 
+  // Every layer that a specific appearance owns spells out `tinted` as well.
+  // Icon Composer resolves an appearance with no entry of its own to the
+  // DEFAULT value, not to dark, and Mono derives every tinted rendition. A
+  // layer left without a tinted value inherits its light-mode opacity, so a
+  // light-only layer hid the foreground in Mono and the tinted icon came out
+  // blank (verified with Xcode's `ictool`).
+
   // Dark foreground group (visible only in dark mode, when separate dark variant provided)
   if (hasDark) {
     groups.push({
@@ -177,6 +184,7 @@ function buildAppleIconJson(
         'opacity-specializations': [
           { value: 0 },
           { appearance: 'dark', value: 1 },
+          { appearance: 'tinted', value: 0 },
         ],
       }],
       shadow,
@@ -239,7 +247,11 @@ function buildAppleIconJson(
     if (!hasDark) fgOpacitySpecs.push({ appearance: 'dark', value: 1 })
   }
   if (hasDark) fgOpacitySpecs.push({ appearance: 'dark', value: 0 })
+  // Mono shows the mono layer when there is one, and the main foreground
+  // otherwise. Only written when another spec exists: a lone foreground is
+  // visible everywhere already, and Icon Composer writes no specs for it.
   if (hasMono) fgOpacitySpecs.push({ appearance: 'tinted', value: 0 })
+  else if (fgOpacitySpecs.length > 0) fgOpacitySpecs.push({ appearance: 'tinted', value: 1 })
 
   const fgLayer: Record<string, unknown> = {
     glass: config.glass,
@@ -348,7 +360,12 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
     // Mono layer (only when using alternate source for mono)
     let monoName: string | undefined
     if (appleConfig.monoSourceChoice === 'alternate' && alternateCanvas) {
-      const { data: monoData } = await generatePng(alternateCanvas, 1024)
+      // Zoomed like every other layer: Mono is the same icon in another
+      // appearance, so its artwork must sit at the same scale.
+      const monoCanvas = appleZoom !== 100
+        ? drawWithZoom(alternateCanvas, alternateCanvas.width, appleZoom)
+        : alternateCanvas
+      const { data: monoData } = await generatePng(monoCanvas, 1024)
       monoName = 'mono.png'
       files.push({ path: `apple/AppIcon.icon/Assets/${monoName}`, data: monoData })
       step()
@@ -789,8 +806,10 @@ export async function generateIcons(options: GenerateOptions): Promise<Uint8Arra
   if (platforms.trayIcon.enabled) {
     const trayConfig = platforms.trayIcon as TrayIconConfig
 
-    // Use dedicated tray source if provided, otherwise fall back to main source
-    let trayCanvas = sourceCanvas
+    // Use dedicated tray source if provided, otherwise the chosen main/alternate
+    // source -- the same order favicon uses. This ignored `sourceChoice` and
+    // always drew the main source, while the app offered the choice.
+    let trayCanvas = resolveCanvas(trayConfig.sourceChoice, sourceCanvas, alternateCanvas)
     if (trayConfig.traySource) {
       trayCanvas = await loadSourceCanvas(trayConfig.traySource, trayFit)
     }

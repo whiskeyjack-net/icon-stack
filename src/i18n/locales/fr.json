@@ -166,6 +166,7 @@
     "svgDarkModeHint": "Intègre une règle prefers-color-scheme pour que le favicon SVG s'inverse dans un navigateur sombre.",
     "maskableBackground": "Fond masquable",
     "unplatedBackground": "Fond de l'icône de barre des tâches",
+    "tileBackground": "Couleur de la tuile (aperçu uniquement)",
     "dedicatedUsingMain": "Utilise la source principale",
     "dedicatedRemove": "Retirer {{label}}",
     "windowsStoreHint": "Deux types d'arrière-plan ici. La couleur de la tuile est UNIQUEMENT un aperçu : les PNG exportés restent transparents et la vraie plaque vient de BackgroundColor dans le manifeste de l'app. L'arrière-plan de l'icône de la barre des tâches EST incrusté dans les PNG sans plaque. Distinct du .ico Windows, qui est l'icône de l'exécutable.",

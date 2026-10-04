@@ -133,6 +133,16 @@ describe('tray icons', () => {
     }
   })
 
+  it('draws from the alternate source when the platform chooses it', async () => {
+    // The app offers the choice; the pipeline used to draw the main source regardless.
+    const tray = 'tray/linux/tray-48.png'
+    const main = await run('trayIcon', png, { sourceChoice: 'main' }, svg)
+    const alternate = await run('trayIcon', png, { sourceChoice: 'alternate' }, svg)
+    const fromSvg = await run('trayIcon', svg)
+    expect(Buffer.from(alternate[tray]).equals(Buffer.from(main[tray]))).toBe(false)
+    expect(Buffer.from(alternate[tray]).equals(Buffer.from(fromSvg[tray]))).toBe(true)
+  })
+
   it('draws the dark variant as a white silhouette that keeps the artwork alpha', async () => {
     const files = await run('trayIcon')
     const light = await pixels(files['tray/linux/tray-48.png'])
@@ -216,6 +226,33 @@ describe('Apple .icon appearances', () => {
     expect([opacity(fg), opacity(fg, 'dark'), opacity(fg, 'tinted')]).toEqual([1, 1, 0])
     expect(mono['fill-specializations']).toEqual([{ appearance: 'tinted', value: 'automatic' }])
     expect(fg['fill-specializations']).toBeUndefined()
+  })
+
+  it('gives each appearance exactly one visible layer when light and dark differ', async () => {
+    // Icon Composer resolves a missing appearance to the DEFAULT value, so a
+    // light-only layer once hid the foreground in Mono and left it blank.
+    const visible = (files: Record<string, Uint8Array>, appearance?: string) =>
+      layers(files).filter((l) => opacity(l, appearance) > 0).map((l) => l['image-name'])
+
+    for (const [patch, light, dark] of [
+      [{ lightSourceChoice: 'alternate' }, 'foreground-light.png', 'foreground.png'],
+      [{ darkSourceChoice: 'alternate' }, 'foreground.png', 'foreground-dark.png'],
+      [{ lightSourceChoice: 'alternate', darkSourceChoice: 'alternate' }, 'foreground-light.png', 'foreground-dark.png'],
+    ] as const) {
+      const files = await run('apple', png, patch, png)
+      expect(visible(files)).toEqual([light])
+      expect(visible(files, 'dark')).toEqual([dark])
+      expect(visible(files, 'tinted')).toEqual(['foreground.png'])
+    }
+  })
+
+  it('zooms the mono layer with the rest of the icon', async () => {
+    const plain = await run('apple', png, { monoSourceChoice: 'alternate' }, png)
+    const zoomed = await run('apple', png, { monoSourceChoice: 'alternate', zoom: 60 }, png)
+    const coverage = async (bytes: Uint8Array) =>
+      (await pixels(bytes)).data.filter((v, i) => i % 4 === 3 && v > 0).length
+    const mono = 'apple/AppIcon.icon/Assets/mono.png'
+    expect(await coverage(zoomed[mono])).toBeLessThan((await coverage(plain[mono])) * 0.5)
   })
 
   it('gives a lone foreground the automatic tint fill Icon Composer defaults to', async () => {

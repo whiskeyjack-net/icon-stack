@@ -166,6 +166,7 @@
     "svgDarkModeHint": "Incorpora una regola prefers-color-scheme perché la favicon SVG si inverta in un browser scuro.",
     "maskableBackground": "Sfondo mascherabile",
     "unplatedBackground": "Sfondo dell'icona nella barra delle applicazioni",
+    "tileBackground": "Colore del riquadro (solo anteprima)",
     "dedicatedUsingMain": "Usa l'origine principale",
     "dedicatedRemove": "Rimuovi {{label}}",
     "windowsStoreHint": "Qui ci sono due tipi di sfondo. Il colore della piastrella è SOLO ANTEPRIMA: i PNG esportati restano trasparenti e la piastra reale viene da BackgroundColor nel manifest dell'app. Lo sfondo dell'icona della barra delle applicazioni VIENE incorporato nei PNG senza piastra. Separato dal .ico di Windows, che è l'icona dell'eseguibile.",

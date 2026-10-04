@@ -166,6 +166,7 @@
     "svgDarkModeHint": "Incrusta una regla prefers-color-scheme para que el favicon SVG se invierta en un navegador oscuro.",
     "maskableBackground": "Fondo enmascarable",
     "unplatedBackground": "Fondo del icono de la barra de tareas",
+    "tileBackground": "Color del mosaico (solo vista previa)",
     "dedicatedUsingMain": "Usando el origen principal",
     "dedicatedRemove": "Quitar {{label}}",
     "windowsStoreHint": "Aquí hay dos tipos de fondo. El color del mosaico es SOLO VISTA PREVIA: los PNG exportados siguen siendo transparentes y la placa real viene de BackgroundColor en el manifiesto de tu app. El fondo del icono de la barra de tareas SÍ se integra en los PNG sin placa. Es independiente del .ico de Windows, que es el icono del ejecutable.",

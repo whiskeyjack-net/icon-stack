@@ -79,10 +79,13 @@ export function appleLayerFor(
 }
 
 /**
- * The layer to draw when the appearance has no dedicated one. `regular` is the
- * always-exported `foreground.png`; the first available variant covers the case
- * where a future export drops it.
+ * The layer to draw when the appearance has no dedicated one: `regular`, the
+ * always-exported `foreground.png`, which is what the `.icon` shows there too.
+ *
+ * Never another appearance's layer while `regular` exists. Falling back to "the
+ * first available" is how the light artwork leaked into the dark preview.
  */
 function fallback(available: IconVariant[]): IconVariant {
-  return available.includes('regular') ? 'regular' : (available[0] ?? 'regular')
+  if (available.includes('regular')) return 'regular'
+  return available.find((v) => v !== 'light' && v !== 'dark' && v !== 'mono') ?? available[0] ?? 'regular'
 }

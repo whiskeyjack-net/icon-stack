@@ -69,6 +69,12 @@ export function variantOf(path: string): IconVariant {
   // lookaround cannot be outrun by the next separator someone picks.
   if (/(?<![a-z0-9])dark(?![a-z0-9])/.test(p)) return 'dark'
   if (/(?<![a-z0-9])light(?![a-z0-9])/.test(p)) return 'light'
+  // An Apple `.icon` names its main artwork `foreground.png`, but it is the
+  // icon itself rather than an Android-style layer. Read as `foreground`, an
+  // Apple export had no `regular` variant, and the preview's fallback grabbed
+  // whichever appearance layer came first: a light-only export then showed
+  // its light artwork in dark mode too.
+  if (p.includes('.icon/assets/')) return 'regular'
   if (p.includes('foreground')) return 'foreground'
   if (p.includes('background')) return 'background'
   return 'regular'
