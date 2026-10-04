@@ -1,5 +1,15 @@
 # @whiskeyjack-net/icon-stack
 
+## 0.3.1
+
+### Patch Changes
+
+- Apple `.icon` tinted appearance, and the tray source choice.
+
+  - **Apple `.icon` no longer exports a blank tinted icon** when a light variant is set to the alternate source. Icon Composer resolves an appearance with no entry of its own to the default value, so the light-only layer hid the main foreground in Mono as well. Every appearance-specific layer now states its `tinted` opacity, and the main foreground is the one Mono shows unless a mono layer exists. Verified with Xcode's `ictool` across light-only, dark-only and both.
+  - **The Apple mono layer takes the platform zoom**, like the light and dark layers. It was always drawn at 100%.
+  - **Tray icons honour `sourceChoice`.** They drew the main source whatever it said; a dedicated `traySource` still takes precedence, as `faviconSource` does.
+
 ## 0.3.0
 
 ### Minor Changes
