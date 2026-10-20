@@ -65,6 +65,7 @@
   "preview": {
     "title": "Vista previa",
     "none": "Sin tamaños ráster para esta plataforma.",
+    "rendering": "Generando la vista previa…",
     "watch": "Watch",
     "shuffleBackdrop": "Cambiar el fondo",
     "appearanceLabel": "Apariencia",

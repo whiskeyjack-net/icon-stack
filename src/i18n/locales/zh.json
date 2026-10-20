@@ -65,6 +65,7 @@
   "preview": {
     "title": "预览",
     "none": "此平台没有位图尺寸。",
+    "rendering": "正在生成预览…",
     "watch": "Watch",
     "shuffleBackdrop": "更换背景",
     "appearanceLabel": "外观",

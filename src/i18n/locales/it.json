@@ -65,6 +65,7 @@
   "preview": {
     "title": "Anteprima",
     "none": "Nessuna dimensione raster per questa piattaforma.",
+    "rendering": "Generazione dell’anteprima…",
     "watch": "Watch",
     "shuffleBackdrop": "Cambia lo sfondo",
     "appearanceLabel": "Aspetto",

@@ -65,6 +65,7 @@
   "preview": {
     "title": "Vorschau",
     "none": "Keine Rastergrößen für diese Plattform.",
+    "rendering": "Vorschau wird erstellt …",
     "watch": "Watch",
     "shuffleBackdrop": "Hintergrund wechseln",
     "appearanceLabel": "Erscheinungsbild",

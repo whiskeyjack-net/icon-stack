@@ -65,6 +65,7 @@
   "preview": {
     "title": "プレビュー",
     "none": "このプラットフォームにはラスターサイズがありません。",
+    "rendering": "プレビューを作成中…",
     "watch": "Watch",
     "shuffleBackdrop": "背景を変える",
     "appearanceLabel": "外観",

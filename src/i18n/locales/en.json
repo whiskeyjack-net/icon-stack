@@ -65,6 +65,7 @@
   "preview": {
     "title": "Preview",
     "none": "No raster sizes for this platform.",
+    "rendering": "Rendering the preview…",
     "watch": "Watch",
     "shuffleBackdrop": "Change the backdrop",
     "appearanceLabel": "Appearance",

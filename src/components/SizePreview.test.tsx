@@ -283,4 +283,15 @@ describe('SizePreview', () => {
     await icon(32, 'Favicon')
     expect(screen.getByRole('button', { name: '16' })).toBeInTheDocument()
   })
+
+  it('says it is rendering until the first render lands, and only then that there is nothing', async () => {
+    // Linux has no fixture, so its render resolves to an empty export.
+    render(<SizePreview platform="linux" />)
+
+    expect(screen.getByRole('status')).toHaveTextContent('Rendering the preview…')
+    expect(screen.queryByText('No raster sizes for this platform.')).toBeNull()
+
+    expect(await screen.findByText('No raster sizes for this platform.')).toBeInTheDocument()
+    expect(screen.queryByRole('status')).toBeNull()
+  })
 })

@@ -65,6 +65,7 @@
   "preview": {
     "title": "Aperçu",
     "none": "Aucune taille raster pour cette plateforme.",
+    "rendering": "Création de l’aperçu…",
     "watch": "Watch",
     "shuffleBackdrop": "Changer l'arrière-plan",
     "appearanceLabel": "Apparence",
