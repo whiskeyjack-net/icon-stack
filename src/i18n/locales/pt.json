@@ -65,6 +65,7 @@
   "preview": {
     "title": "Pré-visualização",
     "none": "Sem tamanhos raster para esta plataforma.",
+    "rendering": "A gerar a pré-visualização…",
     "watch": "Watch",
     "shuffleBackdrop": "Mudar o fundo",
     "appearanceLabel": "Aparência",
@@ -194,5 +195,10 @@
     "body": "Cada definição por plataforma está calibrada para a imagem atual. Substituí-la por {{fileName}} mantém a tua seleção de plataformas e não reinicia mais nada, mas todas as pré-visualizações são geradas de novo.",
     "cancel": "Manter a atual",
     "confirm": "Substituir"
+  },
+  "update": {
+    "ready": "Está disponível uma nova versão do Icon Stack.",
+    "reload": "Recarregar",
+    "later": "Mais tarde"
   }
 }

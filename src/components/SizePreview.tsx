@@ -128,6 +128,10 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
   const [variants, setVariants] = useState<Map<IconVariant, RenderedIcon[]>>(new Map())
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  // False until a render has finished, so "nothing yet" and "this export has
+  // no raster sizes" read differently: the first render after a mount can take
+  // seconds while every preview on the Source tab runs at once.
+  const [rendered, setRendered] = useState(false)
   const [size, setSize] = useState<number | null>(null)
   const [appearance, setAppearance] = useState<AppleAppearance>('light')
   const [watch, setWatch] = useState(false)
@@ -149,10 +153,12 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
         if (run !== runRef.current) return // a newer run superseded this one
         setVariants(grouped)
         setError(null)
+        setRendered(true)
       } catch (err) {
         if (run !== runRef.current) return
         console.error(err)
         setError(t('preview.failed'))
+        setRendered(true)
       } finally {
         if (run === runRef.current) setPending(false)
       }
@@ -269,6 +275,14 @@ export function SizePreview({ platform, title }: SizePreviewProps) {
 
         {error ? (
           <Notice tone="error">{error}</Notice>
+        ) : !rendered ? (
+          <div role="status" aria-busy="true" className="space-y-3">
+            <span className="sr-only">{t('preview.rendering')}</span>
+            <div
+              aria-hidden="true"
+              className="aspect-square w-full animate-pulse rounded-xl bg-[var(--color-surface-muted-light)] motion-reduce:animate-none dark:bg-[var(--color-surface-muted-dark)]"
+            />
+          </div>
         ) : selected === null ? (
           <p className="text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
             {t('preview.none')}

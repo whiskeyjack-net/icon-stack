@@ -65,6 +65,7 @@
   "preview": {
     "title": "Vorschau",
     "none": "Keine Rastergrößen für diese Plattform.",
+    "rendering": "Vorschau wird erstellt …",
     "watch": "Watch",
     "shuffleBackdrop": "Hintergrund wechseln",
     "appearanceLabel": "Erscheinungsbild",
@@ -194,5 +195,10 @@
     "body": "Jede plattformspezifische Einstellung ist auf das aktuelle Bild abgestimmt. Ein Ersetzen durch {{fileName}} behält deine Plattformauswahl und setzt nichts weiter zurück, aber alle Vorschauen werden neu erstellt.",
     "cancel": "Aktuelles behalten",
     "confirm": "Ersetzen"
+  },
+  "update": {
+    "ready": "Eine neue Version von Icon Stack ist bereit.",
+    "reload": "Neu laden",
+    "later": "Später"
   }
 }

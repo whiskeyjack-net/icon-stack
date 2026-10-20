@@ -65,6 +65,7 @@
   "preview": {
     "title": "Vista previa",
     "none": "Sin tamaños ráster para esta plataforma.",
+    "rendering": "Generando la vista previa…",
     "watch": "Watch",
     "shuffleBackdrop": "Cambiar el fondo",
     "appearanceLabel": "Apariencia",
@@ -194,5 +195,10 @@
     "body": "Cada ajuste por plataforma está afinado con la imagen actual. Reemplazarla por {{fileName}} conserva tu selección de plataformas y no restablece nada más, pero todas las vistas previas se vuelven a generar.",
     "cancel": "Mantener la actual",
     "confirm": "Reemplazar"
+  },
+  "update": {
+    "ready": "Hay una nueva versión de Icon Stack lista.",
+    "reload": "Recargar",
+    "later": "Más tarde"
   }
 }

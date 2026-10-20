@@ -65,6 +65,7 @@
   "preview": {
     "title": "Aperçu",
     "none": "Aucune taille raster pour cette plateforme.",
+    "rendering": "Création de l’aperçu…",
     "watch": "Watch",
     "shuffleBackdrop": "Changer l'arrière-plan",
     "appearanceLabel": "Apparence",
@@ -194,5 +195,10 @@
     "body": "Chaque réglage par plateforme est ajusté sur l'image actuelle. La remplacer par {{fileName}} conserve votre sélection de plateformes et ne réinitialise rien d'autre, mais tous les aperçus sont regénérés.",
     "cancel": "Garder l'actuelle",
     "confirm": "Remplacer"
+  },
+  "update": {
+    "ready": "Une nouvelle version d’Icon Stack est prête.",
+    "reload": "Recharger",
+    "later": "Plus tard"
   }
 }

@@ -13,7 +13,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // A new build waits for the user: UpdateToast offers the reload, so the
+      // page never swaps builds mid-task and never keeps serving a stale one.
+      registerType: 'prompt',
       // NOT the default `sw.js`. That path is occupied by a tombstone worker
       // (public/sw.js) whose whole job is to unregister the PREVIOUS PWA and
       // drop its precache -- a stale precache there is what made the rebuilt app
