@@ -195,5 +195,10 @@
     "body": "Ogni impostazione per piattaforma è calibrata sull'immagine attuale. Sostituirla con {{fileName}} mantiene la selezione delle piattaforme e non reimposta nulla d'altro, ma tutte le anteprime vengono rigenerate.",
     "cancel": "Mantieni l'attuale",
     "confirm": "Sostituisci"
+  },
+  "update": {
+    "ready": "È pronta una nuova versione di Icon Stack.",
+    "reload": "Ricarica",
+    "later": "Più tardi"
   }
 }

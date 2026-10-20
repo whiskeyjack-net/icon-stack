@@ -195,5 +195,10 @@
     "body": "Every per-platform setting is tuned against the current image. Replacing it with {{fileName}} keeps your platform selection and resets nothing else, but the previews all re-render.",
     "cancel": "Keep current",
     "confirm": "Replace"
+  },
+  "update": {
+    "ready": "A new version of Icon Stack is ready.",
+    "reload": "Reload",
+    "later": "Later"
   }
 }

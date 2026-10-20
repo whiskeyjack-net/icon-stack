@@ -11,7 +11,13 @@ export default defineConfig({
   // both import the same block. Declaring one here and not there (or the
   // reverse) makes every component that reads it throw at module scope.
   define: appDefines,
-  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      // A virtual module the PWA plugin serves only inside the Vite build.
+      'virtual:pwa-register/react': fileURLToPath(new URL('./src/test/pwa-register-stub.ts', import.meta.url)),
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,

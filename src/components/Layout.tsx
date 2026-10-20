@@ -23,6 +23,7 @@ import {
 } from '@whiskeyjack-net/tauri'
 import { Stack, GearSix, List, X, Check } from '@phosphor-icons/react'
 import { GeneratorActions, GeneratorActionsMeasure } from './GeneratorActions'
+import { UpdateToast } from './UpdateToast'
 import { useGenerator } from '@/contexts/GeneratorContext'
 import { SOURCE_ACCEPT } from '@/lib/process-file'
 
@@ -186,6 +187,8 @@ export function Layout({ children }: { children: ReactNode }) {
           {t('replace.body', { fileName: replacePending?.name ?? '' })}
         </p>
       </BottomDrawer>
+
+      <UpdateToast />
     </AppShell>
   )
 }

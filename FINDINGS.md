@@ -27,8 +27,17 @@ elsewhere, fixed upstream, arrived here for free.
 
 ## Live
 
-None. Verified against the published packages on 2026-08-09, not against memory
-of having asked.
+### FIXED HERE – a closed Toast keeps its buttons in the tab order
+
+**design-system 0.31.0**, 2026-10-20. `Toast` stays mounted while closed so it
+can fade out, and closed it is only `opacity-0` and `pointer-events-none`. Its
+`action` and dismiss buttons therefore stay focusable and in the accessibility
+tree: a keyboard user tabs onto an invisible Reload, and a screen reader reads
+a toast that is not on screen. The accessibility rule is that a closed overlay
+is inert, hidden, or not rendered. `UpdateToast` passes `inert` while closed,
+spread untyped because React 18 has no prop for it. Upstream ask: `Toast` sets
+`inert` on its root whenever `open` is false, so every caller with an `action`
+or `onDismiss` gets it.
 
 ---
 
